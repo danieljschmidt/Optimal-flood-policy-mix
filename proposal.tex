@@ -1,0 +1,92 @@
+\documentclass[12pt]{article}
+
+% Packages
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+
+% Title information
+\title{Project Idea: Optimal flood policy}
+\author{Daniel Jonas Schmidt}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Motivation}
+\begin{itemize}
+    \item With rational expectations about flood risk, there is no need for government intervention (except for public adaptation measures).
+    \item However, there is evidence of substantial heterogeneity in flood risk beliefs, and many people underestimate their flood risk.
+    \item A universal flood insurance mandate is often legally and politically infeasible.
+    \item This creates a potential role for government intervention in the form of flood insurance subsidies, subsidies for private adaptation measures, or disaster relief programs.
+    \item What is the socially optimal mix of these policies in the presence of heterogeneous flood risk beliefs?
+    \item There are interesting trade-offs. For example, disaster relief programs provide a safety net for uninsured households, but they also reduce incentives to buy flood insurance or invest in private adaptation measures.
+    \item Possibly, the current mix of flood policies in the US is not that much different from the optimal mix.
+\end{itemize}
+
+\section{Possible starting point}
+What is the optimal mix of flood insurance subsidies and disaster relief in the following setting:
+\begin{itemize}
+    \item one time period
+    \item heterogeneity in flood risk beliefs
+    \item fixed budget dedicated to flood policies
+    \item no private adaptation measures
+\end{itemize}
+
+\subsection{Household decision problem}
+
+\begin{itemize}
+    \item Wealth $w$ available for consumption
+    \item Flood occurs with probability $p$ (objective flood risk)
+    \item Household believes flood occurs with probability $q$ (subjective flood risk)
+    \item Flood causes damage $d$ and there is no misperception about damage conditional on flood occurrence
+    \item The true cost of flood insurance is $\pi d$ where $\pi = (1 + \mu)p$ and $\mu$ is the insurance loading factor
+    \item Government subsidizes flood insurance, so household pays $(1-s)\pi d$
+    \item If uninsured and flood occurs, household receives disaster relief that covers a fraction $a$ of the damage
+    \item If insured, expected utility is
+    \[
+    V_{ins} = u(w - (1-s)\pi d)
+    \]
+    \item If uninsured, expected utility is
+    \[
+    V_{unins} = (1-q)u(w) + q u(w - (1-a)d)
+    \]
+    \item Household buys insurance if $V_{ins} > V_{unins}$
+    \item If the household is risk averse, the minimum subjective flood risk $q$ to buy insurance is
+    \[
+    q^* = \frac{u(w) - u(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)}
+    \]
+\end{itemize}
+
+\subsection{Government problem}
+\begin{itemize}
+    \item Population with distribution of subjective flood risk $F(q)$
+    \item Government has budget $B$ dedicated to flood policies
+    \item Government chooses subsidy $s$ and disaster relief fraction $a$ to maximize social welfare
+    \item Social welfare is
+    \[
+    S(s,a) = V_{unins}(s,a) F(q^*(s,a)) + V_{ins}(s,a) (1 - F(q^*(s,a)))
+    \]
+    \item Budget constraint is
+    \[
+    B = a d q^*(s,a) F(q^*(s,a)) + s \pi d (1 - F(q^*(s,a)))
+    \]
+\end{itemize}
+
+\section{Possible extensions}
+\begin{itemize}
+    \item Private adaptation measures
+    \item Public adaptation measures
+    \item Liquidity-provision policies (disaster loans, 401k withdrawals, mortgage relief)
+    \item Optimal budget dedicated to flood policies
+    \item Government support with floods creates incentives to build in flood-prone areas/ migrate to flood-prone areas
+    \item Multiple time periods
+\end{itemize}
+
+\section{Caveats}
+\begin{itemize}
+    \item It seems like stylized theoretical models are not very popular in economics anymore.
+    \item There are no good measures of subjective flood risk beliefs in the data.
+\end{itemize}
+
+\end{document}
