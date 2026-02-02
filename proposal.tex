@@ -3,6 +3,8 @@
 % Packages
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
 
 % Title information
 \title{Project Idea: Optimal flood policy}
@@ -33,7 +35,7 @@ What is the optimal mix of flood insurance subsidies and disaster relief in the 
     \item no private adaptation measures
 \end{itemize}
 
-\subsection{Household decision problem}
+\section{Household Problem}
 
 \begin{itemize}
     \item Wealth $w$ available for consumption
@@ -45,33 +47,240 @@ What is the optimal mix of flood insurance subsidies and disaster relief in the 
     \item If uninsured and flood occurs, household receives disaster relief that covers a fraction $a$ of the damage
     \item If insured, expected utility is
     \[
-    V_{ins} = u(w - (1-s)\pi d)
+    V_{ins}(s) = u(w - (1-s)\pi d)
     \]
-    \item If uninsured, expected utility is
+    \item If uninsured, perceived expected utility is
     \[
-    V_{unins} = (1-q)u(w) + q u(w - (1-a)d)
+    V_{perc,unins}(q,a) = (1-q)u(w) + q \, u(w - (1-a)d)
     \]
-    \item Household buys insurance if $V_{ins} > V_{unins}$
+    \item However, the true expected utility if uninsured is
+    \[
+    V_{unins}(a) = (1-p)u(w) + p \, u(w - (1-a)d)
+    \]
+    \item Household buys insurance if $V_{ins}(s) > V_{perc,unins}(q,a)$
     \item If the household is risk averse, the minimum subjective flood risk $q$ to buy insurance is
     \[
-    q^* = \frac{u(w) - u(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)}
+    q^*(s,a) = \frac{u(w) - u(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)}
     \]
 \end{itemize}
 
-\subsection{Government problem}
+\section{Government Problem}
+
 \begin{itemize}
     \item Population with distribution of subjective flood risk $F(q)$
     \item Government has budget $B$ dedicated to flood policies
     \item Government chooses subsidy $s$ and disaster relief fraction $a$ to maximize social welfare
-    \item Social welfare is
+    \item Social welfare is the population-weighted true expected utility:
     \[
-    S(s,a) = V_{unins}(s,a) F(q^*(s,a)) + V_{ins}(s,a) (1 - F(q^*(s,a)))
+    S(s,a) = V_{unins}(a) \cdot F(q^*(s,a)) + V_{ins}(s) \cdot \bigl(1 - F(q^*(s,a))\bigr)
     \]
-    \item Budget constraint is
+    \item Budget constraint (using true flood probability $p$ for disaster relief costs):
     \[
-    B = a d q^*(s,a) F(q^*(s,a)) + s \pi d (1 - F(q^*(s,a)))
+    B = a p d \cdot F(q^*(s,a)) + s \pi d \cdot \bigl(1 - F(q^*(s,a))\bigr)
     \]
 \end{itemize}
+
+\section{Solution Approach}
+
+\subsection{The Lagrangian}
+
+The government maximizes social welfare subject to the budget constraint:
+\[
+\mathcal{L}(s,a,\lambda) = V_{unins}(a) \cdot F(q^*) + V_{ins}(s) \cdot (1 - F(q^*)) + \lambda \Bigl[ B - a p d \cdot F(q^*) - s \pi d \cdot (1 - F(q^*)) \Bigr]
+\]
+
+where $q^* = q^*(s,a)$ for notational brevity.
+
+\subsection{Preliminary Derivatives}
+
+\subsubsection{Derivatives of the Utility Functions}
+
+\[
+\frac{\partial V_{ins}}{\partial s} = \pi d \cdot u'(w - (1-s)\pi d) > 0
+\]
+
+\[
+\frac{\partial V_{unins}}{\partial a} = p d \cdot u'(w - (1-a)d) > 0
+\]
+
+\subsubsection{Derivatives of the Insurance Threshold}
+
+Recall that:
+\[
+q^*(s,a) = \frac{u(w) - u(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)}
+\]
+
+Let us define for convenience:
+\[
+N(s) \equiv u(w) - u(w - (1-s)\pi d) \quad \text{(numerator)}
+\]
+\[
+D(a) \equiv u(w) - u(w - (1-a)d) \quad \text{(denominator)}
+\]
+
+so that $q^* = N(s)/D(a)$.
+
+\textbf{Derivative with respect to $s$:}
+\[
+\frac{\partial N}{\partial s} = \pi d \cdot u'(w - (1-s)\pi d)
+\]
+\[
+\frac{\partial q^*}{\partial s} = \frac{1}{D(a)} \cdot \frac{\partial N}{\partial s} = \frac{\pi d \cdot u'(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)} > 0
+\]
+
+Increasing the subsidy $s$ \emph{raises} the threshold $q^*$, meaning fewer households buy insurance.
+
+\textbf{Derivative with respect to $a$:}
+\[
+\frac{\partial D}{\partial a} = -d \cdot u'(w - (1-a)d)
+\]
+\[
+\frac{\partial q^*}{\partial a} = -\frac{N(s)}{D(a)^2} \cdot \frac{\partial D}{\partial a} = \frac{N(s) \cdot d \cdot u'(w - (1-a)d)}{D(a)^2}
+\]
+
+Using $q^* = N/D$:
+\[
+\frac{\partial q^*}{\partial a} = \frac{q^* \cdot d \cdot u'(w - (1-a)d)}{D(a)} > 0
+\]
+
+Increasing disaster relief $a$ \emph{raises} the threshold $q^*$, meaning fewer households buy insurance.
+
+\subsection{First-Order Conditions}
+
+\subsubsection{Derivative with respect to $s$}
+
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial s} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{ins}}{\partial s} \cdot (1 - F(q^*))}_{\text{direct benefit to insured}} \\[8pt]
+&\quad + \lambda \Biggl[ \underbrace{-(apd - s\pi d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{budget effect of switching}} - \underbrace{\pi d \cdot (1 - F(q^*))}_{\text{direct subsidy cost}} \Biggr] = 0
+\end{align*}
+
+\subsubsection{Derivative with respect to $a$}
+
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial a} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{unins}}{\partial a} \cdot F(q^*)}_{\text{direct benefit to uninsured}} \\[8pt]
+&\quad + \lambda \Biggl[ \underbrace{-(apd - s\pi d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{budget effect of switching}} - \underbrace{pd \cdot F(q^*)}_{\text{direct relief cost}} \Biggr] = 0
+\end{align*}
+
+\subsubsection{Budget Constraint}
+
+\[
+\frac{\partial \mathcal{L}}{\partial \lambda} = B - apd \cdot F(q^*) - s\pi d \cdot (1 - F(q^*)) = 0
+\]
+
+\subsection{Characterizing the Optimal Policy}
+
+\subsubsection{Compact Notation}
+
+Define:
+\begin{align*}
+\Delta V &\equiv V_{unins}(a) - V_{ins}(s) = (q^* - p) \cdot D(a) \quad \text{(welfare gap at margin)} \\[4pt]
+\Delta C &\equiv apd - s\pi d \quad \text{(per-capita cost difference: relief vs.\ subsidy)} \\[4pt]
+q^*_s &\equiv \frac{\partial q^*}{\partial s}, \qquad q^*_a \equiv \frac{\partial q^*}{\partial a}
+\end{align*}
+
+The first-order conditions become:
+
+\textbf{FOC for $s$:}
+\[
+\Delta V \cdot f(q^*) \cdot q^*_s + \frac{\partial V_{ins}}{\partial s}(1 - F) = \lambda \Bigl[ \pi d (1-F) + \Delta C \cdot f(q^*) \cdot q^*_s \Bigr]
+\]
+
+\textbf{FOC for $a$:}
+\[
+\Delta V \cdot f(q^*) \cdot q^*_a + \frac{\partial V_{unins}}{\partial a} F = \lambda \Bigl[ pd \cdot F + \Delta C \cdot f(q^*) \cdot q^*_a \Bigr]
+\]
+
+\subsubsection{Marginal Value of Public Funds}
+
+Rearranging each FOC, we can express the shadow value of the budget:
+\[
+\lambda = \frac{\Delta V \cdot f(q^*) \cdot q^*_s + \frac{\partial V_{ins}}{\partial s}(1 - F)}{\pi d (1-F) + \Delta C \cdot f(q^*) \cdot q^*_s}
+\]
+\[
+\lambda = \frac{\Delta V \cdot f(q^*) \cdot q^*_a + \frac{\partial V_{unins}}{\partial a} F}{pd \cdot F + \Delta C \cdot f(q^*) \cdot q^*_a}
+\]
+
+At the optimum, these must be equal, yielding the key optimality condition.
+
+\subsubsection{Optimality Condition}
+
+\begin{equation}
+\boxed{
+\frac{\Delta V \cdot f \cdot q^*_s + \frac{\partial V_{ins}}{\partial s}(1 - F)}{\pi d (1-F) + \Delta C \cdot f \cdot q^*_s} = \frac{\Delta V \cdot f \cdot q^*_a + \frac{\partial V_{unins}}{\partial a} F}{pd \cdot F + \Delta C \cdot f \cdot q^*_a}
+}
+\end{equation}
+
+This equates the \textbf{marginal social welfare per dollar spent} across the two policy instruments.
+
+\subsection{Economic Interpretation}
+
+Each side of the optimality condition has the structure:
+\[
+\frac{\text{Marginal Welfare Benefit}}{\text{Marginal Fiscal Cost}} = \lambda
+\]
+
+The numerator in each case consists of two components:
+
+\begin{enumerate}
+    \item \textbf{Direct effect}: The benefit to those who remain in their current insurance status
+    \begin{itemize}
+        \item For $s$: $\frac{\partial V_{ins}}{\partial s}(1-F)$ — insured households benefit from lower premiums
+        \item For $a$: $\frac{\partial V_{unins}}{\partial a}F$ — uninsured households benefit from better disaster relief
+    \end{itemize}
+    
+    \item \textbf{Behavioral correction effect}: $\Delta V \cdot f(q^*) \cdot q^*_i$ — welfare change from households switching status
+    \begin{itemize}
+        \item When $q^* > p$ (overestimation): $\Delta V > 0$, so policies that raise $q^*$ and reduce insurance uptake \emph{improve} welfare
+        \item When $q^* < p$ (underestimation): $\Delta V < 0$, so policies that lower $q^*$ and increase insurance uptake \emph{improve} welfare
+    \end{itemize}
+\end{enumerate}
+
+The denominator captures the marginal fiscal cost, including both direct costs and the budgetary impact of households switching between insurance and non-insurance.
+
+\subsection{Special Cases}
+
+\subsubsection{Case 1: No Risk Misperception ($q^* = p$ for all households)}
+
+When $q^* = p$, we have $\Delta V = 0$, so the behavioral terms vanish:
+\[
+\frac{\frac{\partial V_{ins}}{\partial s}(1 - F)}{\pi d (1-F)} = \frac{\frac{\partial V_{unins}}{\partial a} F}{pd \cdot F}
+\]
+
+Simplifying:
+\[
+\frac{u'(w - (1-s)\pi d)}{\pi} = \frac{u'(w - (1-a)d)}{1}
+\]
+
+This yields the standard result: equalize marginal utility per dollar of cost across groups, adjusted for the insurance loading.
+
+\subsubsection{Case 2: Uniform Underestimation ($q < p$ for all)}
+
+When everyone underestimates flood risk, $\Delta V < 0$ for marginal households. The government has an incentive to:
+\begin{itemize}
+    \item Increase subsidies $s$ to encourage insurance uptake (corrective motive)
+    \item Reduce disaster relief $a$ to make non-insurance less attractive
+\end{itemize}
+
+\subsubsection{Case 3: Uniform Overestimation ($q > p$ for all)}
+
+When everyone overestimates flood risk, $\Delta V > 0$ for marginal households. The government may want to:
+\begin{itemize}
+    \item Reduce subsidies to discourage excessive insurance purchase
+    \item Increase disaster relief since the uninsured are making a better decision than they realize
+\end{itemize}
+
+\subsection{Solution Algorithm}
+
+Given functional forms for $u(\cdot)$ and $F(\cdot)$, the system can be solved numerically:
+
+\begin{enumerate}
+    \item Specify utility function (e.g., CRRA: $u(c) = \frac{c^{1-\gamma}}{1-\gamma}$)
+    \item Specify distribution of beliefs $F(q)$ (e.g., Beta distribution on $[0,1]$)
+    \item Set parameter values: $w$, $d$, $p$, $\mu$, $B$
+    \item Solve the system of three equations (two FOCs + budget constraint) in three unknowns $(s^*, a^*, \lambda^*)$
+\end{enumerate}
+
+Standard nonlinear equation solvers (e.g., Newton-Raphson) can be applied to this system.
 
 \section{Possible extensions}
 \begin{itemize}
