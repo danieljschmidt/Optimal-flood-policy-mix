@@ -7,7 +7,7 @@ Solves for optimal subsidy (s) and disaster relief (a) given:
 """
 
 import numpy as np
-from scipy.optimize import minimize, fsolve
+from scipy.optimize import minimize
 from scipy.stats import beta
 from dataclasses import dataclass
 

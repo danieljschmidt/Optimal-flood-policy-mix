@@ -17,13 +17,14 @@
 
 \section{Motivation}
 \begin{itemize}
-    \item With rational expectations about flood risk, there is no need for government intervention (except for public adaptation measures).
+    \item With rational expectations about flood risk, it is optimal for the government to not provide disaster relief or subsidize insurance or adaptation.
     \item However, there is evidence of substantial heterogeneity in flood risk beliefs, and many people underestimate their flood risk.
     \item A universal flood insurance mandate is often legally and politically infeasible.
-    \item This creates a potential role for government intervention in the form of flood insurance subsidies, subsidies for private adaptation measures, or disaster relief programs.
+    \item This creates a potential role for government intervention in the form of flood insurance subsidies, subsidies for private adaptation measures, disaster relief programs, or a combination of all policies.
     \item What is the socially optimal mix of these policies in the presence of heterogeneous flood risk beliefs?
-    \item There are interesting trade-offs. For example, disaster relief programs provide a safety net for uninsured households, but they also reduce incentives to buy flood insurance or invest in private adaptation measures.
-    \item Possibly, the current mix of flood policies in the US is not that much different from the optimal mix.
+    \item Subsidies can increase insurance and adaptation towards their socially optimal level, but with sufficient heterogeneity in beliefs, there will always be a group of households that underestimate flood risk enough to nevertheless not take any action. 
+    \item Disaster relief programs provide a safety net for uninsured households, but they also reduce incentives to buy flood insurance or invest in private adaptation measures. 
+    \item Possibly, the current mix of policies in the US is not that much different from the optimal mix.
 \end{itemize}
 
 \section{Possible starting point}
@@ -35,7 +36,7 @@ What is the optimal mix of flood insurance subsidies and disaster relief in the 
     \item no private adaptation measures
 \end{itemize}
 
-\section{Household Problem}
+\subsection{Household Problem}
 
 \begin{itemize}
     \item Wealth $w$ available for consumption
@@ -64,34 +65,22 @@ What is the optimal mix of flood insurance subsidies and disaster relief in the 
     \]
 \end{itemize}
 
-\section{Government Problem}
+\subsection{Government Problem}
 
 \begin{itemize}
     \item Population with distribution of subjective flood risk $F(q)$
     \item Government has budget $B$ dedicated to flood policies
     \item Government chooses subsidy $s$ and disaster relief fraction $a$ to maximize social welfare
-    \item Social welfare is the population-weighted true expected utility:
     \[
     S(s,a) = V_{unins}(a) \cdot F(q^*(s,a)) + V_{ins}(s) \cdot \bigl(1 - F(q^*(s,a))\bigr)
     \]
-    \item Budget constraint (using true flood probability $p$ for disaster relief costs):
+    subject to
     \[
     B = a p d \cdot F(q^*(s,a)) + s \pi d \cdot \bigl(1 - F(q^*(s,a))\bigr)
     \]
 \end{itemize}
 
-\section{Solution Approach}
-
-\subsection{The Lagrangian}
-
-The government maximizes social welfare subject to the budget constraint:
-\[
-\mathcal{L}(s,a,\lambda) = V_{unins}(a) \cdot F(q^*) + V_{ins}(s) \cdot (1 - F(q^*)) + \lambda \Bigl[ B - a p d \cdot F(q^*) - s \pi d \cdot (1 - F(q^*)) \Bigr]
-\]
-
-where $q^* = q^*(s,a)$ for notational brevity.
-
-\subsection{Preliminary Derivatives}
+\subsection{Solution}
 
 \subsubsection{Derivatives of the Utility Functions}
 
@@ -105,67 +94,52 @@ where $q^* = q^*(s,a)$ for notational brevity.
 
 \subsubsection{Derivatives of the Insurance Threshold}
 
-Recall that:
 \[
 q^*(s,a) = \frac{u(w) - u(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)}
 \]
-
-Let us define for convenience:
 \[
 N(s) \equiv u(w) - u(w - (1-s)\pi d) \quad \text{(numerator)}
 \]
 \[
 D(a) \equiv u(w) - u(w - (1-a)d) \quad \text{(denominator)}
 \]
-
-so that $q^* = N(s)/D(a)$.
-
-\textbf{Derivative with respect to $s$:}
 \[
-\frac{\partial N}{\partial s} = \pi d \cdot u'(w - (1-s)\pi d)
+\frac{\partial N}{\partial s} = -\pi d \cdot u'(w - (1-s)\pi d)
 \]
 \[
-\frac{\partial q^*}{\partial s} = \frac{1}{D(a)} \cdot \frac{\partial N}{\partial s} = \frac{\pi d \cdot u'(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)} > 0
+\frac{\partial q^*}{\partial s} = \frac{1}{D(a)} \cdot \frac{\partial N}{\partial s} = -\frac{\pi d \cdot u'(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)} > 0
 \]
-
-Increasing the subsidy $s$ \emph{raises} the threshold $q^*$, meaning fewer households buy insurance.
-
-\textbf{Derivative with respect to $a$:}
 \[
 \frac{\partial D}{\partial a} = -d \cdot u'(w - (1-a)d)
 \]
 \[
 \frac{\partial q^*}{\partial a} = -\frac{N(s)}{D(a)^2} \cdot \frac{\partial D}{\partial a} = \frac{N(s) \cdot d \cdot u'(w - (1-a)d)}{D(a)^2}
 \]
-
-Using $q^* = N/D$:
 \[
 \frac{\partial q^*}{\partial a} = \frac{q^* \cdot d \cdot u'(w - (1-a)d)}{D(a)} > 0
 \]
 
-Increasing disaster relief $a$ \emph{raises} the threshold $q^*$, meaning fewer households buy insurance.
+Increasing the subsidy $s$ \emph{decreases} the threshold $q^*$, meaning more households buy insurance.
+Increasing disaster relief $a$ \emph{increases} the threshold $q^*$, meaning fewer households buy insurance.
 
-\subsection{First-Order Conditions}
-
-\subsubsection{Derivative with respect to $s$}
-
+\subsubsection{First-Order Conditions}
 \begin{align*}
-\frac{\partial \mathcal{L}}{\partial s} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{ins}}{\partial s} \cdot (1 - F(q^*))}_{\text{direct benefit to insured}} \\[8pt]
-&\quad + \lambda \Biggl[ \underbrace{-(apd - s\pi d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{budget effect of switching}} - \underbrace{\pi d \cdot (1 - F(q^*))}_{\text{direct subsidy cost}} \Biggr] = 0
+    \frac{\partial \mathcal{L}}{\partial s} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{ins}}{\partial s} \cdot (1 - F(q^*))}_{\text{direct benefit to insured}} \\[8pt]
+    &\quad + \lambda \Biggl[ \underbrace{-(apd - s\pi d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{budget effect of switching}} - \underbrace{\pi d \cdot (1 - F(q^*))}_{\text{direct subsidy cost}} \Biggr] = 0
+\end{align*}
+\begin{align*}
+    \frac{\partial \mathcal{L}}{\partial a} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{unins}}{\partial a} \cdot F(q^*)}_{\text{direct benefit to uninsured}} \\[8pt]
+    &\quad + \lambda \Biggl[ \underbrace{-(apd - s\pi d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{budget effect of switching}} - \underbrace{pd \cdot F(q^*)}_{\text{direct relief cost}} \Biggr] = 0
 \end{align*}
 
-\subsubsection{Derivative with respect to $a$}
+\begin{itemize}
+    \item Insurance subsidy: switching delivers welfare gains, benefit to insured is wasteful
+    \item Disaster relief: benefit to uninsured is the goal, switching is the problem
+\end{itemize}
 
-\begin{align*}
-\frac{\partial \mathcal{L}}{\partial a} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{unins}}{\partial a} \cdot F(q^*)}_{\text{direct benefit to uninsured}} \\[8pt]
-&\quad + \lambda \Biggl[ \underbrace{-(apd - s\pi d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{budget effect of switching}} - \underbrace{pd \cdot F(q^*)}_{\text{direct relief cost}} \Biggr] = 0
-\end{align*}
+% TODO
 
-\subsubsection{Budget Constraint}
-
-\[
-\frac{\partial \mathcal{L}}{\partial \lambda} = B - apd \cdot F(q^*) - s\pi d \cdot (1 - F(q^*)) = 0
-\]
+% Question: Are we sure that there is only one maximum and that it is an interior maximum?
 
 \subsection{Characterizing the Optimal Policy}
 
