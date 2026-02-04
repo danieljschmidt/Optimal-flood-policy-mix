@@ -5,6 +5,7 @@
 \usepackage{setspace}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{graphicx}
 
 % Title information
 \title{Project Idea: Optimal flood policy}
@@ -18,14 +19,15 @@
 \section{Motivation}
 \begin{itemize}
     \item With rational expectations about flood risk, it is optimal for the government to not provide disaster relief or subsidize insurance or adaptation.
-    \item However, there is evidence of substantial heterogeneity in flood risk beliefs, and many people underestimate their flood risk.
-    \item A universal flood insurance mandate is often legally and politically infeasible.
+    \item However, there is evidence of substantial heterogeneity in flood risk beliefs and of underestimation of flood risk. A universal flood insurance mandate, which would ensure that even those who underestimate flood risk are insured, is often legally and politically infeasible.
     \item This creates a potential role for government intervention in the form of flood insurance subsidies, subsidies for private adaptation measures, disaster relief programs, or a combination of all policies.
-    \item What is the socially optimal mix of these policies in the presence of heterogeneous flood risk beliefs?
-    \item Subsidies can increase insurance and adaptation towards their socially optimal level, but with sufficient heterogeneity in beliefs, there will always be a group of households that underestimate flood risk enough to nevertheless not take any action. 
+    \item Subsidies can increase insurance and adaptation towards their socially optimal level, but with sufficient heterogeneity in beliefs, there will always be a group of households that underestimate flood risk enough to stay uninsured and under-adapted even with subsidies in place. 
     \item Disaster relief programs provide a safety net for uninsured households, but they also reduce incentives to buy flood insurance or invest in private adaptation measures. 
-    \item Possibly, the current mix of policies in the US is not that much different from the optimal mix.
+    \item What is the socially optimal mix of these policies in the presence of heterogeneous flood risk beliefs? Is it optimal to use all available policy instruments, or only a subset? How does optimal policy depend on the distribution of flood risk beliefs, risk aversion, and other parameters?
+    \item The methodological approach I have in mind is to set up a stylized theoretical model and derive analytical results where possible. To take the model to the data, we could calibrate it or try a sufficient statistics approach.
 \end{itemize}
+
+\newpage
 
 \section{Possible starting point}
 What is the optimal mix of flood insurance subsidies and disaster relief in the following setting:
@@ -40,15 +42,15 @@ What is the optimal mix of flood insurance subsidies and disaster relief in the 
 
 \begin{itemize}
     \item Wealth $w$ available for consumption
-    \item Flood occurs with probability $p$ (objective flood risk)
-    \item Household believes flood occurs with probability $q$ (subjective flood risk)
+    \item Flood occurs with probability $p$
+    \item Household believes flood occurs with probability $q$ 
     \item Flood causes damage $d$ and there is no misperception about damage conditional on flood occurrence
-    \item The true cost of flood insurance is $\pi d$ where $\pi = (1 + \mu)p$ and $\mu$ is the insurance loading factor
-    \item Government subsidizes flood insurance, so household pays $(1-s)\pi d$
+    \item Flood insurance is actuarially fair and costs $p$ per unit of coverage
+    \item Government subsidizes flood insurance, so household pays $(1-s)p d$
     \item If uninsured and flood occurs, household receives disaster relief that covers a fraction $a$ of the damage
     \item If insured, expected utility is
     \[
-    V_{ins}(s) = u(w - (1-s)\pi d)
+    V_{ins}(s) = u(w - (1-s)p d)
     \]
     \item If uninsured, perceived expected utility is
     \[
@@ -61,7 +63,7 @@ What is the optimal mix of flood insurance subsidies and disaster relief in the 
     \item Household buys insurance if $V_{ins}(s) > V_{perc,unins}(q,a)$
     \item If the household is risk averse, the minimum subjective flood risk $q$ to buy insurance is
     \[
-    q^*(s,a) = \frac{u(w) - u(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)}
+    q^*(s,a) = \frac{u(w) - u(w - (1-s)p d)}{u(w) - u(w - (1-a)d)}
     \]
 \end{itemize}
 
@@ -76,200 +78,96 @@ What is the optimal mix of flood insurance subsidies and disaster relief in the 
     \]
     subject to
     \[
-    B = a p d \cdot F(q^*(s,a)) + s \pi d \cdot \bigl(1 - F(q^*(s,a))\bigr)
+    B = a p d \cdot F(q^*(s,a)) + s p d \cdot \bigl(1 - F(q^*(s,a))\bigr)
     \]
 \end{itemize}
 
-\subsection{Solution}
-
-\subsubsection{Derivatives of the Utility Functions}
-
-\[
-\frac{\partial V_{ins}}{\partial s} = \pi d \cdot u'(w - (1-s)\pi d) > 0
-\]
-
-\[
-\frac{\partial V_{unins}}{\partial a} = p d \cdot u'(w - (1-a)d) > 0
-\]
-
-\subsubsection{Derivatives of the Insurance Threshold}
-
-\[
-q^*(s,a) = \frac{u(w) - u(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)}
-\]
-\[
-N(s) \equiv u(w) - u(w - (1-s)\pi d) \quad \text{(numerator)}
-\]
-\[
-D(a) \equiv u(w) - u(w - (1-a)d) \quad \text{(denominator)}
-\]
-\[
-\frac{\partial N}{\partial s} = -\pi d \cdot u'(w - (1-s)\pi d)
-\]
-\[
-\frac{\partial q^*}{\partial s} = \frac{1}{D(a)} \cdot \frac{\partial N}{\partial s} = -\frac{\pi d \cdot u'(w - (1-s)\pi d)}{u(w) - u(w - (1-a)d)} > 0
-\]
-\[
-\frac{\partial D}{\partial a} = -d \cdot u'(w - (1-a)d)
-\]
-\[
-\frac{\partial q^*}{\partial a} = -\frac{N(s)}{D(a)^2} \cdot \frac{\partial D}{\partial a} = \frac{N(s) \cdot d \cdot u'(w - (1-a)d)}{D(a)^2}
-\]
-\[
-\frac{\partial q^*}{\partial a} = \frac{q^* \cdot d \cdot u'(w - (1-a)d)}{D(a)} > 0
-\]
-
-Increasing the subsidy $s$ \emph{decreases} the threshold $q^*$, meaning more households buy insurance.
-Increasing disaster relief $a$ \emph{increases} the threshold $q^*$, meaning fewer households buy insurance.
-
-\subsubsection{First-Order Conditions}
+\subsubsection*{First-Order Conditions of the Lagrangian}
 \begin{align*}
     \frac{\partial \mathcal{L}}{\partial s} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{ins}}{\partial s} \cdot (1 - F(q^*))}_{\text{direct benefit to insured}} \\[8pt]
-    &\quad + \lambda \Biggl[ \underbrace{-(apd - s\pi d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{budget effect of switching}} - \underbrace{\pi d \cdot (1 - F(q^*))}_{\text{direct subsidy cost}} \Biggr] = 0
+    &\quad + \lambda \Biggl[ \underbrace{-(apd - sp d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{budget effect of switching}} - \underbrace{p d \cdot (1 - F(q^*))}_{\text{direct subsidy cost}} \Biggr] = 0
 \end{align*}
 \begin{align*}
     \frac{\partial \mathcal{L}}{\partial a} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{unins}}{\partial a} \cdot F(q^*)}_{\text{direct benefit to uninsured}} \\[8pt]
-    &\quad + \lambda \Biggl[ \underbrace{-(apd - s\pi d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{budget effect of switching}} - \underbrace{pd \cdot F(q^*)}_{\text{direct relief cost}} \Biggr] = 0
+    &\quad + \lambda \Biggl[ \underbrace{-(apd - sp d) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{budget effect of switching}} - \underbrace{pd \cdot F(q^*)}_{\text{direct relief cost}} \Biggr] = 0
 \end{align*}
 
 \begin{itemize}
-    \item Insurance subsidy: switching delivers welfare gains, benefit to insured is wasteful
-    \item Disaster relief: benefit to uninsured is the goal, switching is the problem
+    \item Disaster relief $a$ and insurance subsidy $s$ cannot be negative. Thus, we also need to consider corner solutions where either $s=0$, or $a=0$.
+    \item Depending on the shape of the distribution, several local optima could exist.
+    \item Nevertheless, the first-order conditions nicely illustrate the role of the fraction of insured households and the density of beliefs at the margin:
+    \begin{itemize}
+        \item Increasing insurance subsidies $s$ is most effective when there are many households close to the margin of buying insurance relative to the group of households that is already insured.
+        \item Increasing disaster relief $a$ is most effective when there are few households close to the margin of buying insurance relative to the group of households that is uninsured.
+    \end{itemize}
 \end{itemize}
 
-% TODO
+\subsubsection*{Numerical solution}
 
-% Question: Are we sure that there is only one maximum and that it is an interior maximum?
+We solve the model numerically with the following calibrations:
 
-\subsection{Characterizing the Optimal Policy}
+\begin{itemize}
+    \item CRRA utility with $\gamma = 2$
+    \item Wealth $w = 1$, flood damage $d = 0.5$
+    \item True flood probability: $p = 2\%$
+    \item Government budget: $B = 0.001$ (i.e., 10\% of total expected flood damages)
+    \item Belief distribution: Beta with mean $\mu_q = 1\%$ and standard deviation $\sigma_q \in \{0.5\%, 0.7\%, 1.0\%\}$
+\end{itemize}
 
-\subsubsection{Compact Notation}
+\begin{figure}[h]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{pdf_comparison.png}
+\caption{Distribution of subjective flood risk beliefs}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{welfare_comparison.png}
+\caption{Social welfare as a function of budget allocation to subsidies. Dots mark optimal policy.}
+\end{minipage}
+\end{figure}
 
-Define:
-\begin{align*}
-\Delta V &\equiv V_{unins}(a) - V_{ins}(s) = (q^* - p) \cdot D(a) \quad \text{(welfare gap at margin)} \\[4pt]
-\Delta C &\equiv apd - s\pi d \quad \text{(per-capita cost difference: relief vs.\ subsidy)} \\[4pt]
-q^*_s &\equiv \frac{\partial q^*}{\partial s}, \qquad q^*_a \equiv \frac{\partial q^*}{\partial a}
-\end{align*}
-
-The first-order conditions become:
-
-\textbf{FOC for $s$:}
-\[
-\Delta V \cdot f(q^*) \cdot q^*_s + \frac{\partial V_{ins}}{\partial s}(1 - F) = \lambda \Bigl[ \pi d (1-F) + \Delta C \cdot f(q^*) \cdot q^*_s \Bigr]
-\]
-
-\textbf{FOC for $a$:}
-\[
-\Delta V \cdot f(q^*) \cdot q^*_a + \frac{\partial V_{unins}}{\partial a} F = \lambda \Bigl[ pd \cdot F + \Delta C \cdot f(q^*) \cdot q^*_a \Bigr]
-\]
-
-\subsubsection{Marginal Value of Public Funds}
-
-Rearranging each FOC, we can express the shadow value of the budget:
-\[
-\lambda = \frac{\Delta V \cdot f(q^*) \cdot q^*_s + \frac{\partial V_{ins}}{\partial s}(1 - F)}{\pi d (1-F) + \Delta C \cdot f(q^*) \cdot q^*_s}
-\]
-\[
-\lambda = \frac{\Delta V \cdot f(q^*) \cdot q^*_a + \frac{\partial V_{unins}}{\partial a} F}{pd \cdot F + \Delta C \cdot f(q^*) \cdot q^*_a}
-\]
-
-At the optimum, these must be equal, yielding the key optimality condition.
-
-\subsubsection{Optimality Condition}
-
-\begin{equation}
-\boxed{
-\frac{\Delta V \cdot f \cdot q^*_s + \frac{\partial V_{ins}}{\partial s}(1 - F)}{\pi d (1-F) + \Delta C \cdot f \cdot q^*_s} = \frac{\Delta V \cdot f \cdot q^*_a + \frac{\partial V_{unins}}{\partial a} F}{pd \cdot F + \Delta C \cdot f \cdot q^*_a}
-}
-\end{equation}
-
-This equates the \textbf{marginal social welfare per dollar spent} across the two policy instruments.
-
-\subsection{Economic Interpretation}
-
-Each side of the optimality condition has the structure:
-\[
-\frac{\text{Marginal Welfare Benefit}}{\text{Marginal Fiscal Cost}} = \lambda
-\]
-
-The numerator in each case consists of two components:
-
-\begin{enumerate}
-    \item \textbf{Direct effect}: The benefit to those who remain in their current insurance status
-    \begin{itemize}
-        \item For $s$: $\frac{\partial V_{ins}}{\partial s}(1-F)$ — insured households benefit from lower premiums
-        \item For $a$: $\frac{\partial V_{unins}}{\partial a}F$ — uninsured households benefit from better disaster relief
-    \end{itemize}
+\begin{itemize}
+    \item {Low dispersion of beliefs} ($\sigma = 0.5\%$): Insurance subsidies only ($s = 17\%$, $a = 0\%$) since many households are close to the margin of buying insurance and can be incentivized to do so through subsidies. Insurance coverage increases from 43\% to 57\%.
     
-    \item \textbf{Behavioral correction effect}: $\Delta V \cdot f(q^*) \cdot q^*_i$ — welfare change from households switching status
-    \begin{itemize}
-        \item When $q^* > p$ (overestimation): $\Delta V > 0$, so policies that raise $q^*$ and reduce insurance uptake \emph{improve} welfare
-        \item When $q^* < p$ (underestimation): $\Delta V < 0$, so policies that lower $q^*$ and increase insurance uptake \emph{improve} welfare
-    \end{itemize}
-\end{enumerate}
-
-The denominator captures the marginal fiscal cost, including both direct costs and the budgetary impact of households switching between insurance and non-insurance.
-
-\subsection{Special Cases}
-
-\subsubsection{Case 1: No Risk Misperception ($q^* = p$ for all households)}
-
-When $q^* = p$, we have $\Delta V = 0$, so the behavioral terms vanish:
-\[
-\frac{\frac{\partial V_{ins}}{\partial s}(1 - F)}{\pi d (1-F)} = \frac{\frac{\partial V_{unins}}{\partial a} F}{pd \cdot F}
-\]
-
-Simplifying:
-\[
-\frac{u'(w - (1-s)\pi d)}{\pi} = \frac{u'(w - (1-a)d)}{1}
-\]
-
-This yields the standard result: equalize marginal utility per dollar of cost across groups, adjusted for the insurance loading.
-
-\subsubsection{Case 2: Uniform Underestimation ($q < p$ for all)}
-
-When everyone underestimates flood risk, $\Delta V < 0$ for marginal households. The government has an incentive to:
-\begin{itemize}
-    \item Increase subsidies $s$ to encourage insurance uptake (corrective motive)
-    \item Reduce disaster relief $a$ to make non-insurance less attractive
+    \item {Medium dispersion of beliefs} ($\sigma = 0.7\%$): Mixed policy ($s = 13.9\%$, $a = 7.4\%$) so that insurance take-up stays roughly constant at 40\%.
+    
+    \item {High dispersion of beliefs} ($\sigma = 1.0\%$): Disaster relief only ($s = 0\%$, $a = 14\%$) since relatively few households are at the margin of buying insurance. Insurance coverage decreases from 37\% to 27\%.
 \end{itemize}
 
-\subsubsection{Case 3: Uniform Overestimation ($q > p$ for all)}
-
-When everyone overestimates flood risk, $\Delta V > 0$ for marginal households. The government may want to:
+\section{Extensions}
+\subsubsection*{Natural next steps}
 \begin{itemize}
-    \item Reduce subsidies to discourage excessive insurance purchase
-    \item Increase disaster relief since the uninsured are making a better decision than they realize
+    \item Introduce administration costs for flood insurance and disaster relief
+    \item Include private adaptation measures
+    \item What is the optimal budget dedicated to flood policies?
 \end{itemize}
-
-\subsection{Solution Algorithm}
-
-Given functional forms for $u(\cdot)$ and $F(\cdot)$, the system can be solved numerically:
-
-\begin{enumerate}
-    \item Specify utility function (e.g., CRRA: $u(c) = \frac{c^{1-\gamma}}{1-\gamma}$)
-    \item Specify distribution of beliefs $F(q)$ (e.g., Beta distribution on $[0,1]$)
-    \item Set parameter values: $w$, $d$, $p$, $\mu$, $B$
-    \item Solve the system of three equations (two FOCs + budget constraint) in three unknowns $(s^*, a^*, \lambda^*)$
-\end{enumerate}
-
-Standard nonlinear equation solvers (e.g., Newton-Raphson) can be applied to this system.
-
-\section{Possible extensions}
+\subsubsection*{Possible further extensions/ Things to discuss verbally but not model formally}
 \begin{itemize}
-    \item Private adaptation measures
+    \item Correlation of flood risk beliefs with income and/or wealth
+    \item Heterogeneity in risk aversion
+    \item Sorting of households into flood-prone areas based on beliefs
     \item Public adaptation measures
     \item Liquidity-provision policies (disaster loans, 401k withdrawals, mortgage relief)
-    \item Optimal budget dedicated to flood policies
-    \item Government support with floods creates incentives to build in flood-prone areas/ migrate to flood-prone areas
-    \item Multiple time periods
+    \item Government support for households in flood-prone areas creates incentives to build in flood-prone areas/ migrate to flood-prone areas
 \end{itemize}
 
 \section{Caveats}
 \begin{itemize}
+    \item There are no good sources of the distribution of flood risk beliefs, but this would be a key input to the model.
+    \begin{itemize}
+        \item The first-order conditions depend only on the fraction of insured households (publicly observable) and the density of beliefs at the margin (can potentially be recovered from the price elasticity of insurance demand). This suggests we may be able to assess whether the current policy mix is locally optimal using these two statistics alone, without full knowledge of the belief distribution.
+    \end{itemize}
+    \item Even the relatively simple model outlined above already yields quite complex expressions.
+    \begin{itemize}
+        \item Can we think of an alternative modelling approach that yields more tractable results? 
+    \end{itemize}
     \item It seems like stylized theoretical models are not very popular in economics anymore.
-    \item There are no good measures of subjective flood risk beliefs in the data.
+    \begin{itemize}
+        \item How do we best package this work to make it appealing to a good journal? What journals would be interested in this kind of work?
+    \end{itemize}
 \end{itemize}
 
 \end{document}
