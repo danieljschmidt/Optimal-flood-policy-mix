@@ -1,0 +1,746 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[utf8]{inputenc}
+\usepackage{ifdraft}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+
+% Math
+\usepackage{amsmath, mathtools}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+
+\usepackage{xcolor}
+
+\usepackage{natbib}
+\usepackage{comment}
+
+\title{Simplest model}
+\author{Taco Prins, Lennard Schlatmann, Daniel Schmidt}
+\date{March 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{section}{One period, fixed flood policy budget}
+
+We have one period. When we calculate the welfare effect of policy changes, we compare long-run steady states and ignore transition paths. 
+
+\vspace{\baselineskip}
+
+There are two locations where individual $i$ may live, inland $l$ and waterfront $w$, with total housing stocks $H^l(p^l)$ and $H^w(p^w)$. Denote location by $j$. Individuals draw income $y$ from a continuous distribution. They obtain utility $u(s,x)+\epsilon_{ij}$ where $s$ denotes housing services and $x$ denotes the consumption of the composite (numéraire) good. The consumption utility function $u(\cdot,\cdot)$ is concave with $u_s\rightarrow\infty$ as $s\rightarrow0$ and $u_x\rightarrow\infty$ as $x\rightarrow0$. Let housing consumption be $h$. We assume $s=h$ for the inland location, while housing in the waterfront location generates additional services from the waterfront amenity so that $s=\omega h$. Finally $\epsilon_{ij}$ is an idiosyncratic taste for each location $j\in{l,w}$ with a type $1$ extreme value distribution.
+
+\vspace{\baselineskip}
+
+Flooding occurs idiosyncratically with probability $p$. Prior to the realisation of the flood event, each individual $i$ chooses housing consumption inland or at the waterfront and, conditional on choosing the waterfront, whether to purchase flood insurance. The timing of the model imposes that once the housing choice $h^l_i$ or $h^w_i$ and the insurance choice has been made, $x_i$ is adjusted after the flood realisation to meet the budget constraint.  We get the following constraints:
+
+\begin{itemize}
+
+\item When individual $i$ chooses to purchase inland housing, his budget constraint is $p^lh^l_i+x_i=(1-\tau)y_i$, where $\tau$ is a proportional tax on income to fund flood insurance subsidies and disaster aid. 
+
+\item When individual $i$ chooses waterfront housing with insurance, his budget constraint is $p^wh^w_i+(1-s)pdh^w_i+x_i=(1-\tau)y_i$, regardless of the occurrence of flooding. Here, $s$ is the government subsidy for insurance and we assume actuarially fair pricing of flood insurance. 
+
+\item When individual $i$ chooses waterfront housing without insurance and there is no flood, his constraint is $p^wh^w_i+x_i=(1-\tau)y_i$. When there is a flood, his budget constraint is $(p^w+(1-a)d)h^w_i+x_i=(1-\tau)y_i$, where $d$ is the proportional damage to the house that must be repaired. 
+
+\end{itemize}
+
+Although the true flood probability is $p$, individuals have a subjective probability $q_i$ with which they believe a flood will take place. We suppose that $q$ follows some unknown distribution with support on $[0,1]$. Thus, individuals in general weight the potential outcomes incorrectly.
+
+\subsection{Indirect value functions with subjective beliefs}
+For what follows, it is convenient to define the following value functions:
+
+\begin{itemize}
+\item The indirect utility of each individual conditional on choosing to live in the inland location $V^{l}(y;p^l)$;
+\item The indirect utility of each individual conditional on choosing to live in the waterfront location and buying flood insurance $V^{\text{w,yes}}(y;p^w)$;
+\item The indirect utility of each individual conditional on choosing to live in the waterfront location without buying flood insurance. For this utility, we define two terms: the subjective utility $\tilde{V}^{\text{w,no}}(q,y;p^w)$ which is calculated with the probability weight $q$ for flooding; and the objective utility $V^{\text{w,no}}(q,y;p^w)$ which is calculated with the probability weight $p$ for flooding, but given the `wrong' housing choice $h^w(q,y)$ that maximises subjective utility.
+\end{itemize}
+
+
+For clarity, we can write out explicitly
+\[V^\text{w,yes}(y;p^w)=
+\max_{h^w} u(\omega h^w, x(h^w))
+\]
+
+with 
+
+\[
+x=(1-\tau)y-(p^w+(1-s)pd)h^w
+\]
+
+
+
+We write out
+
+\[\tilde{V}^\text{w,no}(q,y;p^w)=
+\max_{h^w} (1-q) u(\omega h^w,x(0,h^w)) + q (u(\omega h^w, x(1,h^w)))
+\]
+
+with
+
+\[
+x(0,h^w)=(1-\tau)y-p^wh^w
+\]
+
+and
+\[
+x(1,h^w)=(1-\tau)y-(p^w+(1-a)d)h^w
+\]
+
+Finally,
+
+\begin{equation}
+V^{\text{w,no}}(q,y;p^w)=\tilde{V}^{\text{w,no}}(q,y;p^w)+(p-q)\left(u(\omega h^{\text{w,no}}, x(1,h^{\text{w,no}})-u(\omega h^{\text{w,no}}, x(0,h^{\text{w,no}})\right) \nonumber
+\end{equation}
+
+One final important point: (1) if perceived flood risk $q=0$, the individual will definitely not insure because insurance costs money; (2) if $(1-a)q\geq (1-s)p$, the individual will definitely insure because utility is concave, by assumption. Thus, provided disaster aid is not larger than the net insurance payout when a flood occurs, there is some belief threshold function for each income level $0<q^{*}(y)<1$ s.t. individual $i$ with income $y_i$ will insure if and only if $q_i\geq q^{*}(y_i)$. This threshold is increasing in disaster aid $a$ and decreasing in insurance subsidy $s$. 
+
+
+
+
+
+%\vspace{\baselineskip}
+
+%[MOVE ALL THE BELOW ELSEWHERE. ONLY KEY POINT - THERE IS BELIEF THRESHOLD.]
+
+%Denote by $h^{\text{w,yes}}(y;p^w)$ optimal housing consumption when the individual chooses insurance, and similarly define $h^{\text{w,no}}(q,y;p^w)$. Then, applying the envelope theorem, we know that $\frac{dV^\text{w,yes}}{d q}=0$ while $\frac{d\tilde{V}^\text{w,no}}{d q}=u(\omega h^{\text{w,no}}, x(1,h^{\text{w,no}}))-u(\omega h^{\text{w,no}}, x(0,h^{\text{w,no}}))$. Provided $a<1$, from the fact that utility is increasing in both arguments,  $\frac{d\tilde{V}^\text{w,no}}{d q}<0$. Furthermore, it's easy to see that when $q_i=0$, the agent will definitely not insure, while when $(1-a)q_i\geq (1-s)p$, the agent will definitely insure because utility is concave. Thus, assuming that disaster aid is not larger than the net insurance payout when a flood occurs, there is some belief threshold function $0<q^{*}(y)<1$ s.t. individual $i$ will insure if and only if $q_i\geq q^{*}(y_i)$.  
+
+%\vspace{\baselineskip}
+
+%Because of the distributional assumption on the locational preference, we know that for each income level $y$ and subjective flood probability $q$ the fraction of individuals living in the waterfront location is given by $P^{\text{w,no}}(q,y;p^l,p^w)=\frac{exp({\tilde{V}^{\text{w,no}}(q,y;p^w)})}{exp({\tilde{V}^{\text{w,no}}(q,y;p^w)})+exp(V^{l}(y;p^l))}$ for $q<q^{*}(y)$ and by $P^{\text{w,yes}}(y;p^l,p^w)=\frac{exp({V^{\text{w,yes}}(y;p^w)})}{exp({V^{\text{w,yes}}(y;p^w)})+exp(V^{l}(y;p^l))}$ for $q\geq q^{*}(y)$. 
+
+%\vspace{\baselineskip}
+
+
+
+%Let $f(q,y)$ signify the joint PDF over income and flood risk belief. The fraction of agents living uninsured at the waterfront is $\int_y\int_{0}^{q^{*}(y)}P^{\text{w,no}}(q,y;p^l,p^w)f(q,y)dqdy$ and the fraction of agents living insured at the waterfront is $\int_yP^{\text{w,yes}}(y;p^l,p^w)\int_{q^{*}(y)}^{1}f(q,y)dqdy$. Furthermore, given $y$ and for $q<q^{*}(y)$, expected (subjective) utility is $\tilde{V}^{\text{no}}(q,y;p^w)=\text{log}(\text{exp}(\tilde{V}^{\text{w,no}}(q,y;p^w))+\text{exp}(V^{l}(y;p^l)))$ while if $q\geq q^{*}(y)$, expected utility is $V^{\text{yes}}(y;p^w)=\text{log}(\text{exp}(V^{\text{w,yes}}(y;p^w))+\text{exp}(V^{l}(y;p^l)))$.  
+
+
+
+\subsection{Social planner budget constraint}
+
+Let $f(q,y)$ signify the joint PDF over income and flood risk belief and define
+\begin{equation}
+m(y)\equiv \int_{q^{*}(y)}^{1} f(q,y)\,dq.
+\end{equation}
+
+Because of the distributional assumption on the location preference, we know that for each income level $y$ and subjective flood probability $q$ the fraction of individuals living in the waterfront location is given by $P^{\text{w,no}}(q,y;p^l,p^w)=\frac{exp({\tilde{V}^{\text{w,no}}(q,y;p^w)})}{exp({\tilde{V}^{\text{w,no}}(q,y;p^w)})+exp(V^{l}(y;p^l))}$ for $q<q^{*}(y)$ and by $P^{\text{w,yes}}(y;p^l,p^w)=\frac{exp({V^{\text{w,yes}}(y;p^w)})}{exp({V^{\text{w,yes}}(y;p^w)})+exp(V^{l}(y;p^l))}$ for $q\geq q^{*}(y)$. The government must then satisfy the budget constraint
+\begin{align}
+\int_y\int_q \tau y f(q,y)\,dq\,dy
+&=
+pad\,
+\underbrace{
+\int_y\int_{0}^{q^{*}(y)}
+P^{\text{w,no}}(q,y;p^l,p^w)\,h^{\text{w,no}}(q,y;p^w)\,f(q,y)\,dq\,dy
+}_{\text{Housing demand, uninsured}}
+\nonumber\\
+&\qquad
++
+psd\,
+\underbrace{
+\int_y
+P^{\text{w,yes}}(y;p^l,p^w)\,h^{\text{w,yes}}(y;p^w)\,m(y)\,dy
+}_{\text{Housing demand, insured}}.
+\end{align}
+\subsection{Social planner problem}
+
+The utilitarian planner evaluates welfare using the true flood probability $p$, not households' subjective flood probabilities $q$. Write the subjective expected utility of households with $q<q(y)$ (who do not insure) as $\tilde V^{\text{no}}(q,y)$ and note that we get $\tilde V^{\text{no}}(q,y) = \log\left(
+\exp\big(\tilde V^{\text{w,no}}(q,y)\big)
++
+\exp\big(V^l(y)\big)
+\right)$. Define a similar term for households with $q\geq q(y)$ : $V^{\text{yes}}(y)=\log\left(
+\exp\big(V^{\text{yes}}(q,y)\big)+\exp\big(V^l(y)\big)
+\right)$. Finally, note that the objective welfare of households with $q<q^{*}(y)$ is given by 
+\begin{equation}
+V^{\text{no}}(q,y)=\tilde V^{\text{no}}(q,y)+P^{\text{w,no}}(q,y)\big(V^{\text{w,no}}(q,y)-\tilde V^{\text{w,no}}(q,y)\big)
+\end{equation}
+
+since they choose to live on the waterfront with probability $P^{\text{w,no}}(q,y)$ and, in that case, their objective utility is less than their subjective utility by $V^{\text{w,no}}(q,y)-\tilde V^{\text{w,no}}(q,y)=(p-q)\left(u(\omega h^{\text{w,no}}, x(1,h^{\text{w,no}})-u(\omega h^{\text{w,no}}, x(0,h^{\text{w,no}})\right)$. We can then conveniently write the social welfare function as
+
+\begin{align}
+\mathcal{W}(a,s)
+&=
+\int_y\int_{0}^{q^{*}(y)}
+\tilde V^{\text{no}}(q,y)f(q,y)\,dq\,dy
++
+\int_y
+V^{\text{yes}}(y)
+m(y)dy
+\nonumber\\
+&\qquad
++
+\int_y\int_{0}^{q^{*}(y)}P^{\text{w,no}}(q,y)
+\Big(V^{\text{w,no}}(q,y)-\tilde V^{\text{w,no}}(q,y)\Big)f(q,y)\,dq\,dy
+-\lambda_B G(a,s).
+\end{align}
+
+$G(a,s)$ represents the government's budget constraint and, for readability, dependence on prices and policies is suppressed where obvious.
+
+\subsection{First derivatives of planner problem}
+
+Assume first that the supply of housing in both locations is perfectly elastic in the long run, so $p^l$ and $p^w$ are fixed and supply adjusts to meet demand. We can then apply the envelope theorem to get the derivatives for the policy variables $a$ and $s$. Then, taking derivatives and plugging them in gives
+\begin{align}
+\frac{d\mathcal W}{da}
+&=
+\int_y\int_{0}^{q^{*}(y)}
+\Bigg[
+P^{\text{w,no}}(q,y)\,
+p d h^{\text{w,no}}\,
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+\nonumber\\
+&\qquad\qquad\qquad
++
+\frac{\partial P^{\text{w,no}}(q,y)}{\partial a}
+(p-q)
+\Big(
+u\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+-
+u\big(\omega h^{\text{w,no}},x(0,h^{\text{w,no}})\big)
+\Big)
+\Bigg]
+f(q,y)\,dq\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+P^{\text{w,no}}(q^{*}(y),y)
+\,(p-q^{*}(y))
+\Big(
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+\Big)
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial a}\,dy
+\nonumber\\
+&\qquad
+-\lambda_B\frac{dG}{da},
+\end{align}
+where for brevity $h^{\text{w,no},*}\equiv h^{\text{w,no}}(q^{*}(y),y)$. We can furthermore plug in the formula for $P^{\text{w,no}}$ to get
+\begin{align}
+\frac{d\mathcal W}{da}
+&=
+\int_y\int_{0}^{q^{*}(y)}
+\Bigg[
+P^{\text{w,no}}(q,y)\,
+p d h^{\text{w,no}}\,
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+\nonumber\\
+&\qquad\qquad\qquad
++
+\underbrace{P^{\text{w,no}}(q,y)\big(1-P^{\text{w,no}}(q,y)\big)\,
+q d h^{\text{w,no}}\,
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)}_{\text{Marginal increase in uninsured households at waterfront}}
+\nonumber\\
+&\qquad\qquad\qquad\qquad \times
+\underbrace{(p-q)
+\Big(
+u\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+-
+u\big(\omega h^{\text{w,no}},x(0,h^{\text{w,no}})\big)
+\Big)}_{\text{Difference between objective and subjective utility}}
+\Bigg]
+f(q,y)\,dq\,dy\nonumber\\
+&\qquad
++
+\int_y
+P^{\text{w,no}}(q^{*}(y),y)
+\,(p-q^{*}(y))
+\Big(
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+\Big)
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial a}\,dy
+\nonumber\\
+&\qquad
+-\lambda_B\frac{dG}{da}.
+\end{align}
+
+For the insurance subsidy $s$, we get
+\begin{align}
+\frac{d\mathcal W}{ds}
+&=
+\int_y
+P^{\text{w,yes}}(y)\,
+p d\,h^{\text{w,yes}}
+u_x\big(\omega h^{\text{w,yes}},x(h^{\text{w,yes}})\big)\,
+m(y)\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+P^{\text{w,no}}(q^{*}(y),y)
+\,(p-q^{*}(y))
+\Big(
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+\Big)
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial s}\,dy
+\nonumber\\
+&\qquad
+-\lambda_B\frac{dG}{ds}.
+\end{align}
+
+\end{section}
+
+Comparing with Daniel’s expression in his proposal, we see that everything is the same, except
+for the multiplicative term inside the first integral of the derivative for disaster aid. By providing disaster aid, it becomes more attractive to live uninsured in the flood-exposed area. Because of the belief friction, this is costly to the planner - individuals who switch at the margin between the inland location and the waterfront location (without insurance) lose utility when they do so. This utility loss is precisely equal to the difference between the subjective utility of living at the waterfront (equal to the utility of the other option of living inland, since we are at the margin where individuals are indifferent between the two) and the objective utility if living at the waterfront, which is lower. (Just as in the original proposal, disaster aid also still has the negative effect of inducing individuals at the waterfront to switch from insuring to not insuring, which is captured by $\frac{\partial q^{*}(y)}{\partial a}$.) 
+
+\subsection{Derivative of insurance belief threshold}
+
+Note that by the implicit value theorem,
+\begin{equation}
+\frac{\partial q^{*}(y)}{\partial a}
+=
+-
+\frac{
+q^{*}(y)\,d\,h^{\text{w,no},*}\,
+u_x\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+}{
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+},
+\end{equation}
+where $h^{\text{w,no},*}\equiv h^{\text{w,no}}(q^{*}(y),y)$, and
+\begin{equation}
+\frac{\partial q^{*}(y)}{\partial s}
+=
+\frac{
+p\,d\,h^{\text{w,yes}}\,
+u_x\big(\omega h^{\text{w,yes}},x(h^{\text{w,yes}})\big)
+}{
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+}.
+\end{equation}
+
+These formulas could be helpful as part of a structural approach to finding how disaster aid moves the proportion of insured households. Alternatively, we could note that, in the budget constraint, an increase in insurance subsidy is equivalent to a decrease in insurance premiums for any other reason, while an increase in disaster aid is equivalent to a decrease in flood damages (holding insurance premiums constant). There is perhaps cross-sectional or panel data that could allow you to infer those behavioural responses directly, as in a sufficient statistics approach. 
+
+\section*{Derivation Appendix}
+
+
+
+
+\paragraph{Derivative of objective welfare with respect to a generic policy variable.}
+
+Let $\theta\in\{a,s\}$. For convenience, define
+\[
+\Delta(q,y)\equiv V^{\text{w,no}}(q,y)-\tilde V^{\text{w,no}}(q,y).
+\]
+Applying Leibniz' rule to the welfare function gives
+\begin{align}
+\frac{d\mathcal W}{d\theta}
+&=
+\int_y\int_{0}^{q^{*}(y)}
+\frac{\partial \tilde V^{\text{no}}(q,y)}{\partial \theta}
+f(q,y)\,dq\,dy
++
+\int_y
+\frac{\partial V^{\text{yes}}(y)}{\partial \theta}
+m(y)\,dy
+\nonumber\\
+&\qquad
++
+\int_y\int_{0}^{q^{*}(y)}
+\frac{\partial}{\partial\theta}
+\left[
+P^{\text{w,no}}(q,y)\Delta(q,y)
+\right]
+f(q,y)\,dq\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+\Big[
+\tilde V^{\text{no}}(q^{*}(y),y)-V^{\text{yes}}(y)
++
+P^{\text{w,no}}(q^{*}(y),y)\Delta(q^{*}(y),y)
+\Big]
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial\theta}\,dy
+-\lambda_B\frac{dG}{d\theta}.
+\end{align}
+
+Using the threshold indifference condition
+\[
+\tilde V^{\text{no}}(q^{*}(y),y)=V^{\text{yes}}(y),
+\]
+this simplifies to
+\begin{align}
+\frac{d\mathcal W}{d\theta}
+&=
+\int_y\int_{0}^{q^{*}(y)}
+\frac{\partial \tilde V^{\text{no}}(q,y)}{\partial \theta}
+f(q,y)\,dq\,dy
++
+\int_y
+\frac{\partial V^{\text{yes}}(y)}{\partial \theta}
+m(y)\,dy
+\nonumber\\
+&\qquad
++
+\int_y\int_{0}^{q^{*}(y)}
+\frac{\partial}{\partial\theta}
+\left[
+P^{\text{w,no}}(q,y)\Delta(q,y)
+\right]
+f(q,y)\,dq\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+P^{\text{w,no}}(q^{*}(y),y)\Delta(q^{*}(y),y)
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial\theta}\,dy
+-\lambda_B\frac{dG}{d\theta}.
+\end{align}
+
+Substituting the derivatives implied by the type 1 extreme value assumption,
+\begin{align}
+\frac{\partial \tilde V^{\text{no}}(q,y)}{\partial\theta}
+&=
+P^{\text{w,no}}(q,y)\frac{\partial \tilde V^{\text{w,no}}(q,y)}{\partial\theta}
++
+\big(1-P^{\text{w,no}}(q,y)\big)\frac{\partial V^l(y)}{\partial\theta},
+\\
+\frac{\partial V^{\text{yes}}(y)}{\partial\theta}
+&=
+P^{\text{w,yes}}(y)\frac{\partial V^{\text{w,yes}}(y)}{\partial\theta}
++
+\big(1-P^{\text{w,yes}}(y)\big)\frac{\partial V^l(y)}{\partial\theta},
+\end{align}
+and applying the product rule to the correction term, we get
+\begin{align}
+\frac{d\mathcal W}{d\theta}
+&=
+\int_y\int_{0}^{q^{*}(y)}
+\Bigg[
+P^{\text{w,no}}(q,y)\frac{\partial V^{\text{w,no}}(q,y)}{\partial\theta}
++
+\big(1-P^{\text{w,no}}(q,y)\big)\frac{\partial V^l(y)}{\partial\theta}
+\nonumber\\
+&\qquad\qquad\qquad
++
+\frac{\partial P^{\text{w,no}}(q,y)}{\partial\theta}
+\Big(V^{\text{w,no}}(q,y)-\tilde V^{\text{w,no}}(q,y)\Big)
+\Bigg]
+f(q,y)\,dq\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+\left[
+P^{\text{w,yes}}(y)\frac{\partial V^{\text{w,yes}}(y)}{\partial \theta}
++
+\big(1-P^{\text{w,yes}}(y)\big)\frac{\partial V^l(y)}{\partial \theta}
+\right]
+m(y)\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+P^{\text{w,no}}(q^{*}(y),y)
+\Big(V^{\text{w,no}}(q^{*}(y),y)-\tilde V^{\text{w,no}}(q^{*}(y),y)\Big)
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial \theta}\,dy
+-\lambda_B\frac{dG}{d\theta}.
+\end{align}
+
+\subsubsection{First derivatives with perfectly elastic supply}
+
+Assume first that the supply of housing in both locations is perfectly elastic in the long run, so $p^l$ and $p^w$ are fixed and supply adjusts to meet demand. We can then apply the envelope theorem to get the derivatives for the policy variables $a$ and $s$.
+
+For disaster aid $a$, we have
+\begin{align}
+\frac{\partial V^{\text{w,no}}}{\partial a}
+&=
+p d h^{\text{w,no}}
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big),
+\\
+\frac{\partial \tilde V^{\text{w,no}}}{\partial a}
+&=
+q d h^{\text{w,no}}
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big),
+\\
+\frac{\partial V^l}{\partial a}&=0,
+\qquad
+\frac{\partial V^{\text{w,yes}}}{\partial a}=0.
+\end{align}
+Hence, using
+\begin{equation}
+V^{\text{w,no}}(q,y)-\tilde V^{\text{w,no}}(q,y)
+=
+(p-q)
+\left[
+u\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+-
+u\big(\omega h^{\text{w,no}},x(0,h^{\text{w,no}})\big)
+\right],
+\end{equation}
+we can write the derivative with respect to disaster aid as
+\begin{align}
+\frac{d\mathcal W}{da}
+&=
+\int_y\int_{0}^{q^{*}(y)}
+\Bigg[
+P^{\text{w,no}}(q,y)\,
+p d h^{\text{w,no}}\,
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+\nonumber\\
+&\qquad\qquad\qquad
++
+\frac{\partial P^{\text{w,no}}(q,y)}{\partial a}
+(p-q)
+\Big(
+u\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+-
+u\big(\omega h^{\text{w,no}},x(0,h^{\text{w,no}})\big)
+\Big)
+\Bigg]
+f(q,y)\,dq\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+P^{\text{w,no}}(q^{*}(y),y)
+\,(p-q^{*}(y))
+\Big(
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+\Big)
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial a}\,dy
+\nonumber\\
+&\qquad
+-\lambda_B\frac{dG}{da},
+\end{align}
+where for brevity $h^{\text{w,no},*}\equiv h^{\text{w,no}}(q^{*}(y),y)$.
+
+Moreover, since
+\begin{equation}
+P^{\text{w,no}}(q,y)
+=
+\frac{\exp(\tilde V^{\text{w,no}}(q,y))}
+{\exp(\tilde V^{\text{w,no}}(q,y))+\exp(V^l(y))},
+\end{equation}
+we obtain the standard logit derivative
+\begin{equation}
+\frac{\partial P^{\text{w,no}}(q,y)}{\partial a}
+=
+P^{\text{w,no}}(q,y)\big(1-P^{\text{w,no}}(q,y)\big)
+\left(
+\frac{\partial \tilde V^{\text{w,no}}(q,y)}{\partial a}
+-
+\frac{\partial V^l(y)}{\partial a}
+\right).
+\end{equation}
+Under perfectly elastic supply, $\frac{\partial V^l(y)}{\partial a}=0$, so
+\begin{equation}
+\frac{\partial P^{\text{w,no}}(q,y)}{\partial a}
+=
+P^{\text{w,no}}(q,y)\big(1-P^{\text{w,no}}(q,y)\big)
+\frac{\partial \tilde V^{\text{w,no}}(q,y)}{\partial a}.
+\end{equation}
+Applying the envelope theorem,
+\begin{equation}
+\frac{\partial \tilde V^{\text{w,no}}(q,y)}{\partial a}
+=
+q d h^{\text{w,no}}
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big),
+\end{equation}
+and therefore
+\begin{equation}
+\frac{\partial P^{\text{w,no}}(q,y)}{\partial a}
+=
+P^{\text{w,no}}(q,y)\big(1-P^{\text{w,no}}(q,y)\big)
+q d h^{\text{w,no}}
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big).
+\end{equation}
+
+Substituting this into the welfare derivative gives
+\begin{align}
+\frac{d\mathcal W}{da}
+&=
+\int_y\int_{0}^{q^{*}(y)}
+\Bigg[
+P^{\text{w,no}}(q,y)\,
+p d h^{\text{w,no}}\,
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+\nonumber\\
+&\qquad\qquad\qquad
++
+P^{\text{w,no}}(q,y)\big(1-P^{\text{w,no}}(q,y)\big)\,
+q d h^{\text{w,no}}\,
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+\nonumber\\
+&\qquad\qquad\qquad\qquad \times
+(p-q)
+\Big(
+u\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+-
+u\big(\omega h^{\text{w,no}},x(0,h^{\text{w,no}})\big)
+\Big)
+\Bigg]
+f(q,y)\,dq\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+P^{\text{w,no}}(q^{*}(y),y)
+\,(p-q^{*}(y))
+\Big(
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+\Big)
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial a}\,dy
+\nonumber\\
+&\qquad
+-\lambda_B\frac{dG}{da}.
+\end{align}
+
+For the insurance subsidy $s$, we have
+\begin{align}
+\frac{\partial V^{\text{w,no}}}{\partial s}=0,
+\qquad
+\frac{\partial \tilde V^{\text{w,no}}}{\partial s}=0,
+\qquad
+\frac{\partial V^l}{\partial s}=0,
+\end{align}
+while
+\begin{align}
+\frac{\partial V^{\text{w,yes}}}{\partial s}
+=
+p d\,h^{\text{w,yes}}
+u_x\big(\omega h^{\text{w,yes}},x(h^{\text{w,yes}})\big).
+\end{align}
+Therefore,
+\begin{align}
+\frac{d\mathcal W}{ds}
+&=
+\int_y
+P^{\text{w,yes}}(y)\,
+p d\,h^{\text{w,yes}}
+u_x\big(\omega h^{\text{w,yes}},x(h^{\text{w,yes}})\big)\,
+m(y)\,dy
+\nonumber\\
+&\qquad
++
+\int_y
+P^{\text{w,no}}(q^{*}(y),y)
+\,(p-q^{*}(y))
+\Big(
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+\Big)
+f(q^{*}(y),y)\frac{\partial q^{*}(y)}{\partial s}\,dy
+\nonumber\\
+&\qquad
+-\lambda_B\frac{dG}{ds}.
+\end{align}
+
+\paragraph{Threshold derivatives from the implicit function theorem.}
+A final point is that we can derive an explicit formula for how the belief threshold shifts with policy. Recall that the insurance threshold $q^{*}(y)$ is defined implicitly by the indifference condition
+\begin{equation}
+\tilde V^{\text{w,no}}(q^{*}(y),y)=V^{\text{w,yes}}(y).
+\end{equation}
+Define
+\begin{equation}
+\Phi(q,y;a,s)\equiv \tilde V^{\text{w,no}}(q,y)-V^{\text{w,yes}}(y),
+\end{equation}
+so that
+\begin{equation}
+\Phi(q^{*}(y),y;a,s)=0.
+\end{equation}
+Provided $\partial \Phi/\partial q\neq 0$, the implicit function theorem implies that for $\theta\in\{a,s\}$,
+\begin{equation}
+\frac{\partial q^{*}(y)}{\partial \theta}
+=
+-\frac{\frac{\partial \Phi(q^{*}(y),y;a,s)}{\partial \theta}}
+{\frac{\partial \Phi(q^{*}(y),y;a,s)}{\partial q}}.
+\end{equation}
+
+Since $V^{\text{w,yes}}(y)$ does not depend on $q$, we have
+\begin{equation}
+\frac{\partial \Phi(q,y;a,s)}{\partial q}
+=
+\frac{\partial \tilde V^{\text{w,no}}(q,y)}{\partial q}.
+\end{equation}
+Applying the envelope theorem,
+\begin{equation}
+\frac{\partial \tilde V^{\text{w,no}}(q,y)}{\partial q}
+=
+u\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big)
+-
+u\big(\omega h^{\text{w,no}},x(0,h^{\text{w,no}})\big),
+\end{equation}
+which is strictly negative.
+
+Under perfectly elastic supply, we further have
+\begin{align}
+\frac{\partial \Phi(q,y;a,s)}{\partial a}
+&=
+\frac{\partial \tilde V^{\text{w,no}}(q,y)}{\partial a}
+-
+\frac{\partial V^{\text{w,yes}}(y)}{\partial a}
+=
+q\,d\,h^{\text{w,no}}
+u_x\big(\omega h^{\text{w,no}},x(1,h^{\text{w,no}})\big),
+\\
+\frac{\partial \Phi(q,y;a,s)}{\partial s}
+&=
+\frac{\partial \tilde V^{\text{w,no}}(q,y)}{\partial s}
+-
+\frac{\partial V^{\text{w,yes}}(y)}{\partial s}
+=
+-\,p\,d\,h^{\text{w,yes}}
+u_x\big(\omega h^{\text{w,yes}},x(h^{\text{w,yes}})\big).
+\end{align}
+Therefore,
+\begin{equation}
+\frac{\partial q^{*}(y)}{\partial a}
+=
+-
+\frac{
+q^{*}(y)\,d\,h^{\text{w,no},*}\,
+u_x\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+}{
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+},
+\end{equation}
+where $h^{\text{w,no},*}\equiv h^{\text{w,no}}(q^{*}(y),y)$, and
+\begin{equation}
+\frac{\partial q^{*}(y)}{\partial s}
+=
+\frac{
+p\,d\,h^{\text{w,yes}}\,
+u_x\big(\omega h^{\text{w,yes}},x(h^{\text{w,yes}})\big)
+}{
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)
+}.
+\end{equation}
+
+Since
+\[
+u\big(\omega h^{\text{w,no},*},x(1,h^{\text{w,no},*})\big)
+-
+u\big(\omega h^{\text{w,no},*},x(0,h^{\text{w,no},*})\big)<0,
+\]
+it follows that
+\[
+\frac{\partial q^{*}(y)}{\partial a}>0
+\qquad\text{and}\qquad
+\frac{\partial q^{*}(y)}{\partial s}<0.
+\]
+Thus, more generous disaster aid raises the belief threshold for insurance take-up, while a larger insurance subsidy lowers it.
+
+\end{document}
+
+
+
+
