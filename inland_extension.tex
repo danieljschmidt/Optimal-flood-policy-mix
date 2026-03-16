@@ -95,28 +95,6 @@ V^{\text{w,no}}(q,y;p^w)=\tilde{V}^{\text{w,no}}(q,y;p^w)+(p-q)\left(u(\omega h^
 
 One final important point: (1) if perceived flood risk $q=0$, the individual will definitely not insure because insurance costs money; (2) if $(1-a)q\geq (1-s)p$, the individual will definitely insure because utility is concave, by assumption. Thus, provided disaster aid is not larger than the net insurance payout when a flood occurs, there is some belief threshold function for each income level $0<q^{*}(y)<1$ s.t. individual $i$ with income $y_i$ will insure if and only if $q_i\geq q^{*}(y_i)$. This threshold is increasing in disaster aid $a$ and decreasing in insurance subsidy $s$. 
 
-
-
-
-
-%\vspace{\baselineskip}
-
-%[MOVE ALL THE BELOW ELSEWHERE. ONLY KEY POINT - THERE IS BELIEF THRESHOLD.]
-
-%Denote by $h^{\text{w,yes}}(y;p^w)$ optimal housing consumption when the individual chooses insurance, and similarly define $h^{\text{w,no}}(q,y;p^w)$. Then, applying the envelope theorem, we know that $\frac{dV^\text{w,yes}}{d q}=0$ while $\frac{d\tilde{V}^\text{w,no}}{d q}=u(\omega h^{\text{w,no}}, x(1,h^{\text{w,no}}))-u(\omega h^{\text{w,no}}, x(0,h^{\text{w,no}}))$. Provided $a<1$, from the fact that utility is increasing in both arguments,  $\frac{d\tilde{V}^\text{w,no}}{d q}<0$. Furthermore, it's easy to see that when $q_i=0$, the agent will definitely not insure, while when $(1-a)q_i\geq (1-s)p$, the agent will definitely insure because utility is concave. Thus, assuming that disaster aid is not larger than the net insurance payout when a flood occurs, there is some belief threshold function $0<q^{*}(y)<1$ s.t. individual $i$ will insure if and only if $q_i\geq q^{*}(y_i)$.  
-
-%\vspace{\baselineskip}
-
-%Because of the distributional assumption on the locational preference, we know that for each income level $y$ and subjective flood probability $q$ the fraction of individuals living in the waterfront location is given by $P^{\text{w,no}}(q,y;p^l,p^w)=\frac{exp({\tilde{V}^{\text{w,no}}(q,y;p^w)})}{exp({\tilde{V}^{\text{w,no}}(q,y;p^w)})+exp(V^{l}(y;p^l))}$ for $q<q^{*}(y)$ and by $P^{\text{w,yes}}(y;p^l,p^w)=\frac{exp({V^{\text{w,yes}}(y;p^w)})}{exp({V^{\text{w,yes}}(y;p^w)})+exp(V^{l}(y;p^l))}$ for $q\geq q^{*}(y)$. 
-
-%\vspace{\baselineskip}
-
-
-
-%Let $f(q,y)$ signify the joint PDF over income and flood risk belief. The fraction of agents living uninsured at the waterfront is $\int_y\int_{0}^{q^{*}(y)}P^{\text{w,no}}(q,y;p^l,p^w)f(q,y)dqdy$ and the fraction of agents living insured at the waterfront is $\int_yP^{\text{w,yes}}(y;p^l,p^w)\int_{q^{*}(y)}^{1}f(q,y)dqdy$. Furthermore, given $y$ and for $q<q^{*}(y)$, expected (subjective) utility is $\tilde{V}^{\text{no}}(q,y;p^w)=\text{log}(\text{exp}(\tilde{V}^{\text{w,no}}(q,y;p^w))+\text{exp}(V^{l}(y;p^l)))$ while if $q\geq q^{*}(y)$, expected utility is $V^{\text{yes}}(y;p^w)=\text{log}(\text{exp}(V^{\text{w,yes}}(y;p^w))+\text{exp}(V^{l}(y;p^l)))$.  
-
-
-
 \subsection{Social planner budget constraint}
 
 Let $f(q,y)$ signify the joint PDF over income and flood risk belief and define
@@ -738,6 +716,13 @@ it follows that
 \frac{\partial q^{*}(y)}{\partial s}<0.
 \]
 Thus, more generous disaster aid raises the belief threshold for insurance take-up, while a larger insurance subsidy lowers it.
+
+
+
+
+
+
+
 
 \end{document}
 
