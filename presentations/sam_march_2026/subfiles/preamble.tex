@@ -1,0 +1,116 @@
+
+%% Theme Setup:
+% Use Metropolis Theme, show progressbar for each section, show slide pages as fractions
+\usetheme[progressbar=frametitle, numbering = fraction]{metropolis}
+
+% Packages
+\usepackage{appendixnumberbeamer}
+\usepackage{pdfpages}
+\usepackage{booktabs}
+\usepackage{bookmark}
+\usepackage[english]{babel}
+\usepackage{caption}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{comment}
+\usepackage{enumitem} % to use a b c for 
+\setitemize{label=$\bullet$} %enumerate
+\usepackage[export]{adjustbox} % to use left in includegraphics
+\usepackage{fixmath} % to write math expressions in bold
+\usepackage{xspace}
+\usepackage[scale=2]{ccicons}
+\usepackage{csquotes}
+\usepackage{subcaption} % needed for making subfigures
+\usepackage{pifont} % ty
+%Needed for accessing dinglist for making check marks and crosses
+\usepackage[round]{natbib} % important for using citet and citep !!!
+\usepackage{bbm} % for printing the indicator sign properly
+\usepackage{dsfont} % too
+\usepackage{verbatim}
+%%%% For Making Metropolis nice %%%%%
+\setbeamertemplate{mini frame}{}
+\setbeamertemplate{mini frame in current section}{}
+\setbeamertemplate{mini frame in current subsection}{}
+
+% To make sections on top of each slide but overwrite dots \makeatletter
+\setbeamertemplate{headline}{%
+\begin{beamercolorbox}[sep=0.1cm, ht=2.3em]{section in head/foot}
+		\vskip2pt\insertnavigation{\paperwidth}\vskip-2pt
+\end{beamercolorbox}%
+\begin{beamercolorbox}[colsep=1.5pt]{lower separation line head}
+\end{beamercolorbox}}
+
+% To make box for titles of each slide
+\setbeamertemplate{frametitle}{
+	\nointerlineskip
+	\begin{beamercolorbox}[sep=0.2cm, ht=1.8em,wd=\paperwidth]{frametitle}
+		\vbox{}\vskip-1ex%
+		\strut\insertframetitle\strut
+		\vskip-0.5ex%
+	\end{beamercolorbox}
+	\usebeamertemplate*{progress bar in head/foot}}
+
+% Change the color of box at top (fg: text, bg, box color)
+% Lower Box with title
+\definecolor{black2}{RGB}{27,55,61}
+\setbeamercolor{section in head/foot}{fg=White, bg=black2}  % Upper Box with sections
+
+%% For alert block
+\setbeamercolor{block title alerted}{fg= White, bg=black2}
+%body
+\setbeamercolor{block body alerted}{fg=black!90,bg=lightgray}
+
+
+% Change font size of title of each slide 
+\setbeamerfont{frametitle}{size=\small,series=\bfseries}
+\setbeamerfont{section in head/foot}{size=\tiny}
+
+% This section adds the navigation dots for all slides
+\usepackage{remreset}% tiny package containing just the \@removefromreset command
+\makeatletter
+\@removefromreset{subsection}{section}
+\beamer@compresstrue					% Locates dots nicely below section names
+\makeatother
+\setcounter{subsection}{1}
+
+% Needed for metropolis
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+\newcommand*{\captionsource}[2]{\caption[{#1}]{#1\hspace{\linewidth}\textbf{Source:
+		}#2}}
+
+%% Further Specifications %%
+
+% To not print "References" at the slide where references are
+\renewcommand{\bibsection}{}
+
+% To make \widebar possible without using mathabx package (produces further problems)
+\makeatletter
+\newcommand*\rel@kern[1]{\kern#1\dimexpr\macc@kerna}
+\newcommand*\widebar[1]{%
+	\begingroup
+	\def\mathaccent##1##2{%
+		\rel@kern{0.8}%
+		\overline{\rel@kern{-0.8}\macc@nucleus\rel@kern{0.2}}%
+		\rel@kern{-0.2}%
+	}%
+	\macc@depth\@ne
+	\let\math@bgroup\@empty \let\math@egroup\macc@set@skewchar
+	\mathsurround\z@ \frozen@everymath{\mathgroup\macc@group\relax}%
+	\macc@set@skewchar\relax
+	\let\mathaccentV\macc@nested@a
+	\macc@nested@a\relax111{#1}%
+	\endgroup
+}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%
+
+% Set Graphics path
+\graphicspath{{figures/}}
+
+\title{Optimal flood risk mix}
+
+\date{March 26, 2026}
+\author{Taco Prins, Lennard Schlattmann, Daniel Schmidt}
+
+%\institute{DNB internal}

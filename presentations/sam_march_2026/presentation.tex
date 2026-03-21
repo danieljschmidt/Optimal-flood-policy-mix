@@ -1,0 +1,293 @@
+
+\documentclass[xcolor=dvipsnames, aspectratio = 169]{beamer}
+
+\usetheme[progressbar=frametitle, numbering = fraction]{metropolis}
+\include{subfiles/preamble}
+
+\begin{document}
+\maketitle
+
+{ % to make sections appear in navigation bar at top
+\AtBeginSection{} % but not as section slides, 
+% close at the end
+
+\section{Motivation}
+
+\begin{frame}{Motivation}
+    \begin{itemize}
+    	\setlength{\itemsep}{0.3cm}
+        \item Households have \textbf{heterogeneous flood risk beliefs}, some underestimate risk
+        \item Mandatory flood risk insurance often legally/politically infeasible 
+        \item Several \textbf{policy alternatives:} 
+        \begin{enumerate}[label=\arabic*.] 
+            \item Subsidies for private adaptation measures $\rightarrow$ increase adaptation towards social optimum vs. windfall gains
+            \item Disaster relief programs $\rightarrow$ safety net for uninsured households vs. lower incentive to insure
+        \end{enumerate}
+        \item \textbf{Questions:} What is the optimal policy mix? How does it depend on distribution of flood risk beliefs, risk aversion, other parameters?
+        \item \textbf{Approach:} Stylized theoretical model with sufficient statistics approach
+    \end{itemize}
+\end{frame}
+
+% ==========================================================
+\section{Model}
+
+\begin{frame}{Model: Locations, preferences, and risk}
+\begin{itemize}[leftmargin=0.0cm]
+    \setlength{\itemsep}{0.3cm}
+    \item[] \textbf{Two locations:} inland $l$ and waterfront $w$ with housing stocks $H_l(p_l)$ and $H_w(p_w)$
+\item[] \textbf{Agents:} income $y$ drawn from continuous distribution; idiosyncratic location taste $\varepsilon_{ij}$
+\item[] \textbf{Utility:} $u(s,x) + \varepsilon_{ij}$, with concave $u(\cdot)$ and Inada-type conditions
+\item[] \textbf{Housing services:}
+\[
+s =
+\begin{cases}
+h & \text{if } j=l \\
+\omega h & \text{if } j=w \quad (\omega>1 \text{ amenity})
+\end{cases}
+\]
+\item[] \textbf{Flood risk:} flood occurs idiosyncratically with true probability $p$, damage proportional to housing: $dh$
+\item[] \textbf{Beliefs:} subjective flood probability $q\in[0,1]$ with distribution (unknown) over $(q,y)$
+\end{itemize}
+\end{frame}
+
+% ==========================================================
+\begin{frame}{Model: Timing and choices}
+\textbf{One-period model; steady-state comparison}\\
+\begin{enumerate}[label=\arabic*.] 
+  \item Household observes $(y,q)$ and draws $\varepsilon_{ij}$
+  \item Household chooses location $j\in\{l,w\}$ and housing $h$
+  \item If $j=w$, household chooses whether to buy flood insurance
+  \item Flood realization occurs (with true probability $p$)
+  \item Consumption of numeraire good $x$ adjusts to satisfy the budget constraint
+\end{enumerate}
+\vspace{0.4em}
+\textbf{Policy instruments:}
+\begin{itemize}
+  \item Proportional income tax $\tau$ finances policy
+  \item Disaster aid generosity $a$ (reduces uncovered repair cost in flood state)
+  \item Insurance subsidy rate $s$ (reduces insurance premium paid by household)
+\end{itemize}
+\end{frame}
+
+% ==========================================================
+\begin{frame}{Model: Budget constraints by choice}
+Let $p_l$ and $p_w$ denote (long-run) housing prices inland and waterfront.
+
+\medskip
+\textbf{(i) Inland:}
+\[
+p_l h_i^l + x_i = (1-\tau) y_i
+\]
+
+\textbf{(ii) Waterfront with insurance (actuarially fair premium):}
+\[
+\qquad p_w h_i^w + (1-s)p d h_i^w + x_i = (1-\tau) y_i, \quad \text{independent of flood realization}
+\]
+
+\textbf{(iii) Waterfront without insurance:}
+\[
+\begin{aligned}
+\text{No flood: } & p_w h_i^w + x_i = (1-\tau)y_i,\\
+\text{Flood: } & p_w h_i^w + (1-a)d h_i^w + x_i = (1-\tau) y_i
+\end{aligned}
+\]
+\end{frame}
+
+% ==========================================================
+\begin{frame}{Model: Indirect utilities and belief-based decision making}
+Define indirect utility conditional on location/insurance choice:
+
+\begin{itemize}
+  \item Inland: $V^l(y; p_l)$.
+  \item Waterfront insured: $V^{w,\text{yes}}(y; p_w)$.
+  \item Waterfront uninsured: households maximize \emph{subjective} expected utility using $q$:
+  \[
+  \tilde V^{w,\text{no}}(q,y; p_w) = \max_{h^w} (1-q)u(\omega h^w, x_0) + q\,u(\omega h^w, x_1),
+  \]
+  with $x_0=(1-\tau)y - p_w h^w$ and $x_1=(1-\tau)y-(p_w+(1-a)d)h^w$.
+\end{itemize}
+
+\medskip
+\textbf{Key friction:} planner evaluates outcomes with \emph{true} $p$, but households choose $h^w$ and insurance based on $q$. This creates a wedge between perceived optimal and socially optimal welfare
+
+\end{frame}
+
+\section{First findings}
+
+% ==========================================================
+\begin{frame}{Findings: Insurance take-up threshold and comparative statics}
+There exists a \textbf{belief threshold} $q^*(y)\in(0,1)$ such that:
+\[
+\text{Buy insurance} \iff q \ge q^*(y)
+\]
+
+\smallskip
+\textbf{Intuition for threshold:}
+\begin{itemize}
+  \item If $q=0$: insurance is never purchased (costly, no perceived benefit)
+  \item If perceived expected loss is large enough, concavity implies insurance is preferred
+  \item Disaster aid $a$ makes being uninsured less painful in the flood state $\rightarrow$ \textbf{reduces insurance incentives}
+  \item Insurance subsidy $s$ reduces the premium $\rightarrow$ \textbf{raises insurance incentives}
+\end{itemize}
+
+\medskip
+\textbf{Comparative statics (qualitative):}
+\[
+\frac{\partial q^*(y)}{\partial a} > 0,
+\qquad
+\frac{\partial q^*(y)}{\partial s} < 0
+\]
+
+\end{frame}
+
+% ==========================================================
+\begin{frame}{Findings: Location choice}
+Type-1 extreme value tastes $(\varepsilon_{ij})$ imply logit structure for waterfront choice
+
+\medskip
+\textbf{Uninsured waterfront choice probability (for $q<q^*(y)$):}
+\[
+P^{w,\text{no}}(q,y)=
+\frac{\exp\left(\tilde V^{w,\text{no}}(q,y)\right)}
+{\exp\left(\tilde V^{w,\text{no}}(q,y)\right)+\exp\left(V^l(y)\right)}.
+\]
+
+\textbf{Insured waterfront choice probability (for $q\ge q^*(y)$):}
+\[
+P^{w,\text{yes}}(y)=
+\frac{\exp\left(V^{w,\text{yes}}(y)\right)}
+{\exp\left(V^{w,\text{yes}}(y)\right)+\exp\left(V^l(y)\right)}.
+\]
+
+\medskip
+\textbf{Implication:} Policy affects welfare through two channels:
+\begin{itemize}
+  \item \textbf{Intensive margin:} housing demand $h$ and insurance choice
+  \item \textbf{Extensive margin:} shifts in location probability into the waterfront area
+\end{itemize}
+\end{frame}
+
+% ==========================================================
+\begin{comment}
+\begin{frame}{First findings: Social planner: evaluates welfare under true flood probability $p$ (not $q$)}
+\small
+\textbf{Key objects:}
+\begin{itemize}
+  \item Joint density of beliefs and income: $f(q,y)$
+  \item Insurance threshold: $q^*(y)$, with mass of insured types $m(y)=\int_{q^*(y)}^{1} f(q,y)\,dq$
+  \item Choice probabilities: $P^{w,\text{no}}(q,y)$ (uninsured, $q<q^*(y)$), $P^{w,\text{yes}}(y)$ (insured, $q\ge q^*(y)$)
+\end{itemize}  
+
+\textbf{Welfare components:}
+\begin{enumerate}[label=\arabic*.] 
+  \item \textbf{Expected indirect utility} for types with $q<q^*(y)$:
+  \[
+  \tilde V^{\text{no}}(q,y)=\log\!\Big[\exp\big(\tilde V^{w,\text{no}}(q,y)\big)+\exp\big(V^l(y)\big)\Big]
+  \]
+  \item \textbf{Expected indirect utility} for types with $q\ge q^*(y)$:
+  \[
+  V^{\text{yes}}(y)=\log\!\Big[\exp\big(V^{w,\text{yes}}(y)\big)+\exp\big(V^l(y)\big)\Big]
+  \]
+  \item \textbf{Belief-correction term} for uninsured waterfront movers:
+  \[
+  \Delta(q,y)=V^{w,\text{no}}(q,y)-\tilde V^{w,\text{no}}(q,y)
+  = (p-q)\Big[u(\omega h^{w,\text{no}},x_1)-u(\omega h^{w,\text{no}},x_0)\Big]
+  \]
+\end{enumerate}
+
+\smallskip
+
+\end{frame}
+\end{comment}
+% ==========================================================
+\begin{frame}{First findings: Social planner}
+\small
+\textbf{Planner objective (schematic):}
+\begin{eqnarray*}
+    W(a,s)&=&
+\underbrace{\int_y \int_0^{q^*(y)} \tilde V^{\text{no}}(q,y) f\,dq\,dy}_{\text{uninsured (by $q$)}}
++\underbrace{\int_y V^{\text{yes}}(y) m(y)\,dy}_{\text{insured}} \\
+&+&\underbrace{\int_y \int_0^{q^*(y)} P^{w,\text{no}}(q,y)\,\Delta(q,y)\, f\,dq\,dy}_{\text{belief correction}}
+-\lambda_B\, \underbrace{G(a,s)}_{\text{balanced budget}} 
+\end{eqnarray*}
+
+
+\textbf{Balanced budget:}
+\[
+\int_y\!\!\int_q \tau y\, f\,dq\,dy
+=
+\underbrace{p\,a\,d\!\int_y\!\!\int_0^{q^*(y)} \! P^{w,\text{no}}(q,y)\,h^{w,\text{no}}\, f\,dq\,dy}_{\text{disaster-aid outlays}}
++
+\underbrace{p\,s\,d\!\int_y \! P^{w,\text{yes}}(y)\,h^{w,\text{yes}}\, m(y)\,dy}_{\text{insurance-subsidy outlays}}
+\]
+\end{frame}
+
+
+\begin{frame}{First findings: Policy effects (qualitative):}
+\small
+\begin{itemize}[leftmargin=-0.2cm]
+  \item \textbf{Insurance subsidy $s$:}
+  \begin{itemize}
+    \item Lowers net premium $\rightarrow$ raises $V^{w,\text{yes}}$, $P^{w,\text{yes}}$ and $h^{w,\text{yes}}$, lowers threshold $q^*(y)$
+    \item Budget cost scales with $p\,s\,d$ and insured waterfront exposure
+  \end{itemize}
+  \item \textbf{Disaster aid $a$:}
+  \begin{itemize}
+    \item Softens uninsured flood state $\rightarrow$ raises $\tilde V^{w,\text{no}}$, $P^{w,\text{no}}$, and threshold $q^*(y)$ 
+    \item \textbf{Belief friction cost:} shifts marginal agents into risky area without fully internalizing true $p$
+  \end{itemize}
+\end{itemize}
+\smallskip
+\textbf{Optimal mix intuition:}
+\begin{enumerate}[label=\arabic*.] 
+  \item Use $s$ to correct under-insurance driven by biased beliefs \& risk aversion (ex ante)
+  \item Limit $a$ to avoid excessive sorting into risky areas (moral hazard), while preserving social insurance motives (ex post)
+  \item Respect the government budget and weigh the belief-correction gains against fiscal costs and induced location shifts
+\end{enumerate}
+\end{frame}
+
+% ----------------------------------------------------------
+\begin{frame}{Next steps:}
+\textbf{Structural:}
+\begin{itemize}
+  \item .
+\end{itemize}
+
+\textbf{Empirical:}
+\begin{itemize}
+  \item .
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Literature}
+    \begin{itemize}
+        \item Flood risks: \citet{bakkensen2022}
+        \item Flood insurance: \citet{hennighausen2023}. \citet{collier2023}
+    \end{itemize}
+\end{frame}
+
+\appendix
+
+\section{Appendix}
+
+%%% REFERENCES %%%
+
+\setbeamertemplate{frametitle continuation}{}
+% to get rid of numeration in references frame title:
+% i, ii, etc.
+
+\begin{frame}[allowframebreaks]{References}
+	\small
+	\bibliography{subfiles/references.bib}
+	\bibliographystyle{apalike}
+\end{frame}
+
+}
+
+
+
+% ==========================================================
+
+
+\end{document}
