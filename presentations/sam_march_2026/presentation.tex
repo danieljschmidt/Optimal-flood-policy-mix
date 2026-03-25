@@ -29,6 +29,35 @@
     \end{itemize}
 \end{frame}
 
+\section{Preliminary results}
+
+\begin{frame}{Preliminary results}
+
+    Focus on trade-off between insurance subsidy and disaster relief:
+    \begin{align}
+    \text{MVPF}_s 
+    &= \frac{
+    \overbrace{(p-q^*)\,\Delta u \cdot \dfrac{\partial I}{\partial s}}^{\text{welfare gain from take-up}}
+    \;+\;
+    \overbrace{pd\,u'(c_{ins})\cdot I}^{\text{windfall to insured}}
+    }{
+    \underbrace{pd\!\left[I + (s-a)\,\dfrac{\partial I}{\partial s}\right]}_{\text{net fiscal cost}}
+    }
+    \label{eq:mvpf_s}
+    \\[14pt]
+    \text{MVPF}_a 
+    &= \frac{
+    \overbrace{(p-q^*)\,\Delta u \cdot \dfrac{\partial I}{\partial a}}^{\text{welfare loss from crowd-out}}
+    \;+\;
+    \overbrace{pd\,u'(c_f)\cdot U}^{\text{transfer to uninsured}}
+    }{
+    \underbrace{pd\!\left[U + (s-a)\,\dfrac{\partial I}{\partial a}\right]}_{\text{net fiscal cost}}
+    }
+    \label{eq:mvpf_a}
+    \end{align}
+    
+\end{frame}
+
 \section{Questions}
 
 \begin{frame}{Questions}
@@ -49,11 +78,9 @@
 
 % ==========================================================
 
-\begin{frame}{Backup slides}
-\end{frame}
+\section{Backup slides}
 
 % ==========================================================
-\section{Model}
 
 \begin{frame}{Model: Locations, preferences, and risk}
 \begin{itemize}[leftmargin=0.0cm]
@@ -135,8 +162,6 @@ Define indirect utility conditional on location/insurance choice:
 \textbf{Key friction:} planner evaluates outcomes with \emph{true} $p$, but households choose $h^w$ and insurance based on $q$. This creates a wedge between perceived optimal and socially optimal welfare
 
 \end{frame}
-
-\section{First findings}
 
 % ==========================================================
 \begin{frame}{Findings: Insurance take-up threshold and comparative statics}
