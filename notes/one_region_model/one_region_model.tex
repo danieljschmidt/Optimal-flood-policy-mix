@@ -8,7 +8,7 @@
 \usepackage{graphicx}
 
 % Title information
-\title{Project Idea: Optimal flood policy}
+\title{Optimal Flood Policy}
 \author{Taco Prins, Lennard Schlattmann, and Daniel Jonas Schmidt}
 \date{\today}
 
@@ -23,140 +23,135 @@
     \item Subsidies can increase insurance and adaptation towards their socially optimal level, but with sufficient heterogeneity in beliefs, there will always be a group of households that underestimate flood risk enough to stay uninsured and under-adapted even with subsidies in place. 
     \item Disaster relief programs provide a safety net for uninsured households, but they also reduce incentives to buy flood insurance or invest in private adaptation measures. 
     \item What is the socially optimal mix of these policies in the presence of heterogeneous flood risk beliefs? Is it optimal to use all available policy instruments, or only a subset? How does optimal policy depend on the distribution of flood risk beliefs, risk aversion, and other parameters?
-    \item The methodological approach I have in mind is to set up a stylized theoretical model and derive analytical results where possible. To take the model to the data, we could calibrate it or try a sufficient statistics approach.
+    \item We follow a sufficient statistics approach: We set up a stylized theoretical model and derive expressions for the optimal policy mix that depend on a small number of statistics that can be estimated empirically. Additionally, we solve the model numerically to illustrate the determinants of optimal policy.
 \end{itemize}
 
-\section{Possible starting point}
-\begin{itemize}
-    \item One time period
-    \item Fixed budget dedicated to flood policies
-    \item Insurance subsidy and disaster relief as policy instruments, no private adaptation
-\end{itemize}
+\section{Static model with one region}
+
+Consider a one-period model with one region. The government has a fixed budget $B$ dedicated to flood policies and can choose between two instruments: an insurance subsidy $s$ and a disaster relief fraction $a$.
 
 \subsection{Household Problem}
 
+\noindent\textbf{Setup.} Each household has wealth $w$ and faces a flood that occurs with true probability $p$ and causes damage $d$. Households differ in their subjective flood probability $q$, distributed across the population according to the CDF $F(q)$. There is no misperception about damage conditional on flood occurrence.
+
+\vspace{0.2cm}
+\noindent\textbf{Flood policies.}
 \begin{itemize}
-    \item Wealth $w$ available for consumption
-    \item Flood occurs with probability $p$
-    \item Household believes flood occurs with probability $q$ 
-    \item Flood causes damage $d$ and there is no misperception about damage conditional on flood occurrence
-    \item Flood insurance is actuarially fair and costs $p$ per unit of coverage
-    \item Government subsidizes flood insurance, so household pays $(1-s)p d$
-    \item If uninsured and flood occurs, household receives disaster relief that covers a fraction $a$ of the damage
-    \item If insured, expected utility is
-    \[
-    V_{ins}(s) = u(w - (1-s)p d)
-    \]
-    \item If uninsured, perceived expected utility is
-    \[
-    V_{perc,unins}(q,a) = (1-q)u(w) + q \, u(w - (1-a)d)
-    \]
-    \item However, the true expected utility if uninsured is
-    \[
-    V_{unins}(a) = (1-p)u(w) + p \, u(w - (1-a)d)
-    \]
-    \item Household buys insurance if $V_{ins}(s) > V_{perc,unins}(q,a)$
-    \item The minimum subjective flood risk $q$ to buy insurance is
-    \[
-    q^*(s,a) = \frac{u(w) - u(w - (1-s)p d)}{u(w) - u(w - (1-a)d)}
-    \]
+    \item The government subsidizes flood insurance relative to the actuarially fair price, so an insured household pays $(1-s)pd$.
+    \item The government provides disaster relief covering a fraction $a$ of damage for uninsured households that experience a flood.
 \end{itemize}
+
+\vspace{0.2cm}
+\noindent\textbf{Consumption levels.}
+\begin{itemize}
+    \item Insured: $c_I = w - (1-s)pd$
+    \item Uninsured, no flood: $c_{U,N} = w$
+    \item Uninsured, flood: $c_{U,F} = w - (1-a)d$
+\end{itemize}
+
+\vspace{0.2cm}
+\noindent\textbf{Value functions.}
+\begin{itemize}
+    \item Insured: $V_I(s) = u(c_I)$
+    \item Uninsured (perceived): $\tilde{V}_U(q,a) = (1-q)\,u(c_{U,N}) + q\,u(c_{U,F})$
+    \item Uninsured (true): $V_U(a) = (1-p)\,u(c_{U,N}) + p\,u(c_{U,F})$
+\end{itemize}
+
+\vspace{0.2cm}
+\noindent\textbf{Insurance decision.} A household buys insurance if $V_I(s) > \tilde{V}_U(q,a)$. Setting $V_I(s) = \tilde{V}_U(q^*,a)$ and solving for the threshold belief gives
+\begin{equation}
+    q^*(s,a) = \frac{u(c_{U,N}) - u(c_I)}{u(c_{U,N}) - u(c_{U,F})} = \frac{u(w) - u(w-(1-s)pd)}{u(w) - u(w-(1-a)d)}. \label{eq:qstar}
+\end{equation}
+Households with $q > q^*(s,a)$ buy insurance; those with $q \leq q^*(s,a)$ do not.
 
 \subsection{Government Problem}
 
+The government maximizes social welfare subject to its budget constraint. The social planner evaluates household welfare using the true flood probability $p$. Denoting the insurance take-up rate by $I(s,a) = 1 - F(q^*(s,a))$, the government's problem is
+\begin{equation}
+    S(s,a) = V_I(s)\cdot I(s,a) + V_U(a)\cdot\bigl(1-I(s,a)\bigr) \label{eq:welfare}
+\end{equation}
+subject to
+\begin{equation}
+    B = pd\bigl[s\,I(s,a) + a\,\bigl(1-I(s,a)\bigr)\bigr]. \label{eq:budget}
+\end{equation}
+The Lagrangian is
+\[
+    \mathcal{L}(s,a,\lambda) = S(s,a) + \lambda\!\left[B - pd\bigl(s\,I(s,a) + a\,\bigl(1-I(s,a)\bigr)\bigr)\right],
+\]
+where $\lambda$ is the shadow value of the budget constraint.
+
+\subsubsection*{First-Order Conditions}
+
+\begin{align}
+    \frac{\partial\mathcal{L}}{\partial s} &=
+        \underbrace{(V_I-V_U)\,\frac{\partial I}{\partial s}}_{\text{welfare gain from switching}}
+        +\underbrace{\frac{\partial V_I}{\partial s}\cdot I}_{\text{transfer to insured}}
+        -\lambda\,pd\!\left[
+            \underbrace{I}_{\text{direct cost}}
+            +\underbrace{(s-a)\,\frac{\partial I}{\partial s}}_{\text{fiscal externality}}
+        \right] = 0 \label{eq:foc_s} \\[12pt]
+    \frac{\partial\mathcal{L}}{\partial a} &=
+        \underbrace{(V_I-V_U)\,\frac{\partial I}{\partial a}}_{\text{loss from crowd-out}}
+        +\underbrace{\frac{\partial V_U}{\partial a}\cdot(1-I)}_{\text{transfer to uninsured}}
+        -\lambda\,pd\!\left[
+            \underbrace{(1-I)}_{\text{direct cost}}
+            +\underbrace{(s-a)\,\frac{\partial I}{\partial a}}_{\text{fiscal externality}}
+        \right] = 0 \label{eq:foc_a}
+\end{align}
+
+Each first-order condition balances three effects of marginally increasing an instrument:
 \begin{itemize}
-    \item Population with distribution of subjective flood risk $F(q)$
-    \item Government has budget $B$ dedicated to flood policies
-    \item Government chooses subsidy $s$ and disaster relief fraction $a$ to maximize social welfare
-    \[
-    S(s,a) = V_{unins}(a) \cdot F(q^*(s,a)) + V_{ins}(s) \cdot \bigl(1 - F(q^*(s,a))\bigr)
-    \]
-    subject to
-    \[
-    B = pd \bigl[ a F(q^*(s,a)) + s (1 - F(q^*(s,a))) \bigr]
-    \]
-\end{itemize}
-
-\subsubsection*{First-Order Conditions of the Lagrangian}
-\begin{align*}
-    \frac{\partial \mathcal{L}}{\partial s} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{ins}}{\partial s} \cdot (1 - F(q^*))}_{\text{direct benefit to insured}} \\[8pt]
-    &\quad + \lambda \, pd \Biggl[ \underbrace{-(a - s) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial s}}_{\text{budget effect of switching}} - \underbrace{(1 - F(q^*))}_{\text{direct subsidy cost}} \Biggr] = 0
-\end{align*}
-\begin{align*}
-    \frac{\partial \mathcal{L}}{\partial a} &= \underbrace{(V_{unins} - V_{ins}) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{welfare effect of switching households}} + \underbrace{\frac{\partial V_{unins}}{\partial a} \cdot F(q^*)}_{\text{direct benefit to uninsured}} \\[8pt]
-    &\quad + \lambda \, pd \Biggl[ \underbrace{-(a - s) \cdot f(q^*) \cdot \frac{\partial q^*}{\partial a}}_{\text{budget effect of switching}} - \underbrace{F(q^*)}_{\text{direct relief cost}} \Biggr] = 0
-\end{align*}
-
-\begin{itemize}
-    \item Disaster relief $a$ and insurance subsidy $s$ cannot be negative. Thus, we also need to consider corner solutions where either $s=0$, or $a=0$.
-    \item Depending on the shape of the distribution, several local optima could exist.
-    \item Nevertheless, the first-order conditions nicely illustrate the role of the fraction of insured households and the density of beliefs at the margin:
-    \begin{itemize}
-        \item Increasing insurance subsidies $s$ is most effective when there are many households close to the margin of buying insurance relative to the number of households that is already insured.
-        \item Increasing disaster relief $a$ is most effective when there are few households close to the margin of buying insurance relative to the number of households that is uninsured.
-    \end{itemize}
-\end{itemize}
-
-\subsubsection*{Toward a sufficient statistics formula}
-
-\begin{itemize}
-    \item Define the insurance take-up rate $I(s,a) = 1 - F(q^*(s,a))$ and the uninsured share $U = F(q^*)$. By the chain rule,
-    \[
-    f(q^*)\frac{\partial q^*}{\partial s} = -\frac{\partial I}{\partial s}, \qquad
-    f(q^*)\frac{\partial q^*}{\partial a} = -\frac{\partial I}{\partial a},
-    \]
-    where $\frac{\partial I}{\partial s} > 0$ (subsidies increase take-up) and $\frac{\partial I}{\partial a} < 0$ (relief crowds out insurance). Both are aggregate behavioral responses that can in principle be estimated from policy variation.
-    \item Write $c_{ins} = w - (1-s)pd$ for insured consumption and $c_f = w - (1-a)d$ for uninsured flood consumption. Substituting $\frac{\partial V_{ins}}{\partial s} = pd\,u'(c_{ins})$ and $\frac{\partial V_{unins}}{\partial a} = pd\,u'(c_f)$, the FOCs become:
-    \begin{align}
-        (V_{ins} - V_{unins})\frac{\partial I}{\partial s} + pd\,u'(c_{ins})\cdot I &= \lambda\,pd\!\left[I + (s-a)\frac{\partial I}{\partial s}\right] \label{eq:foc_s_suff} \\[6pt]
-        (V_{ins} - V_{unins})\frac{\partial I}{\partial a} + pd\,u'(c_f)\cdot U &= \lambda\,pd\!\left[U + (s-a)\frac{\partial I}{\partial a}\right] \label{eq:foc_a_suff}
-    \end{align}
-    \item At the threshold, $V_{ins}(s) = V_{perc,unins}(q^*,a)$ by definition of $q^*$. Because the social planner evaluates the uninsured using the true probability $p$ rather than $q^*$, the welfare gap decomposes as
-    \[
-    V_{ins} - V_{unins} = \bigl[(1-q^*)u(w) + q^*u(c_f)\bigr] - \bigl[(1-p)u(w) + pu(c_f)\bigr] = (p - q^*)\,\Delta u,
-    \]
-    where $\Delta u \equiv u(w) - u(c_f) > 0$. Following the terminology of Alcott, Lockwood and Taubinsky (2019), this is an \emph{internality correction}: it captures the welfare gain from switching the marginal household---which misperceives its own risk---to insurance. It is positive when $q^* < p$, i.e.\ when the marginal household underestimates flood risk.
-    \item Dividing each FOC by the respective marginal fiscal cost yields the Marginal Value of Public Funds (MVPF) for each instrument:
-    \begin{align}
-        \text{MVPF}_s &= \frac{\overbrace{(p-q^*)\,\Delta u \cdot \dfrac{\partial I}{\partial s}}^{\substack{\text{internality correction:} \\ \text{welfare gain from switching} \\ \text{marginal households to insurance}}} \;+\; \overbrace{pd\,u'(c_{ins})\cdot I}^{\substack{\text{transfer: windfall to} \\ \text{already-insured households}}}}{\underbrace{pd\!\left[I + (s-a)\,\dfrac{\partial I}{\partial s}\right]}_{\substack{\text{net fiscal cost, incl.\ fiscal externality} \\ \text{from behavioral response}}}} \label{eq:mvpf_s} \\[14pt]
-        \text{MVPF}_a &= \frac{\overbrace{(p-q^*)\,\Delta u \cdot \dfrac{\partial I}{\partial a}}^{\substack{\text{internality correction:} \\ \text{welfare loss from crowd-out} \\ \text{of insurance}\;(\partial I/\partial a < 0)}} \;+\; \overbrace{pd\,u'(c_f)\cdot U}^{\substack{\text{transfer: direct benefit to} \\ \text{uninsured households}}}}{\underbrace{pd\!\left[U + (s-a)\,\dfrac{\partial I}{\partial a}\right]}_{\substack{\text{net fiscal cost, incl.\ fiscal externality} \\ \text{from behavioral response}}}} \label{eq:mvpf_a}
-    \end{align}
-    Both MVPFs share the same structure: welfare generated per dollar of fiscal cost. The numerator of each consists of two terms:
-    \begin{enumerate}
-        \item An \emph{internality correction} term, proportional to the misperception wedge $(p - q^*)$ and the behavioral response ($\partial I / \partial s$ or $\partial I / \partial a$). For subsidies, this term is positive: each household switched into insurance gains $(p-q^*)\Delta u$ in welfare that it does not perceive, and the subsidy switches $\partial I/\partial s$ households per unit. For relief, this term is negative: relief crowds out insurance ($\partial I/\partial a < 0$), pushing marginal households back into an underinsured state.
-        \item A \emph{mechanical transfer} to existing recipients. For subsidies, all $I$ already-insured households receive a premium reduction valued at $u'(c_{ins})$ per dollar---a pure windfall. For relief, all $U$ uninsured households receive additional coverage valued at $u'(c_f)$ per dollar. Because uninsured flood victims are poorer ($c_f < c_{ins}$), marginal utility is higher for relief recipients ($u'(c_f) > u'(c_{ins})$): a dollar of relief generates more direct utility than a dollar of subsidy. This is relief's \emph{consumption-smoothing advantage}.
-    \end{enumerate}
-    The denominator captures the net fiscal cost, which includes a \emph{fiscal externality}: when a household switches from uninsured to insured (or vice versa), it moves between costing $a \cdot pd$ in relief and $s \cdot pd$ in subsidy, changing the government's expenditure by $(s-a)pd$ per switcher. At an interior optimum, $\text{MVPF}_s = \text{MVPF}_a = \lambda$. At a corner (e.g.\ $a=0$), the unused instrument has a lower MVPF.
-    \item The following quantities are directly observable or estimable from policy variation: take-up rates $I$ and $U$; the take-up response to subsidies $\frac{\partial I}{\partial s}$ (related to the price semi-elasticity of insurance demand $\eta$ via $\frac{\partial I}{\partial s} = pd \cdot \eta$); the crowd-out of insurance by relief $\frac{\partial I}{\partial a}$; and the policy parameters $p$, $d$, $s$, $a$. The structural terms that remain are: $q^*$ (the marginal household's subjective belief), and the utility values $\Delta u$, $u'(c_{ins})$, $u'(c_f)$ which depend on risk aversion.
-\end{itemize}
-
-\subsubsection*{Eliminating structural terms via CRRA calibration}
-\begin{itemize}
-    \item Under CRRA utility $u(c) = c^{1-\gamma}/(1-\gamma)$, all utility terms become known functions of the consumption levels $c_{ins}$, $w$, $c_f$ and a single parameter $\gamma$: 
-    \[
-    \Delta u = \frac{w^{1-\gamma} - c_f^{1-\gamma}}{1-\gamma}, \quad u'(c_{ins}) = c_{ins}^{-\gamma}, \quad u'(c_f) = c_f^{-\gamma}.
-    \]
-    The consumption levels themselves are determined by the observable quantities $w$, $d$, $p$, $s$, $a$. The marginal household's belief is also pinned down:
-    \[
-    q^* = \frac{w^{1-\gamma} - c_{ins}^{1-\gamma}}{w^{1-\gamma} - c_f^{1-\gamma}},
-    \]
-    which follows directly from the definition of $q^*$ and the CRRA functional form. All terms in the MVPF formulas \eqref{eq:mvpf_s}--\eqref{eq:mvpf_a} are therefore determined by the behavioral responses ($\partial I / \partial s$, $\partial I / \partial a$), the observable policy parameters ($w$, $d$, $p$, $s$, $a$), the take-up rate $I$, and a single calibrated parameter $\gamma$.
-    \item A second-order Taylor expansion of $u$ around $w$ could in principle eliminate even the dependence on a parametric utility function. However, this approach requires flood damage to be small relative to wealth ($d \ll w$). In the numerical calibration below, $d/w = 0.5$, which makes the second-order expansion unreliable (for instance, the approximation yields $q^*(0,0) \approx 1.35\%$ versus the exact value of $1.01\%$). For severe flood events, the CRRA calibration approach---which uses the same single structural parameter $\gamma$ but involves no approximation---is preferable.
-\end{itemize}
-
-\subsubsection*{When should subsidies receive more funding than disaster relief?}
-\begin{itemize}
-    \item Starting from no intervention ($s = a = 0$), the fiscal externality terms vanish and the MVPF formulas simplify. The first dollar should go to subsidies rather than relief ($\text{MVPF}_s > \text{MVPF}_a$) if and only if
+    \item \textbf{Internality correction.} Households at the margin $q = q^*$ misperceive their flood risk. Switching them into (or out of) insurance changes social welfare by $(V_I - V_U)$ per switcher, and each instrument shifts $\partial I/\partial s$ (or $\partial I/\partial a$) households across the margin. Because $V_I(s) = \tilde{V}_U(q^*,a)$ at the threshold by definition of $q^*$, the welfare gap reflects the difference between applying the true versus subjective probability to the uninsured outcome:
     \begin{equation}
-    (p - q^*_0)\,\Delta u_0 \left[\frac{1}{I_0}\frac{\partial I}{\partial s}\bigg|_0 + \frac{1}{U_0}\left|\frac{\partial I}{\partial a}\bigg|_0\right|\right] > pd\bigl[u'(c_f^0) - u'(c_{ins}^0)\bigr] \label{eq:subsidy_vs_relief}
+        V_I - V_U = \tilde{V}_U(q^*,a) - V_U(a) = (p-q^*)\,\Delta u, \label{eq:internality}
     \end{equation}
-    where subscript $0$ denotes evaluation at $s=a=0$, so $c_{ins}^0 = w - pd$ and $c_f^0 = w - d$.
-    \item The left-hand side is the \emph{internality correction}, amplified by the behavioral responsiveness of insurance take-up to each instrument (normalized per recipient). Within the brackets, $\frac{1}{I_0}\frac{\partial I}{\partial s}\big|_0$ measures how effectively subsidies attract marginal households into insurance per insured household, and $\frac{1}{U_0}|\frac{\partial I}{\partial a}\big|_0|$ measures how many households crowd out of insurance per uninsured household when relief increases. The two semi-elasticities are summed because both work in the same direction for the comparison: subsidies gain from pulling households into insurance, while relief loses from pushing them out.
-    \item The right-hand side reflects the \emph{consumption-smoothing advantage of disaster relief}: since $c_f^0 < c_{ins}^0$, marginal utility is higher for uninsured flood victims ($u'(c_f^0) > u'(c_{ins}^0)$), so each dollar transferred through relief generates more direct utility than a dollar transferred through subsidies.
-    \item In words: the condition compares the \emph{efficiency} gain from correcting underinsurance---weighted by how responsive take-up is to both instruments---against the \emph{equity} gain from directing transfers to the neediest (uninsured) households. The first dollar should go to subsidies when the welfare value of the behavioral correction exceeds the welfare value of better-targeted consumption smoothing.
+    where $\Delta u \equiv u(c_{U,N}) - u(c_{U,F}) > 0$ is the utility gain from avoiding flood damage. Following Allcott, Lockwood, and Taubinsky (2019), we call this the \emph{internality correction}. It is positive when $q^* < p$ (the marginal household underestimates flood risk), so the subsidy corrects an internality by switching underinsured households to coverage. For disaster relief, $\partial I/\partial a < 0$, so the same term is negative: relief crowds marginal households out of insurance.
+    \item \textbf{Direct benefit to recipients.} Each instrument directly benefits its existing recipients. The subsidy reduces premiums for all $I$ insured households ($\partial V_I/\partial s = pd\,u'(c_I)$ per unit). Disaster relief improves outcomes for all $(1-I)$ uninsured households that experience a flood ($\partial V_U/\partial a = pd\,u'(c_{U,F})$ per unit). Because uninsured flood victims are poorer ($c_{U,F} < c_I$), their marginal utility is higher: a dollar of relief generates more direct utility than a dollar of subsidy.
+    \item \textbf{Fiscal cost.} Each instrument has a direct cost ($pd$ per recipient) and a fiscal externality from households switching between instruments: a switcher moves from costing $apd$ in relief to $spd$ in subsidy (or vice versa), changing government expenditure by $(s-a)pd$ per switcher.
 \end{itemize}
 
-\noindent\textbf{Summary.} The MVPF formulas \eqref{eq:mvpf_s}--\eqref{eq:mvpf_a} express the optimality condition in terms of two estimable behavioral responses ($\partial I/\partial s$, $\partial I/\partial a$), observable policy parameters and take-up rates, and a single calibrated parameter ($\gamma$). This allows assessing whether the current policy mix is locally optimal---or which direction it should be adjusted---without knowledge of the full belief distribution $F$. The concise condition \eqref{eq:subsidy_vs_relief} makes the key trade-off transparent: correcting misperceptions (favoring subsidies) vs.\ consumption smoothing (favoring disaster relief). An important caveat is that this is a \emph{local} optimality test: the MVPF comparison identifies the direction of welfare-improving marginal reallocation, but does not characterize the global optimum. As shown in the FOC discussion above, corners and multiple local optima are possible, so a local test cannot fully substitute for computing the global solution.
+\subsubsection*{Sufficient statistics formula for local optimality}
+
+Rearranging each first-order condition so that the welfare gain per dollar of fiscal cost equals $\lambda$ gives the \emph{marginal value of public funds} (MVPF) for each instrument:
+
+\begin{align}
+    \text{MVPF}_s &= \frac{
+        \overbrace{(p-q^*)\,\Delta u \cdot \dfrac{\partial I}{\partial s}}^{\text{welfare gain from switching}}
+        \;+\;
+        \overbrace{pd\,u'(c_I)\cdot I}^{\text{transfer to insured}}
+    }{
+        \underbrace{pd\,I}_{\text{direct cost}}
+        \;+\;
+        \underbrace{pd\,(s-a)\,\dfrac{\partial I}{\partial s}}_{\text{fiscal externality}}
+    } \label{eq:mvpf_s} \\[14pt]
+    \text{MVPF}_a &= \frac{
+        \overbrace{(p-q^*)\,\Delta u \cdot \dfrac{\partial I}{\partial a}}^{\text{loss from crowd-out}}
+        \;+\;
+        \overbrace{pd\,u'(c_{U,F})\cdot(1-I)}^{\text{transfer to uninsured}}
+    }{
+        \underbrace{pd\,(1-I)}_{\text{direct cost}}
+        \;+\;
+        \underbrace{pd\,(s-a)\,\dfrac{\partial I}{\partial a}}_{\text{fiscal externality}}
+    } \label{eq:mvpf_a}
+\end{align}
+
+At an interior optimum, $\text{MVPF}_s = \text{MVPF}_a = \lambda$: neither instrument can be improved at the margin. Away from the optimum, the marginal dollar should go to the instrument with the higher MVPF. At a corner solution (e.g.\ $a = 0$), the unused instrument has $\text{MVPF} \leq \lambda$.
+
+The MVPF formulas depend on several quantities with different degrees of observability and ease of estimation:
+\begin{itemize}
+    \item The insurance take-up rate $I$ and the uninsured share $1-I$ can be measured from insurance market data.
+    \item The key behavioral response $\partial I/\partial s$ can be linked to the price sensitivity of insurance demand. Since the household's premium is $\pi = (1-s)pd$, we have $\partial\pi/\partial s = -pd$, so
+    \[
+        \frac{\partial I}{\partial s} = -pd\,\frac{\partial I}{\partial \pi}.
+    \]
+    Letting $\varepsilon \equiv (1/I)(\partial I/\partial \pi) < 0$ denote the semi-elasticity of take-up with respect to the premium, this gives $\partial I/\partial s = -pd\,I\,\varepsilon > 0$, which can be estimated from quasi-experimental variation in insurance prices.
+    \item The crowd-out response $\partial I/\partial a$ is harder to estimate directly, as quasi-experimental variation in disaster relief generosity is rare. However, using equation~\eqref{eq:qstar} and the chain rule $\partial I/\partial j = -f(q^*)\,\partial q^*/\partial j$, the unknown density $f(q^*)$ cancels in the ratio:
+    \begin{equation}
+        \frac{\partial I/\partial a}{\partial I/\partial s} = \frac{\partial q^*/\partial a}{\partial q^*/\partial s} = -\frac{q^*}{p}\cdot\frac{u'(c_{U,F})}{u'(c_I)}. \label{eq:ratio}
+    \end{equation}
+    Under structural utility assumptions (e.g.\ CRRA), $\partial I/\partial a$ can therefore be recovered from the estimated $\partial I/\partial s$ together with the observable consumption levels $c_I$ and $c_{U,F}$.
+    \item The internality correction $(p-q^*)\,\Delta u$ and the marginal utilities $u'(c_I)$, $u'(c_{U,F})$ require knowledge of the utility function and of the marginal household's belief $q^*$.
+\end{itemize}
 
 \subsubsection*{Numerical solution}
 
@@ -191,32 +186,16 @@
 \end{itemize}
 
 \section{Extensions}
-\subsubsection*{Natural next steps}
 \begin{itemize}
     \item Introduce administration costs for flood insurance and disaster relief
     \item Include private adaptation measures
-    \item What is the optimal budget dedicated to flood policies?
-\end{itemize}
-\subsubsection*{Possible further extensions/ Things to discuss verbally but not model formally}
-\begin{itemize}
+    \item What is the optimal budget dedicated to flood policies? Compare with marginal cost of public funds
     \item Correlation of flood risk beliefs with income and/or wealth
     \item Heterogeneity in risk aversion
     \item Sorting of households into flood-prone areas based on beliefs
     \item Public adaptation measures
     \item Liquidity-provision policies (disaster loans, 401k withdrawals, mortgage relief)
     \item Government support for households in flood-prone areas creates incentives to build in flood-prone areas/ migrate to flood-prone areas
-\end{itemize}
-
-\section{Caveats}
-\begin{itemize}
-    \item There are no good sources of the distribution of flood risk beliefs, but this would be a key input to the model.
-    \begin{itemize}
-        \item The first-order conditions depend only on the fraction of insured households (publicly observable) and the density of beliefs at the margin (can potentially be recovered from the price elasticity of insurance demand). This suggests we may be able to assess whether the current policy mix is locally optimal using these two statistics alone, without full knowledge of the belief distribution.
-    \end{itemize}
-    \item Even the relatively simple model outlined above cannot be solved analytically for most utility functions and belief distributions.
-    \begin{itemize}
-        \item Can we think of an alternative modelling approach that yields more tractable results? 
-    \end{itemize}
 \end{itemize}
 
 \end{document}

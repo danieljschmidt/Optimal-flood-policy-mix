@@ -20,7 +20,7 @@ class Parameters:
     d: float = 0.5            # flood damage
     p: float = 0.02           # true flood probability
     pi: float = 0.03          # insurance premium per unit coverage
-    # WARNING: The proposal (proposal.tex) assumes actuarially fair insurance,
+    # WARNING: The Latex file assumes actuarially fair insurance,
     # i.e. pi = p. Set pi = p = 0.02 to match the proposal's formulas.
     # The default pi = 0.03 includes a loading factor and will produce
     # different numerical results (e.g. q*(0,0) ≈ 1.5% instead of ≈ 1%).
