@@ -6,6 +6,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{xcolor}
 
 % Title information
 \title{Optimal Flood Policy}
@@ -18,7 +19,7 @@
 
 \section{Motivation}
 \begin{itemize}
-    \item Households have heterogenous flood risk beliefs. Those who underestimate flood risk may not buy insurance or invest enough in private adaptation measures. A universal flood insurance mandate, which would ensure that even those who underestimate flood risk are insured, is often legally and politically infeasible.
+    \item Households have heterogeneous flood risk beliefs. Those who underestimate flood risk may not buy insurance or invest enough in private adaptation measures. A universal flood insurance mandate, which would ensure that even those who underestimate flood risk are insured, is often legally and politically infeasible.
     \item This creates a potential role for government intervention in the form of flood insurance subsidies, subsidies for private adaptation measures, disaster relief programs, or a combination of all policies.
     \item Subsidies can increase insurance and adaptation towards their socially optimal level, but with sufficient heterogeneity in beliefs, there will always be a group of households that underestimate flood risk enough to stay uninsured and under-adapted even with subsidies in place. 
     \item Disaster relief programs provide a safety net for uninsured households, but they also reduce incentives to buy flood insurance or invest in private adaptation measures. 
@@ -196,6 +197,68 @@ The MVPF formulas depend on several quantities with different degrees of observa
     \item Liquidity-provision policies (disaster loans, 401k withdrawals, mortgage relief)
     \item Households migrate into flood-prone areas because of government support (sorting based on beliefs)
     \item Continuous flood insurance decision
+    \item Continuous flood damage
 \end{itemize}
+
+\subsection{Continuous flood damage}
+
+\paragraph{Flood damage distribution.}
+Flood occurs with true probability $p$. Conditional on flood, damage is random:
+$\textcolor{red}{D\sim G}$ with mean $\textcolor{red}{\bar d\equiv\mathbb{E}[D]}$.
+Households misperceive only flood probability: $q\sim F(q)$. 
+
+\paragraph{Policies and consumption.}
+Insurance is full coverage priced at actuarially fair expected loss, subsidized at rate $s$:
+$c_I=w-(1-s)p\textcolor{red}{\bar d}$.
+Uninsured consumption: $c_{U,N}=w$ (no flood), and
+$c_{U,F}(\textcolor{red}{D})=w-(1-a)\textcolor{red}{D}$ (flood with relief fraction $a$). 
+
+\paragraph{Threshold belief and take-up.}
+The marginal (indifferent) belief is
+\[
+q^*(s,a)=
+\frac{u(w)-u\!\left(w-(1-s)p\textcolor{red}{\bar d}\right)}
+{u(w)-\textcolor{red}{\mathbb{E}[u(w-(1-a)D)]}}
+=
+\frac{u(w)-u(c_I)}{\textcolor{red}{\Delta u(a)}},
+\]
+and insurance take-up is $I(s,a)=1-F(q^*(s,a))$. 
+
+\paragraph{Welfare and budget constraint.}
+Planner welfare keeps the same form:
+\[
+S(s,a)=V_I(s)\,I(s,a)+V_U(a)\,[1-I(s,a)],
+\]
+with $V_I(s)=u(c_I)$ and
+$V_U(a)=(1-p)u(w)+p\,\textcolor{red}{\mathbb{E}[u(w-(1-a)D)]}$.
+The budget constraint is unchanged up to replacing $d$ by $\textcolor{red}{\bar d}$:
+\[
+B=p\textcolor{red}{\bar d}\Big[s\,I(s,a)+a\,(1-I(s,a))\Big].
+\]
+
+\paragraph{Internality correction.}
+At the margin, $V_I(s)=\widetilde V_U(q^*,a)$, so
+\[
+V_I-V_U=(p-q^*)\,\textcolor{red}{\Delta u(a)},
+\]
+i.e., the welfare gain from switching the marginal household is still proportional
+to the belief gap $(p-q^*)$ times the (now expected) utility loss from being uninsured
+under flood risk. 
+
+\paragraph{Direct marginal benefits.}
+Subsidy marginal benefit remains
+\[
+\frac{\partial V_I}{\partial s}
+= p\textcolor{red}{\bar d}\,u'(c_I).
+\]
+Relief now targets high-loss states via a damage-weighted marginal utility:
+\[
+\frac{\partial V_U}{\partial a}
+= p\,\textcolor{red}{\mathbb{E}\!\left[D\,u'\!\left(w-(1-a)D\right)\right]},
+\]
+which exceeds $p\bar d\,u'(w-(1-a)\bar d)$ under concavity and heavy tails.
+
+\paragraph{Summary.}
+Relative to the baseline with deterministic damage, all changes enter through expectations over realized damage $D$, replacing point evaluations at $d$ by mean damage $\bar{d}$ in fiscal terms and by damage‑weighted marginal utilities in the welfare effects of disaster relief.
 
 \end{document}
