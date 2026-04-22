@@ -1,0 +1,172 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\title{Empirical Counterparts for MVPF Terms}
+\author{Taco Prins, Lennard Schlattmann, and Daniel Jonas Schmidt}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Empirical Estimates by Term}
+
+\begin{table}[h]
+\centering
+\small
+\renewcommand{\arraystretch}{1}
+\begin{tabularx}{\linewidth}{p{4.6cm}p{4.3cm}X}
+\toprule
+\textbf{Term} & \textbf{Estimate} & \textbf{Source} \\
+\midrule
+$I$ (take-up rate)
+    & $\approx 30\%$ in high-risk areas
+    & \href{https://www.fema.gov/openfema-data-page/nfip-residential-penetration-rates-v1}{FEMA OpenFEMA NFIP Penetration Rates}; \href{https://www.rand.org/content/dam/rand/pubs/technical_reports/2006/RAND_TR300.pdf}{Dixon et al.\ (2006)} \\
+$\varepsilon$ (price semi-elasticity)
+    & $-0.17$ to $-1.38$
+    & \href{https://faculty.wharton.upenn.edu/wp-content/uploads/2017/07/MismeasuringRisk_Mulder2021.pdf}{Mulder (2021)};
+      \href{https://journalofcrr.com/research/03-07-gourevitch-et-al/}{Gourevitch et al.\ (2023)};
+      \href{https://link.springer.com/article/10.1023/A:1007823631497}{Browne \& Hoyt (2000)} \\
+$\partial I / \partial a$ (crowd-out)
+    & $-3\%$ of coverage
+    & \href{https://www.sciencedirect.com/science/article/abs/pii/S0095069617303479}{Kousky, Michel-Kerjan \& Raschky (2018)} \\
+$F(q)$ (belief distribution)
+    & Substantial heterogeneity
+    & \href{https://www.nber.org/system/files/working_papers/w23854/w23854.pdf}{Bakkensen \& Barrage (2017)};
+      \href{https://www.aeaweb.org/articles?id=10.1257/app.6.3.206}{Gallagher (2014)};
+      \href{https://faculty.wharton.upenn.edu/wp-content/uploads/2017/07/MismeasuringRisk_Mulder2021.pdf}{Mulder (2021)} \\
+$p$ (true flood probability)
+    & $1\%$--$10\%$ per year
+    & \href{https://zenodo.org/records/6459076}{First Street Foundation (Zenodo v2.0)};
+      \href{https://www.fema.gov/flood-maps/national-flood-hazard-layer}{FEMA National Flood Hazard Layer} \\
+$d$ (flood damage, conditional on flood)
+    & \$44k--\$83k (avg.\ claim)
+    & \href{https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2}{OpenFEMA NFIP Redacted Claims};
+      \href{https://www.floodsmart.gov/historical-nfip-claims-information-and-trends}{NFIP Historical Claims (FloodSmart)} \\
+$d/w$ (damage-to-wealth ratio)
+    & $10\%$--$16\%$
+    & \href{https://www.fema.gov/openfema-data-page/fima-nfip-redacted-claims-v2}{OpenFEMA NFIP Redacted Claims};
+      \href{https://www.floodsmart.gov/historical-nfip-claims-information-and-trends}{NFIP Historical Claims (FloodSmart)} \\
+$w$ (household wealth)
+    & \$193k (median); \$300k--\$500k (home value)
+    & \href{https://fortune.com/2023/10/18/us-household-wealth-increase-survey-of-consumer-finances-federal-reserve/}{Federal Reserve SCF (2022)};
+      \href{https://www.census.gov/programs-surveys/ahs.html}{American Housing Survey} \\
+$s$ (current subsidy rate)
+    & $\approx 47\%$ (median policyholder)
+    & \href{https://www.gao.gov/assets/gao-23-105977.pdf}{GAO (2023)};
+      \href{https://www.fema.gov/flood-insurance/risk-rating}{FEMA Risk Rating 2.0} \\
+$a$ (current relief fraction)
+    & $\approx 4\%$--$7\%$
+    & Computed from avg.\ FEMA IA grant (\$3k) over avg.\ claim (\$44k--\$83k);
+      \href{https://www.sciencedirect.com/science/article/abs/pii/S0095069617303479}{Kousky et al.\ (2018)} \\
+$\lambda$ (shadow value of budget)
+    & $0.5$--$2$
+    & \href{https://academic.oup.com/qje/article/135/3/1209/5781614}{Hendren \& Sprung-Keyser (2020)} \\
+\bottomrule
+\end{tabularx}
+\caption{Empirical counterparts for the terms in MVPF$_s$ and MVPF$_a$. All estimates are from US data except where noted. The crowd-out estimate from Kousky et al.\ (2018) is identified on the intensive margin (coverage amount) rather than the binary take-up margin, partly due to a regulatory requirement that disaster aid recipients maintain insurance. The model calibration of $d/w = 0.5$ exceeds the empirical average of 10--16\%; the latter reflects average NFIP claims (\$44,000--\$83,000) relative to average US home values (\$500,000).}
+\end{table}
+
+\section*{Notes on Identification}
+
+\paragraph{Price semi-elasticity $\varepsilon$.}
+Since the household's premium is $\pi = (1-s)pd$, we have $\partial\pi/\partial s = -pd$ and therefore
+\[
+    \frac{\partial I}{\partial s} = -pd \cdot I \cdot \varepsilon,
+\]
+where $\varepsilon \equiv (1/I)(\partial I / \partial \pi) < 0$.
+Mulder (2021) exploits variation from outdated FEMA flood maps that misclassify high-risk homes as low-risk, yielding $|\varepsilon| \approx 0.17$.
+Gourevitch et al.\ (2023) exploit the NFIP's Risk Rating~2.0 reform and find a wider range of $|\varepsilon|$ from 0.15 to 1.38 across subgroups.
+
+\paragraph{Crowd-out $\partial I / \partial a$.}
+Direct quasi-experimental estimates of $\partial I/\partial a$ are rare because variation in disaster relief generosity is uncommon.
+Kousky et al.\ (2018) link FEMA Individual Assistance grants (2000--2011) to NFIP policy data and find that receiving a grant reduces coverage the following year by \$4{,}000--\$5{,}000 ($\approx 3\%$ of mean coverage).
+Alternatively, using the ratio trick (eq.~7 of the model notes),
+\[
+    \frac{\partial I/\partial a}{\partial I/\partial s} = -\frac{q^*}{p}\cdot\frac{u'(c_{U,F})}{u'(c_I)},
+\]
+$\partial I/\partial a$ can be recovered from the estimated $\varepsilon$ together with structural utility assumptions.
+
+\paragraph{Belief distribution $F(q)$.}
+Gallagher (2014) documents that take-up spikes after a flood and then decays, consistent with $q < p$ on average and with beliefs that revert toward prior underestimation over time.
+Bakkensen and Barrage (2017) document large cross-sectional heterogeneity in subjective flood probabilities among US coastal homeowners.
+Mulder (2021) measures subjective flood risk at the property level alongside objective risk, enabling direct estimation of the belief gap $p - q$.
+
+\paragraph{Risk aversion $\gamma$.}
+Chetty (2006) identifies $\gamma \approx 1$ from labor supply responses, providing a lower bound.
+The broader empirical literature yields estimates in $[1, 4]$; we use $\gamma = 2$ which is in the middle of this range.
+
+\paragraph{Shadow value $\lambda$.}
+At the interior optimum, MVPF$_s$ = MVPF$_a$ = $\lambda$.
+Hendren and Sprung-Keyser (2020) compute MVPFs for 133 US policy changes; their estimates for adult-targeted social insurance programs cluster between 0.5 and 2, providing a plausible external benchmark for $\lambda$.
+
+\section*{Numerical MVPF Estimates at Current US Policy}
+
+Using the empirical parameter values above, we evaluate both MVPFs at the current US policy mix ($s = 0.47$, $a = 0.055$, $d/w = 0.15$).
+The crowd-out response $\partial I/\partial a$ is recovered via the ratio trick.
+Table~\ref{tab:mvpf} reports all intermediate quantities and the resulting MVPFs.
+
+\begin{table}[h]
+\centering
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{lc}
+\toprule
+& \textbf{Value} \\
+\midrule
+\multicolumn{2}{l}{\textit{Parameters}} \\
+$p$           & $0.02$ \\
+$d/w$         & $0.15$ \\
+$s$           & $0.47$ \\
+$a$           & $0.055$ \\
+$I$           & $0.30$ \\
+$\varepsilon$ & $-0.17$ \\
+$\gamma$      & $2.0$ \\
+\midrule
+\multicolumn{2}{l}{\textit{Consumption levels}} \\
+$c_I$     & $0.9984$ \\
+$c_{U,F}$ & $0.8583$ \\
+\midrule
+\multicolumn{2}{l}{\textit{Intermediate quantities}} \\
+$q^*$                         & $0.0096$ \\
+$(p - q^*)\,\Delta u$         & $0.00171$ \\
+$u'(c_I)$                     & $1.0032$ \\
+$u'(c_{U,F})$                 & $1.3576$ \\
+$\partial I/\partial s$       & $0.000153$ \\
+$\partial I/\partial a$       & $-0.000100$ \\
+\midrule
+\multicolumn{2}{l}{\textit{MVPFs}} \\
+$\mathrm{MVPF}_s$ & $\mathbf{1.003}$ \\
+$\mathrm{MVPF}_a$ & $\mathbf{1.358}$ \\
+\bottomrule
+\end{tabular}
+\caption{MVPF estimates at current US policy ($s = 0.47$, $a = 0.055$, $I = 0.30$, $\varepsilon = -0.17$, $\gamma = 2$, $p = 0.02$, $d/w = 0.15$).}
+\label{tab:mvpf}
+\end{table}
+
+$\mathrm{MVPF}_a > \mathrm{MVPF}_s$, implying that the current US policy mix over-invests in insurance subsidies relative to disaster relief.
+The subsidy MVPF is close to 1 because insured households retain nearly all their wealth ($c_I \approx w$), leaving little room for a welfare gain beyond the direct transfer.
+The relief MVPF is substantially larger because flood victims suffer a significant consumption loss ($c_{U,F} \ll w$), so their marginal utility $u'(c_{U,F})$ is much higher.
+The internality correction $(p - q^*)\Delta u$ and fiscal externality terms are negligibly small, so the MVPFs are essentially determined by the direct transfer terms $pd\,u'(c_I)\,I$ and $pd\,u'(c_{U,F})\,(1-I)$.
+
+\paragraph{Utility function.}
+All computations use CRRA utility with $\gamma = 2$:
+\[
+    u(c) = \frac{c^{1-\gamma}}{1-\gamma} = -\frac{1}{c}, \qquad u'(c) = c^{-\gamma} = \frac{1}{c^2}.
+\]
+Utility is defined over total final consumption, with wealth normalized to $w = 1$.
+The consumption levels entering the MVPF formulas are therefore
+\begin{align*}
+    c_I     &= w - (1-s)\,pd = 1 - 0.53 \times 0.003 = 0.9984, \\
+    c_{U,F} &= w - (1-a)\,d = 1 - 0.945 \times 0.15 = 0.8583.
+\end{align*}
+Because the actuarially fair premium $pd = 0.02 \times 0.15 = 0.003$ is small, insured households barely move away from $w = 1$, so $u'(c_I) \approx 1$.
+This mechanically drives $\mathrm{MVPF}_s \approx 1$: the subsidy delivers one unit of welfare per unit of fiscal cost, with almost no amplification from the utility curvature.
+The gap $\mathrm{MVPF}_a - \mathrm{MVPF}_s$ is therefore driven almost entirely by the consumption loss of flood victims, i.e.\ by $c_{U,F} = 0.8583 < 1$, which raises $u'(c_{U,F}) = 1.36 > 1 \approx u'(c_I)$.
+
+\end{document}
