@@ -57,3 +57,6 @@ Thumbs.db
 *.sublime-*
 .vscode/
 .idea/
+
+# environment folder
+.venv
