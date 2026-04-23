@@ -23,8 +23,7 @@
     \item This creates a potential role for government intervention in the form of flood insurance subsidies, subsidies for private adaptation measures, disaster relief programs, or a combination of all policies.
     \item Subsidies can increase insurance and adaptation towards their socially optimal level, but with sufficient heterogeneity in beliefs, there will always be a group of households that underestimate flood risk enough to stay uninsured and under-adapted even with subsidies in place. 
     \item Disaster relief programs provide a safety net for uninsured households, but they also reduce incentives to buy flood insurance or invest in private adaptation measures. 
-    \item What is the socially optimal mix of these policies in the presence of heterogeneous flood risk beliefs? Is it optimal to use all available policy instruments, or only a subset? How does optimal policy depend on the distribution of flood risk beliefs, risk aversion, and other parameters?
-    \item We follow a sufficient statistics approach: We set up a stylized theoretical model and derive expressions for the optimal policy mix that depend on a small number of statistics that can be estimated empirically. Additionally, we solve the model numerically to illustrate the determinants of optimal policy.
+    \item What is the socially optimal mix of these policies in the presence of heterogeneous flood risk beliefs? Is it optimal to use all available policy instruments, or only a subset? How close is the current US policy to the optimum?
 \end{itemize}
 
 \section{Static model with one region}
@@ -43,25 +42,17 @@ Consider a one-period model with one region. The government has a fixed budget $
 \end{itemize}
 
 \vspace{0.2cm}
-\noindent\textbf{Consumption levels.}
+\noindent\textbf{Value functions and consumption levels.}
 \begin{itemize}
-    \item Insured: $c_I = w - (1-s)pd$
-    \item Uninsured, no flood: $c_{U,N} = w$
-    \item Uninsured, flood: $c_{U,F} = w - (1-a)d$
+    \item Insured: $V_I(s) = u(c_I) = u(w - (1-s)pd)$
+    \item Uninsured (true): $V_U(a) = (1-q)\,u(c_{U,N}) + q\,u(c_{U,F}) = (1-q) u(w) + q u(w - (1-a)d)$
+    \item Uninsured (perceived): $\tilde{V}_U(q,a) = (1-p)\,u(c_{U,N}) + p\,u(c_{U,F})$
 \end{itemize}
 
 \vspace{0.2cm}
-\noindent\textbf{Value functions.}
-\begin{itemize}
-    \item Insured: $V_I(s) = u(c_I)$
-    \item Uninsured (perceived): $\tilde{V}_U(q,a) = (1-q)\,u(c_{U,N}) + q\,u(c_{U,F})$
-    \item Uninsured (true): $V_U(a) = (1-p)\,u(c_{U,N}) + p\,u(c_{U,F})$
-\end{itemize}
-
-\vspace{0.2cm}
-\noindent\textbf{Insurance decision.} A household buys insurance if $V_I(s) > \tilde{V}_U(q,a)$. Setting $V_I(s) = \tilde{V}_U(q^*,a)$ and solving for the threshold belief gives
+\noindent\textbf{Insurance decision.} A household buys insurance if $V_I(s) > \tilde{V}_U(q,a)$. Setting $V_I(s) = \tilde{V}_U(q^*,a)$ and solving for the threshold belief yields
 \begin{equation}
-    q^*(s,a) = \frac{u(c_{U,N}) - u(c_I)}{u(c_{U,N}) - u(c_{U,F})} = \frac{u(w) - u(w-(1-s)pd)}{u(w) - u(w-(1-a)d)}. \label{eq:qstar}
+    q^*(s,a) = \frac{u(c_{U,N}) - u(c_I)}{u(c_{U,N}) - u(c_{U,F})} \label{eq:qstar}
 \end{equation}
 Households with $q > q^*(s,a)$ buy insurance; those with $q \leq q^*(s,a)$ do not.
 
