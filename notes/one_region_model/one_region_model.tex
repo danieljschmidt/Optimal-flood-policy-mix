@@ -266,5 +266,101 @@ One implication of this extension might be that the optimal relief fraction $a$ 
 For example, if $G$ has a heavy right tail, then the marginal benefit of relief is higher because it provides more insurance against extreme losses. 
 This could lead to a higher optimal relief fraction compared to the case with deterministic damage.}
 
+\subsection{Risk aversion heterogeneity}
 
+We now explicitly assume a CRRA utility function, i.e. $u(c)=\frac{c^{1-\gamma}}{1-\gamma}$. The marginal indifferent belief of an agent with CRRA $\gamma$ is 
+\begin{equation}
+    q^*(s,a;\gamma) = \frac{w^{1-\gamma} - (w-(1-s)pd)^{1-\gamma}}{w^{1-\gamma} - (w-(1-a)d)^{1-\gamma}}. \label{eq:qstargamma}
+\end{equation}
+
+Risk aversion $\gamma$ has a considerable affect on this threshold value. Figure \ref{fig:qstar_gamma} shows how $q^*$ varies with $\gamma$, using $s=13.9\%$ and $a=7.4\%$.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/Dependence_q_gamma.png}
+    \caption{Dependence of the insurance threshold $q^*$ on risk aversion $\gamma$, evaluated at $s=13.9\%$ and $a=7.4\%$.}
+    \label{fig:qstar_gamma}
+\end{figure}
+
+However, dispersion in risk aversion does not seem to affect very much how the fraction of insured households responds to policy. Figure \ref{fig:fracinsuredgamma} below shows the fraction of insured households as a function of $a$, with $s$ adjusting to meet the government budget constraint. The left-hand panel shows this fraction with $\sigma=0.7\%$, and the right-hand panel with $\sigma=1.0\%$. CRRA $\gamma$ is assumed to follow a lognormal distribution with mean $2$. From this numerical evidence, dispersion in $\gamma$ thus does not alter by very much the fundamental trade-off between compensating flood-affected households and maximising insurance coverage.  
+    
+\begin{figure}[h]
+\centering
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{notes/one_region_model/figures/Dependence_insuranceratio_vargamma.png}
+\caption{Fraction of insured household as a function of policy $a,s$ and variance of CRRA $\gamma$, with $\sigma_q=0.7\%$}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{notes/one_region_model/figures/Dependence_insuranceratio_vargamma_varq0.01.png}
+\caption{Fraction of insured household as a function of policy $a,s$ and variance of CRRA $\gamma$, with $\sigma_q=1.0\%$}
+\end{minipage}
+\label{fig:fracinsuredgamma}
+\end{figure}   
+
+\subsubsection{Social planner problem with heterogeneous risk aversion}
+
+We assume that risk aversion is heterogeneous across households, with
+\[
+\gamma \sim \text{LogNormal}(\mu_\gamma, \sigma_\gamma^2).
+\]
+
+When preferences are heterogeneous, utility is not directly comparable across individuals, as cardinal utility depends on the normalization of the utility function. To obtain a welfare measure that is comparable across households, we evaluate outcomes in terms of \emph{certainty-equivalent consumption}.
+
+\paragraph{Certainty-equivalent consumption}
+
+Fix a household with risk aversion $\gamma$. If the household purchases insurance, consumption is deterministic and given by
+\[
+c_I(s) = w - (1-s)\pi d.
+\]
+Hence, its certainty-equivalent consumption is simply
+\[
+c_I^{CE}(s;\gamma) = c_I(s).
+\]
+
+If instead the household remains uninsured, it faces flood risk. Expected utility is given by
+\[
+V_U(s,a;\gamma) = (1-p)u(w;\gamma) + p\,u\bigl(w-(1-a)d;\gamma\bigr),
+\]
+and the corresponding certainty-equivalent consumption $c_U^{CE}(s,a;\gamma)$ is implicitly defined by
+\[
+u\bigl(c_U^{CE}(s,a;\gamma);\gamma\bigr) = V_U(s,a;\gamma).
+\]
+
+\paragraph{Aggregation over belief heterogeneity}
+
+Households differ in their subjective flood probability $q$, distributed according to a Beta distribution. For a given $\gamma$, households purchase insurance if and only if $q \geq q^*(s,a;\gamma)$, where $q^*(s,a;\gamma)$ is defined in \eqref{eq:qstargamma}. 
+
+Let $F(\cdot)$ denote the CDF of the belief distribution. Then the fraction of households with risk aversion $\gamma$ that remains uninsured is $F\bigl(q^*(s,a;\gamma)\bigr)$, while the fraction that purchases insurance is $1 - F\bigl(q^*(s,a;\gamma)\bigr)$.
+
+Average certainty-equivalent consumption for households with risk aversion $\gamma$ is therefore given by
+\[
+c^{CE}(s,a;\gamma)
+=
+F\bigl(q^*(s,a;\gamma)\bigr)\, c_U^{CE}(s,a;\gamma)
++
+\bigl(1 - F\bigl(q^*(s,a;\gamma)\bigr)\bigr)\, c_I^{CE}(s;\gamma).
+\]
+
+\paragraph{Social welfare}
+
+The social planner maximizes average certainty-equivalent consumption across the distribution of risk preferences:
+\begin{equation}
+S(s,a)
+=
+\int c^{CE}(s,a;\gamma)\, dG(\gamma),
+\label{eq:welfarehetpreferences}
+\end{equation}
+where $G(\gamma)$ denotes the distribution of risk aversion.
+
+\paragraph{Result}
+When we implement this idea, we get the following result: preference heterogeneity pushes optimal policy away from disaster aid and towards the insurance subsidy. The intuition is probably that households that fail to insure on average have lower risk aversion. Hence, they lose less certainty-equivalent consumption from the realisation of flood losses. Since other things are approximately equal (the strength of the moral hazard effect from disaster aid does not really change, as we've seen), this pushes the social planner to value disaster aid less. Figure \ref{fig:optpolicy_gamma} illustrates the result, with $\sigma_q=0.7\%$. (The cases with $\sigma_q=0.5\%$ and $\sigma_q=1\%$ do not change.)
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{notes/one_region_model/figures/Dependence_optimalpolicy_vargamma.png}
+    \caption{Optimal policy mix with $\sigma_q=0.7\%$. The dots indicate different levels of the variance of risk aversion $\gamma$.}
+    \label{fig:optpolicy_gamma}
+\end{figure}
 \end{document}
