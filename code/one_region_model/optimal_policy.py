@@ -296,6 +296,168 @@ def compute_welfare_vs_budget_allocation(par, n_points=11):
     return results
 
 
+def compute_mvpf_components(s, a, par):
+    """
+    Compute MVPF sub-terms analytically at policy (s, a).
+
+    dI/ds is derived from the beta PDF via the envelope theorem;
+    dI/da follows from the ratio trick (eq. 7 in model notes).
+    Assumes actuarially fair insurance: premium = p·d.
+
+    Returns a dict with all numerator/denominator components for MVPF_s and MVPF_a.
+    """
+    pd = par.p * par.d
+
+    c_I   = par.w - (1 - s) * pd
+    c_U_F = par.w - (1 - a) * par.d
+
+    Delta_u = u(par.w, par.gamma) - u(c_U_F, par.gamma)
+    qs = (u(par.w, par.gamma) - u(c_I, par.gamma)) / Delta_u
+
+    du_I  = u_prime(c_I,   par.gamma)
+    du_UF = u_prime(c_U_F, par.gamma)
+
+    f_q = beta.pdf(qs, par.alpha, par.beta)
+    I   = 1 - beta.cdf(qs, par.alpha, par.beta)
+
+    # Envelope-theorem derivatives (dq*/ds = -du_I*pd/Delta_u, dq*/da = q*·du_UF·d/Delta_u)
+    dI_ds =  f_q * du_I  * pd         / Delta_u   # > 0: subsidy raises take-up
+    dI_da = -f_q * qs    * du_UF * par.d / Delta_u  # < 0: relief crowds out
+
+    internality = (par.p - qs) * Delta_u           # (p - q*) * Delta_u  [eq. 4]
+
+    # ── MVPF_s decomposition  [eq. 5] ──────────────────────────────────────
+    ic_s = internality * dI_ds      # internality correction: welfare gain from switchers
+    db_s = pd * du_I   * I          # direct benefit to insured
+    dc_s = pd * I                   # direct fiscal cost
+    fe_s = pd * (s - a) * dI_ds    # fiscal externality from switching
+    MVPF_s = (ic_s + db_s) / (dc_s + fe_s)
+
+    # ── MVPF_a decomposition  [eq. 6] ──────────────────────────────────────
+    co_a = internality * dI_da      # crowd-out loss (negative)
+    db_a = pd * du_UF  * (1 - I)   # direct benefit to uninsured flood victims
+    dc_a = pd * (1 - I)            # direct fiscal cost
+    fe_a = pd * (s - a) * dI_da    # fiscal externality from switching
+    MVPF_a = (co_a + db_a) / (dc_a + fe_a)
+
+    return dict(
+        s=s, a=a, q_star=qs, I=I,
+        internality=internality, dI_ds=dI_ds, dI_da=dI_da,
+        ic_s=ic_s, db_s=db_s, dc_s=dc_s, fe_s=fe_s, MVPF_s=MVPF_s,
+        co_a=co_a, db_a=db_a, dc_a=dc_a, fe_a=fe_a, MVPF_a=MVPF_a,
+    )
+
+
+def compute_mvpfs_along_frontier(par, n_points=51):
+    """
+    Sweep the budget frontier and return MVPF components as arrays.
+
+    For each budget-to-subsidy fraction in [0, 1], finds the (s, a) pair
+    on the budget constraint and computes full MVPF decomposition.
+    """
+    res = compute_welfare_vs_budget_allocation(par, n_points=n_points)
+    rows = [compute_mvpf_components(s, a, par)
+            for s, a in zip(res['s_values'], res['a_values'])]
+
+    keys = ['s', 'a', 'q_star', 'I', 'MVPF_s', 'MVPF_a',
+            'ic_s', 'db_s', 'dc_s', 'fe_s',
+            'co_a', 'db_a', 'dc_a', 'fe_a']
+    out = {k: np.array([r[k] for r in rows]) for k in keys}
+    out['fractions']      = res['fractions']
+    out['welfare_values'] = res['welfare_values']
+    return out
+
+
+def plot_mvpf_decomposition(mvpf_data, label='', figsize=(12, 9)):
+    """
+    Four-panel figure: MVPF curves + sub-term decompositions along the frontier.
+
+    Panels:
+      top-left:  MVPF_s and MVPF_a vs budget allocation
+      top-right: MVPF_s numerator terms (internality correction + direct benefit)
+      bot-left:  MVPF_a numerator terms (crowd-out + direct benefit)
+      bot-right: Denominator terms (direct cost + fiscal externality) for both
+
+    x-axis: share of budget allocated to insurance subsidy (%).
+    Dashed vertical line marks the welfare-maximising allocation.
+    """
+    pct = mvpf_data['fractions'] * 100
+    opt = int(np.argmax(mvpf_data['welfare_values']))
+
+    fig, axes = plt.subplots(2, 2, figsize=figsize)
+
+    def vline(ax):
+        ax.axvline(pct[opt], color='gray', lw=1, ls='--',
+                   label=f'Optimal ({pct[opt]:.0f}% → subsidy)')
+
+    # ── top-left: MVPF curves ───────────────────────────────────────────────
+    ax = axes[0, 0]
+    ax.plot(pct, mvpf_data['MVPF_s'], color='steelblue',  lw=2, label='MVPF$_s$ (subsidy)')
+    ax.plot(pct, mvpf_data['MVPF_a'], color='darkorange', lw=2, label='MVPF$_a$ (relief)')
+    ax.axhline(0, color='black', lw=0.5)
+    vline(ax)
+    ax.set_xlabel('Budget → subsidy (%)')
+    ax.set_ylabel('MVPF')
+    ax.set_title('Marginal value of public funds')
+    ax.legend(fontsize=9)
+    ax.grid(True, alpha=0.3)
+
+    # ── top-right: MVPF_s numerator ─────────────────────────────────────────
+    ax = axes[0, 1]
+    ax.plot(pct, mvpf_data['ic_s'], color='green',     lw=2,
+            label=r'Internality $(p-q^*)\Delta u \cdot \partial I/\partial s$')
+    ax.plot(pct, mvpf_data['db_s'], color='steelblue', lw=2,
+            label=r"Direct benefit $pd\,u'(c_I)\cdot I$")
+    ax.plot(pct, mvpf_data['ic_s'] + mvpf_data['db_s'], color='black', lw=2, ls='--',
+            label='Total numerator')
+    ax.axhline(0, color='black', lw=0.5)
+    vline(ax)
+    ax.set_xlabel('Budget → subsidy (%)')
+    ax.set_ylabel('Welfare units')
+    ax.set_title('MVPF$_s$ numerator terms')
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+
+    # ── bottom-left: MVPF_a numerator ───────────────────────────────────────
+    ax = axes[1, 0]
+    ax.plot(pct, mvpf_data['co_a'], color='red',       lw=2,
+            label=r'Crowd-out $(p-q^*)\Delta u \cdot \partial I/\partial a$')
+    ax.plot(pct, mvpf_data['db_a'], color='darkorange', lw=2,
+            label=r"Direct benefit $pd\,u'(c_{U,F})\cdot(1-I)$")
+    ax.plot(pct, mvpf_data['co_a'] + mvpf_data['db_a'], color='black', lw=2, ls='--',
+            label='Total numerator')
+    ax.axhline(0, color='black', lw=0.5)
+    vline(ax)
+    ax.set_xlabel('Budget → subsidy (%)')
+    ax.set_ylabel('Welfare units')
+    ax.set_title('MVPF$_a$ numerator terms')
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+
+    # ── bottom-right: denominator terms ─────────────────────────────────────
+    ax = axes[1, 1]
+    ax.plot(pct, mvpf_data['dc_s'], color='steelblue',  lw=2,
+            label=r'Direct cost$_s$  $pd \cdot I$')
+    ax.plot(pct, mvpf_data['fe_s'], color='steelblue',  lw=2, ls='--',
+            label=r'Fiscal ext.$_s$  $pd(s-a)\,\partial I/\partial s$')
+    ax.plot(pct, mvpf_data['dc_a'], color='darkorange', lw=2,
+            label=r'Direct cost$_a$  $pd \cdot (1-I)$')
+    ax.plot(pct, mvpf_data['fe_a'], color='darkorange', lw=2, ls='--',
+            label=r'Fiscal ext.$_a$  $pd(s-a)\,\partial I/\partial a$')
+    ax.axhline(0, color='black', lw=0.5)
+    vline(ax)
+    ax.set_xlabel('Budget → subsidy (%)')
+    ax.set_ylabel('Budget units')
+    ax.set_title('Denominator terms (fiscal costs)')
+    ax.legend(fontsize=8)
+    ax.grid(True, alpha=0.3)
+
+    if label:
+        fig.suptitle(label, fontsize=13)
+    plt.tight_layout()
+    return fig, axes
+
+
 def compare_beta_distributions(par_list, max_q=1, labels=None, figsize=(8, 5)):
     """
     Compare PDF of beta distributions for multiple parameter sets.
