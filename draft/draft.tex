@@ -172,9 +172,74 @@ The deep-parameter formulas are obtained in two steps. First, substitute $\parti
 
     \item \textbf{The $q^*/p$ discount in $\mathrm{MVPF}_a$.} The crowd-out correction is smaller by $q^*/p<1$, inheriting from the weaker behavioral response to relief ($q^*d$ vs.\ $pd$). The internality $(p-q^*)$ is the same for both instruments; the asymmetry comes entirely from the take-up response.
 
-
     \item \textbf{Limiting case.} When $f(q^*)=0$, all behavioral terms vanish: $\mathrm{MVPF}_s=u'(c_I)$ and $\mathrm{MVPF}_a=u'(c_{U,F})$. 
 \end{itemize}
+
+\subsection{Calibration}
+
+TODO: fill table, double-check Lennard's numbers, find different sources for elasticity
+
+\begin{table}[h!]
+\centering
+\caption{Calibration parameters}
+\label{tab:calibration}
+\begin{tabular}{llcc}
+\toprule
+Name & Symbol & Value & Source \\
+\midrule \midrule
+CRRA coefficient & $\gamma$ & 2 & Standard value\\
+\midrule
+Household wealth (normalized) & $w$ & 1 & \\
+Average flood damage (share of home value) & $d$ & 0.15 & NFIP claims \\
+Annual flood probability & $p$ & 0.01 & SFHA definition \\
+\midrule
+Insurance subsidy & $s$ & 0.3 & \\
+Disaster relief fraction & $a$ & 0.05 &  \\
+\midrule
+Insurance take-up rate & $I$ & 0.5 & \\
+Elasticity of take-up w.r.t.\ premium & $\varepsilon$ & -1 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Preferences.}
+We assume a CRRA utility function $u(c)=c^{1-\gamma}/(1-\gamma)$. We set $\gamma=2$, a standard benchmark in the macroeconomic and insurance literatures.
+
+\paragraph{Flood risk.}
+Wealth is normalized to $w=1$, so all monetary quantities are expressed as fractions of household wealth. The parameter $d$ captures average flood damage as a fraction of house value. We estimate this from National Flood Insurance Program (NFIP) claims data by computing average payouts relative to the insured value of the property.
+We set the annual flood probability equal to the threshold that defines the Special Flood Hazard Area: $p=0.01$, corresponding to the 100-year floodplain. Properties inside the SFHA face an annual flood probability of at least 1\%.
+
+\paragraph{Current policy.}
+
+\paragraph{Belief distribution.}
+No reliable data source directly measures the distribution of subjective flood risk beliefs. For an evaluation of the local optimality of the current policy, we only need the insurance coverage and the density at the margin, which we can recover from observed take-up responses to premium variation. For an evaluation of global counterfactual policies, we need the full belief distribution. We address this by fitting a parametric distribution to match the observed take-up rate and premium semi-elasticity.
+
+\paragraph{Local evaluation: Recovering the belief density.}
+Let $\pi=(1-s)pd$ denote the insurance premium. Define the elasticity of take-up with respect to the premium as
+\[
+    \varepsilon \equiv \frac{\pi}{I}\,\frac{\partial I}{\partial\pi} < 0.
+\]
+Differentiating the indifference condition $q^*\Delta u = u(w)-u(w-\pi)$ with respect to $\pi$ gives $\partial q^*/\partial\pi = u'(c_I)/\Delta u$. Since $I=1-F(q^*)$, it follows that
+\[
+    \frac{\partial I}{\partial\pi} = -\frac{f(q^*)\,u'(c_I)}{\Delta u}.
+\]
+Substituting $\partial I/\partial\pi = \varepsilon I/\pi$ and solving for $f(q^*)$:
+\begin{equation}
+    f(q^*) = -\varepsilon\,\frac{I}{\pi}\,\frac{\Delta u}{u'(c_I)}. \label{eq:fqstar}
+\end{equation}
+The elasticity $\varepsilon$ is the single empirical input: it can be estimated from variation in insurance premiums across households or over time. Given $\varepsilon$ and $I$, all remaining objects on the right-hand side---$\pi$, $\Delta u$, and $u'(c_I)$---are computable from the structural parameters $(w,d,s,a,\gamma)$.
+
+\paragraph{Global evaluation: Fitting a parametric distribution.}
+For global evaluations---tracing the optimal policy frontier or computing welfare at counterfactual policies far from the status quo---the complete distribution $F(q)$ is required. We fit a Beta distribution $q\sim\mathrm{Beta}(\alpha,\beta)$, whose two free parameters are identified by two moment conditions. Let $\hat{f} \equiv -\varepsilon(I/\pi)(\Delta u/u'(c_I))$ denote the target density derived in~\eqref{eq:fqstar}. The conditions are:
+\begin{align}
+    I_{q^*}(\alpha,\beta) &= 1 - I, \label{eq:beta_cdf} \\
+    \frac{(q^*)^{\alpha-1}(1-q^*)^{\beta-1}}{B(\alpha,\beta)} &= \hat{f}, \label{eq:beta_pdf}
+\end{align}
+where $I_{q^*}(\alpha,\beta)$ is the regularized incomplete beta function and $B(\alpha,\beta)=\Gamma(\alpha)\Gamma(\beta)/\Gamma(\alpha+\beta)$. Condition~\eqref{eq:beta_cdf} requires the fraction of the population with beliefs at or below $q^*$ to equal the observed uninsured share $1-I$; condition~\eqref{eq:beta_pdf} requires the density at $q^*$ to equal the value pinned down by the premium elasticity. Given the structural objects $(q^*,\pi,\Delta u,u'(c_I))$---all computable from $(w,d,s,a,\gamma)$---together with the empirical inputs $(I,\varepsilon)$, the system~\eqref{eq:beta_cdf}--\eqref{eq:beta_pdf} uniquely identifies $(\alpha,\beta)$ and is solved numerically.
+
+\subsection{Results}
+
+TODO: add results
 
 \section{Extensions}
 \begin{itemize}
