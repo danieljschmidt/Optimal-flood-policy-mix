@@ -1,14 +1,13 @@
 """
-Optimal Flood Insurance Policy Solver
-
 Solves for optimal subsidy (s) and disaster relief (a) given:
-- CRRA utility: u(c) = c^(1-γ) / (1-γ)
+- Cobb-Douglas utility: u(c) = (c^(1-\phi)+h^phi)^(1-γ) / (1-γ)
 - Beta-distributed subjective beliefs: q ~ Beta(α, β)
 """
 
 import numpy as np
 from scipy.optimize import minimize
 from scipy.stats import beta
+from scipy.stats import lognorm
 from dataclasses import dataclass
 import matplotlib.pyplot as plt
 
@@ -24,7 +23,10 @@ class Parameters:
     # i.e. pi = p. Set pi = p = 0.02 to match the proposal's formulas.
     # The default pi = 0.03 includes a loading factor and will produce
     # different numerical results (e.g. q*(0,0) ≈ 1.5% instead of ≈ 1%).
-    gamma: float = 2.0        # CRRA risk aversion
+    mean_gamma: float = 2
+    var_gamma: float = 0.27
+    gamma_max: float = 5.0   # truncation for numerical stability
+    n_gamma: int = 25        # number of grid points
     B: float = 0.001          # government budget (per capita)
     mean_q: float = 0.01      # mean of beta distribution (subjective flood probability)
     var_q: float = 0.0001     # variance of beta distribution
@@ -50,10 +52,38 @@ class Parameters:
             raise ValueError(f"Variance {sigma2} too large for mean {mu}. Max variance: {mu*(1-mu)}")
         concentration = mu * (1 - mu) / sigma2 - 1
         return (1 - mu) * concentration
+    
+    def gamma_grid(self):
+        """
+        Construct grid and weights for truncated lognormal CRRA distribution
+        matching mean and variance approximately.
+        """
+        mean = self.mean_gamma
+        var = self.var_gamma
+    
+        # Convert mean/var of gamma → lognormal parameters
+        sigma2 = np.log(1 + var / mean**2)
+        mu = np.log(mean) - 0.5 * sigma2
+    
+        sigma = np.sqrt(sigma2)
+    
+        # Create evenly spaced quantiles
+        probs = np.linspace(1e-4, 1 - 1e-4, self.n_gamma)
+        dist = lognorm(s=sigma, scale=np.exp(mu))
+        gamma_vals = dist.ppf(probs)
+    
+        # Truncate extreme tail for stability
+        gamma_vals = np.clip(gamma_vals, 1e-4, self.gamma_max)
+    
+        weights = np.ones_like(gamma_vals) / len(gamma_vals)
+    
+        return gamma_vals, weights
 
 
 def u(c, gamma):
-    """CRRA utility function"""
+    """CRRA utility function - when gamma is close to 1, reduce to log utility"""
+    if abs(gamma - 1.0) < 1e-6:
+        return np.log(c)
     return c ** (1 - gamma) / (1 - gamma)
 
 
@@ -62,40 +92,49 @@ def u_prime(c, gamma):
     return c ** (-gamma)
 
 
-def q_star(s, a, par):
+def q_star_gamma(s, a, gamma, par):
     """Insurance purchase threshold"""
     c_ins = par.w - (1 - s) * par.pi * par.d
     c_unins_flood = par.w - (1 - a) * par.d
     
-    num = u(par.w, par.gamma) - u(c_ins, par.gamma)
-    denom = u(par.w, par.gamma) - u(c_unins_flood, par.gamma)
+    num = u(par.w, gamma) - u(c_ins, gamma)
+    denom = u(par.w, gamma) - u(c_unins_flood, gamma)
     
     return num / denom
 
 
-def V_ins(s, par):
-    """Expected utility if insured"""
-    c = par.w - (1 - s) * par.pi * par.d
-    return u(c, par.gamma)
-
-
-def V_unins(a, par):
-    """True expected utility if uninsured"""
-    return (1 - par.p) * u(par.w, par.gamma) + par.p * u(par.w - (1 - a) * par.d, par.gamma)
-
-
 def social_welfare(s, a, par):
-    """Compute social welfare for given policy"""
-    q = q_star(s, a, par)
-    F_q = beta.cdf(q, par.alpha, par.beta)
-    return V_unins(a, par) * F_q + V_ins(s, par) * (1 - F_q)
+    gamma_vals, weights = par.gamma_grid()
+
+    total = 0.0
+
+    for gamma, wgt in zip(gamma_vals, weights):
+        q = q_star_gamma(s, a, gamma, par)
+        F_q = beta.cdf(q, par.alpha, par.beta)
+
+        V_ins = u(par.w - (1 - s) * par.pi * par.d, gamma)
+        V_unins = (1 - par.p) * u(par.w, gamma) + par.p * u(par.w - (1 - a) * par.d, gamma)
+
+        total += wgt * (V_unins * F_q + V_ins * (1 - F_q))
+
+    return total
 
 
 def budget_spent(s, a, par):
-    """Compute budget expenditure"""
-    q = q_star(s, a, par)
-    F_q = beta.cdf(q, par.alpha, par.beta)
-    return a * par.p * par.d * F_q + s * par.pi * par.d * (1 - F_q)
+    gamma_vals, weights = par.gamma_grid()
+
+    total = 0.0
+
+    for gamma, wgt in zip(gamma_vals, weights):
+        q = q_star_gamma(s, a, gamma, par)
+        F_q = beta.cdf(q, par.alpha, par.beta)
+
+        total += wgt * (
+            a * par.p * par.d * F_q +
+            s * par.pi * par.d * (1 - F_q)
+        )
+
+    return total
 
 
 def solve_optimal_policy(par, x0=None):
@@ -130,7 +169,7 @@ def solve_optimal_policy(par, x0=None):
     # TODO: understand this better
     eps = 1e-6
     par_plus = Parameters(
-        w=par.w, d=par.d, p=par.p, pi=par.pi, gamma=par.gamma,
+        w=par.w, d=par.d, p=par.p, pi=par.pi, mean_gamma=par.mean_gamma, var_gamma=par.var_gamma,
         B=par.B + eps, mean_q=par.mean_q, var_q=par.var_q
     )
     result_plus = minimize(
@@ -147,20 +186,26 @@ def solve_optimal_policy(par, x0=None):
 
 
 def compute_outcomes(s, a, par):
-    """Compute equilibrium outcomes"""
-    q = q_star(s, a, par)
-    F_q = beta.cdf(q, par.alpha, par.beta)
-    
-    welfare = V_unins(a, par) * F_q + V_ins(s, par) * (1 - F_q)
-    spending = a * par.p * par.d * F_q + s * par.pi * par.d * (1 - F_q)
-    
+    gamma_vals, weights = par.gamma_grid()
+
+    frac_uninsured = 0.0
+    welfare = 0.0
+
+    for gamma, wgt in zip(gamma_vals, weights):
+        q = q_star_gamma(s, a, gamma, par)
+        F_q = beta.cdf(q, par.alpha, par.beta)
+
+        frac_uninsured += wgt * F_q
+
+        V_ins = u(par.w - (1 - s) * par.pi * par.d, gamma)
+        V_unins = (1 - par.p) * u(par.w, gamma) + par.p * u(par.w - (1 - a) * par.d, gamma)
+
+        welfare += wgt * (V_unins * F_q + V_ins * (1 - F_q))
+
     return {
-        'q_star': q,
-        'frac_uninsured': F_q,
-        'frac_insured': 1 - F_q,
-        'welfare': welfare,
-        'spending': spending,
-        'mean_belief': par.mean_q
+        'frac_uninsured': frac_uninsured,
+        'frac_insured': 1 - frac_uninsured,
+        'welfare': welfare
     }
 
 
@@ -294,168 +339,6 @@ def compute_welfare_vs_budget_allocation(par, n_points=11):
     }
     
     return results
-
-
-def compute_mvpf_components(s, a, par):
-    """
-    Compute MVPF sub-terms analytically at policy (s, a).
-
-    dI/ds is derived from the beta PDF via the envelope theorem;
-    dI/da follows from the ratio trick (eq. 7 in model notes).
-    Assumes actuarially fair insurance: premium = p·d.
-
-    Returns a dict with all numerator/denominator components for MVPF_s and MVPF_a.
-    """
-    pd = par.p * par.d
-
-    c_I   = par.w - (1 - s) * pd
-    c_U_F = par.w - (1 - a) * par.d
-
-    Delta_u = u(par.w, par.gamma) - u(c_U_F, par.gamma)
-    qs = (u(par.w, par.gamma) - u(c_I, par.gamma)) / Delta_u
-
-    du_I  = u_prime(c_I,   par.gamma)
-    du_UF = u_prime(c_U_F, par.gamma)
-
-    f_q = beta.pdf(qs, par.alpha, par.beta)
-    I   = 1 - beta.cdf(qs, par.alpha, par.beta)
-
-    # Envelope-theorem derivatives (dq*/ds = -du_I*pd/Delta_u, dq*/da = q*·du_UF·d/Delta_u)
-    dI_ds =  f_q * du_I  * pd         / Delta_u   # > 0: subsidy raises take-up
-    dI_da = -f_q * qs    * du_UF * par.d / Delta_u  # < 0: relief crowds out
-
-    internality = (par.p - qs) * Delta_u           # (p - q*) * Delta_u  [eq. 4]
-
-    # ── MVPF_s decomposition  [eq. 5] ──────────────────────────────────────
-    ic_s = internality * dI_ds      # internality correction: welfare gain from switchers
-    db_s = pd * du_I   * I          # direct benefit to insured
-    dc_s = pd * I                   # direct fiscal cost
-    fe_s = pd * (s - a) * dI_ds    # fiscal externality from switching
-    MVPF_s = (ic_s + db_s) / (dc_s + fe_s)
-
-    # ── MVPF_a decomposition  [eq. 6] ──────────────────────────────────────
-    co_a = internality * dI_da      # crowd-out loss (negative)
-    db_a = pd * du_UF  * (1 - I)   # direct benefit to uninsured flood victims
-    dc_a = pd * (1 - I)            # direct fiscal cost
-    fe_a = pd * (s - a) * dI_da    # fiscal externality from switching
-    MVPF_a = (co_a + db_a) / (dc_a + fe_a)
-
-    return dict(
-        s=s, a=a, q_star=qs, I=I,
-        internality=internality, dI_ds=dI_ds, dI_da=dI_da,
-        ic_s=ic_s, db_s=db_s, dc_s=dc_s, fe_s=fe_s, MVPF_s=MVPF_s,
-        co_a=co_a, db_a=db_a, dc_a=dc_a, fe_a=fe_a, MVPF_a=MVPF_a,
-    )
-
-
-def compute_mvpfs_along_frontier(par, n_points=51):
-    """
-    Sweep the budget frontier and return MVPF components as arrays.
-
-    For each budget-to-subsidy fraction in [0, 1], finds the (s, a) pair
-    on the budget constraint and computes full MVPF decomposition.
-    """
-    res = compute_welfare_vs_budget_allocation(par, n_points=n_points)
-    rows = [compute_mvpf_components(s, a, par)
-            for s, a in zip(res['s_values'], res['a_values'])]
-
-    keys = ['s', 'a', 'q_star', 'I', 'MVPF_s', 'MVPF_a',
-            'ic_s', 'db_s', 'dc_s', 'fe_s',
-            'co_a', 'db_a', 'dc_a', 'fe_a']
-    out = {k: np.array([r[k] for r in rows]) for k in keys}
-    out['fractions']      = res['fractions']
-    out['welfare_values'] = res['welfare_values']
-    return out
-
-
-def plot_mvpf_decomposition(mvpf_data, label='', figsize=(12, 9)):
-    """
-    Four-panel figure: MVPF curves + sub-term decompositions along the frontier.
-
-    Panels:
-      top-left:  MVPF_s and MVPF_a vs budget allocation
-      top-right: MVPF_s numerator terms (internality correction + direct benefit)
-      bot-left:  MVPF_a numerator terms (crowd-out + direct benefit)
-      bot-right: Denominator terms (direct cost + fiscal externality) for both
-
-    x-axis: share of budget allocated to insurance subsidy (%).
-    Dashed vertical line marks the welfare-maximising allocation.
-    """
-    pct = mvpf_data['fractions'] * 100
-    opt = int(np.argmax(mvpf_data['welfare_values']))
-
-    fig, axes = plt.subplots(2, 2, figsize=figsize)
-
-    def vline(ax):
-        ax.axvline(pct[opt], color='gray', lw=1, ls='--',
-                   label=f'Optimal ({pct[opt]:.0f}% → subsidy)')
-
-    # ── top-left: MVPF curves ───────────────────────────────────────────────
-    ax = axes[0, 0]
-    ax.plot(pct, mvpf_data['MVPF_s'], color='steelblue',  lw=2, label='MVPF$_s$ (subsidy)')
-    ax.plot(pct, mvpf_data['MVPF_a'], color='darkorange', lw=2, label='MVPF$_a$ (relief)')
-    ax.axhline(0, color='black', lw=0.5)
-    vline(ax)
-    ax.set_xlabel('Budget → subsidy (%)')
-    ax.set_ylabel('MVPF')
-    ax.set_title('Marginal value of public funds')
-    ax.legend(fontsize=9)
-    ax.grid(True, alpha=0.3)
-
-    # ── top-right: MVPF_s numerator ─────────────────────────────────────────
-    ax = axes[0, 1]
-    ax.plot(pct, mvpf_data['ic_s'], color='green',     lw=2,
-            label=r'Internality $(p-q^*)\Delta u \cdot \partial I/\partial s$')
-    ax.plot(pct, mvpf_data['db_s'], color='steelblue', lw=2,
-            label=r"Direct benefit $pd\,u'(c_I)\cdot I$")
-    ax.plot(pct, mvpf_data['ic_s'] + mvpf_data['db_s'], color='black', lw=2, ls='--',
-            label='Total numerator')
-    ax.axhline(0, color='black', lw=0.5)
-    vline(ax)
-    ax.set_xlabel('Budget → subsidy (%)')
-    ax.set_ylabel('Welfare units')
-    ax.set_title('MVPF$_s$ numerator terms')
-    ax.legend(fontsize=8)
-    ax.grid(True, alpha=0.3)
-
-    # ── bottom-left: MVPF_a numerator ───────────────────────────────────────
-    ax = axes[1, 0]
-    ax.plot(pct, mvpf_data['co_a'], color='red',       lw=2,
-            label=r'Crowd-out $(p-q^*)\Delta u \cdot \partial I/\partial a$')
-    ax.plot(pct, mvpf_data['db_a'], color='darkorange', lw=2,
-            label=r"Direct benefit $pd\,u'(c_{U,F})\cdot(1-I)$")
-    ax.plot(pct, mvpf_data['co_a'] + mvpf_data['db_a'], color='black', lw=2, ls='--',
-            label='Total numerator')
-    ax.axhline(0, color='black', lw=0.5)
-    vline(ax)
-    ax.set_xlabel('Budget → subsidy (%)')
-    ax.set_ylabel('Welfare units')
-    ax.set_title('MVPF$_a$ numerator terms')
-    ax.legend(fontsize=8)
-    ax.grid(True, alpha=0.3)
-
-    # ── bottom-right: denominator terms ─────────────────────────────────────
-    ax = axes[1, 1]
-    ax.plot(pct, mvpf_data['dc_s'], color='steelblue',  lw=2,
-            label=r'Direct cost$_s$  $pd \cdot I$')
-    ax.plot(pct, mvpf_data['fe_s'], color='steelblue',  lw=2, ls='--',
-            label=r'Fiscal ext.$_s$  $pd(s-a)\,\partial I/\partial s$')
-    ax.plot(pct, mvpf_data['dc_a'], color='darkorange', lw=2,
-            label=r'Direct cost$_a$  $pd \cdot (1-I)$')
-    ax.plot(pct, mvpf_data['fe_a'], color='darkorange', lw=2, ls='--',
-            label=r'Fiscal ext.$_a$  $pd(s-a)\,\partial I/\partial a$')
-    ax.axhline(0, color='black', lw=0.5)
-    vline(ax)
-    ax.set_xlabel('Budget → subsidy (%)')
-    ax.set_ylabel('Budget units')
-    ax.set_title('Denominator terms (fiscal costs)')
-    ax.legend(fontsize=8)
-    ax.grid(True, alpha=0.3)
-
-    if label:
-        fig.suptitle(label, fontsize=13)
-    plt.tight_layout()
-    return fig, axes
 
 
 def compare_beta_distributions(par_list, max_q=1, labels=None, figsize=(8, 5)):
