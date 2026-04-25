@@ -1,0 +1,580 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{pdflscape}
+
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+\title{Behavioral responses of flood insurance coverage to premium changes:\\
+A literature summary}
+\author{Research notes}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{landscape}
+\section*{Summary table}
+
+The table collects headline estimates of how flood insurance \emph{coverage}
+(take-up / policies in force) responds to \emph{premiums}. ``Implied elasticity'' is the
+ratio of the percentage change in coverage to the percentage change in premium when a
+paper does not report an elasticity directly; flagged with $^\dagger$ and discussed in
+the corresponding entry. Entries marked with $^\ddagger$ are based on third-party
+summaries rather than my own read of the paper and should be verified before citation.
+
+\vspace{1em}
+
+\renewcommand{\arraystretch}{1.3}
+\footnotesize
+\begin{tabular}{p{3cm} p{4.5cm} p{3.5cm} p{3.5cm} p{6cm}}
+\toprule
+\textbf{Study} & \textbf{Identification} & \textbf{$\Delta\pi$} & \textbf{$\Delta I$} & \textbf{Elasticity / response} \\
+\midrule
+\citet{hennighausen2023}
+& DiD: pre- vs.\ post-FIRM in SFHA, BW-2012 / HFIAA-2014; NFIP tract panel 2009--18
+& $+14.3\%$ avg.\ ($+24\%$ by 2018)
+& $-8.2\%$ avg.\ ($-16.9\%$ by 2018)
+& Implied elasticity $\approx -0.64$ (log-ratio); $\approx -0.70$ by 2018$^\dagger$ \\
+\citet{collier2026}
+& DiD: SRL vs.\ non-SRL pre-FIRM Zone-A primary residences, BW-2012; NFIP policy panel 2009--18 (2009 cohort)
+& $+25\%$ in Yr 1; $+25\%$/yr thereafter (prices roughly double by 2019)
+& $-26\%$ cumulative non-renewal over Yrs 1--2; no further effect after FY2014
+& Author-reported first-year elasticity $\approx -1.0$ (p.~20). Multi-year effective elasticity is much smaller in absolute value: non-renewal saturates after FY2014 despite further price increases$^\dagger$ \\
+\citet{mulder2024}
+& OLS on renewal indicator exploiting Newly Mapped Subsidy phase-out (calendar-year vs.\ within-year timing); NFIP newly-mapped policy panel, 2015--19
+& $+15\%$/yr scheduled at second renewal under Newly Mapped Subsidy
+& $-0.17$ pp on renewal probability per $+1\%$ premium
+& Author-reported price elasticity $\approx 0.18$ (Table~1, col.~4). Mandate-adjusted voluntary elasticity $\approx 0.37$ (App.~F). Strictly a semi-elasticity; treated as an elasticity in the welfare model$^\dagger$ \\
+\citet{bradt2021}$^\ddagger$
+& Quasi-experimental BW/HFIAA design covering both SFHA (mandate) and non-SFHA (voluntary); NFIP policy data
+& BW/HFIAA-induced premium changes
+& Take-up declines reported for both segments
+& Reported elasticity $\approx -0.25$ to $-0.29$. Useful for separating mandate-driven from voluntary demand \\
+\citet{wagner2022}$^\ddagger$
+& House-level NFIP premium variation from BW/HFIAA in 20 Atlantic and Gulf Coast states, 2009--17; structural demand model with adaptation
+& BW/HFIAA premium increases
+& Take-up response in structural model
+& Reported demand elasticity $\approx -0.25$ to $-0.30$. Recovers WTP $<2/3$ of expected loss inside SFHA \\
+\citet{gourevitch2025}$^\ddagger$
+& DiD-style comparison across ZIPs by quartile of RR2.0 premium increase, 2021--23
+& RR2.0-induced premium increases (vary by quartile)
+& $-11$ to $-39\%$ new policies; $-5$ to $-13\%$ renewals
+& Implied elasticities $-1.38$ to $-0.26$ across subgroups; effects largest in lower-income ZIPs$^\dagger$ \\
+\citet{ortega2025}$^\ddagger$
+& IV using individual NFIP insurance histories, RR2.0 reform
+& RR2.0 premium changes
+& Increased exit, reduced entry both inside and just outside the SFHA; intensive-margin adjustments in coverage and deductibles
+& No clean elasticity reported in available summaries; complements \citet{gourevitch2025} via individual-level data and intensive margin \\
+\citet{browne2000}$^\ddagger$
+& State-year cross-sectional NFIP aggregates
+& Cross-sectional premium variation
+& Policies in force vs.\ total insured amount
+& Reported elasticities: $-0.32$ (extensive margin, policies) and $-1.22$ (intensive margin, total insured amount). Identification weak --- premiums and quantities both depend on risk and loss history \\
+\citet{atreya2015}$^\ddagger$
+& 32-year Georgia county panel
+& Within-county premium variation
+& County-level take-up
+& Reported elasticities $-0.14$ to $-0.31$ depending on specification. Pre-BW benchmark with weak identification by modern standards \\
+\bottomrule
+\end{tabular}
+\end{landscape}
+
+\clearpage
+
+\section{\citet{hennighausen2023} -- \textit{Journal of Housing Economics}}
+
+\paragraph{Focus relative to our question.}
+The paper's headline contributions are housing-market effects (prices, volumes) of the
+2012 Biggert--Waters Act (BW) and 2014 Homeowner Flood Insurance Affordability Act
+(HFIAA). Estimates relevant to the premium--coverage margin appear as a ``first stage''
+analysis (Section 2.3, Table 1, p.\ 4). The paper does not report an elasticity directly;
+the response measure has to be inferred from two reduced-form DiD coefficients.
+
+\paragraph{Setting and reforms.}
+BW (2012) and HFIAA (2014) phased out subsidies for properties built before their
+community's first Flood Insurance Rate Map (``pre-FIRM'') located inside the Special
+Flood Hazard Area (SFHA, the 100-year floodplain). These rules raised pre-FIRM premiums
+by roughly 18--25\% per year toward the full-risk rate, while post-FIRM properties were
+unaffected.
+
+\paragraph{Identification strategy (insurance margin).}
+Two-way fixed-effects DiD on a balanced panel of NFIP policies aggregated to the
+\emph{census tract $\times$ year $\times$ pre/post-FIRM} cell, 2009--2018 (445{,}110
+observations across $\sim$29{,}000 tracts):
+\begin{equation*}
+\log(\text{Insurance})_{itk} = \alpha_1 \, \text{PreFIRM}_{ik}\times \text{Post}_t
++ \delta_{ik} + \eta_{it} + \varepsilon_{itk}.
+\end{equation*}
+Tract-by-pre/post-FIRM ($\delta_{ik}$) and tract-by-year ($\eta_{it}$) fixed effects
+absorb cell-level levels and time-varying tract-wide shocks. The dependent variable is
+either the average premium or the policy count, in logs. $\alpha_1$ identifies the
+differential change for treated (pre-FIRM) policies after 2012. Standard errors are
+clustered by county.
+
+\paragraph{Headline estimates (Table 1, p.\ 4).}
+\begin{itemize}
+\item \textbf{Premium response (col.\ 1):} $\hat{\alpha}_1^{\text{prem}} = 0.134$
+(s.e.\ 0.005); equivalently a $\sim$14.3\% relative increase in average pre-FIRM
+premiums over the study period.
+\item \textbf{Coverage response (col.\ 2):} $\hat{\alpha}_1^{\text{policy}} = -0.086$
+(s.e.\ 0.008); $\sim$8.2\% decrease in pre-FIRM policy counts, $\approx$170{,}600
+fewer policies relative to the 2012 pre-FIRM stock (footnote 11, p.\ 4).
+\item \textbf{Event-study path (Fig.\ A.1, p.\ 15):} the premium effect grows to
+$\sim$24\% and the policy effect to $\sim$16.9\% by 2018; pre-trend Wald tests are
+flat for policies ($p=0.112$) but \emph{not} for premiums ($p=0.00$).
+\end{itemize}
+
+\paragraph{Implied price-responsiveness of coverage (conversion).}
+Both reduced-form coefficients are in logs and come from the same DiD treatment, so a
+Wald-style ratio gives an aggregate elasticity:
+\[
+\eta \;\approx\; \frac{\hat{\alpha}_1^{\text{policy}}}{\hat{\alpha}_1^{\text{prem}}}
+\;=\; \frac{-0.086}{0.134} \;\approx\; -0.64
+\quad\text{(average 2012--18)},\qquad
+\eta_{2018} \;\approx\; \frac{-0.185}{0.265} \;\approx\; -0.70.
+\]
+(For comparison, the percent-change ratio $-0.082/0.143 \approx -0.57$; the difference
+is the standard log-vs.-percent gap at these magnitudes.)\\
+\textbf{Caveats (flagged $^\dagger$):}
+\begin{itemize}
+\item This is an aggregate Wald ratio, not an individual-level price elasticity. It
+should be read as ``how much does coverage fall when the average treated premium rises
+by 1\%, under BW/HFIAA''.
+\item The authors note (p.\ 9) that the premium estimate may understate the increase
+faced by the marginal dropper if those facing the largest hikes selected out of the
+program; this biases $|\eta|$ \emph{downward in magnitude}.
+\item Estimate is local to previously subsidized SFHA properties (pre-FIRM, inside
+100-year floodplain). External validity to post-FIRM, non-SFHA, or fully unsubsidized
+properties is not established.
+\end{itemize}
+
+\paragraph{Margins captured.}
+\textbf{Extensive margin only} (number of policies in force). The data do not separate
+new non-purchase from cancellations, nor do they capture switching to private flood
+insurance. The authors argue the latter is a minor concern: private flood insurance was
+$\approx$4\% of the market in 2018 and tends to attract \emph{lower-risk} properties,
+not subsidized pre-FIRM ones (footnote, p.\ 4, citing Kousky et al.\ 2018).
+
+\paragraph{Threats to identification the authors discuss.}
+(i) Anticipation: argued unlikely because pre-FIRM status was hard to observe
+ex-ante and the political backlash suggests the rate hike was a surprise.
+(ii) Concurrent shocks: Hurricane Sandy (Oct.\ 2012) is the main worry; results are
+robust to dropping NY and NJ (Table A.5).
+(iii) Map updates changing SFHA status: robust to dropping tracts with $>$5\% SFHA
+re-zoning during 2000--19 (Table A.6).
+(iv) Pre-trend in premiums: the event study shows the premium pre-trend is
+statistically rejected, which softens but does not undo the premium effect; the
+\emph{coverage} pre-trend is flat.
+
+\paragraph{Tangential housing-market results (for context, not focal).}
+Repeat-sales DiD on ZTRAX 2008--18 (Tables 3--4): pre-FIRM property \emph{prices}
+fall 4.2\% and \emph{transaction volumes} fall 2.3\%. The price decline is roughly
+the NPV of the premium increase (\$6{,}600 implied vs.\ \$6{,}207 NPV at a 3\% discount
+rate over 30 years; Appendix C), consistent with near-full capitalization.
+
+\paragraph{Comparison the authors draw.}
+The authors note their coverage results are consistent with negative price elasticities
+of NFIP demand reported by \citet{bradt2021} and \citet{wagner2022}, but do not provide
+a numeric comparison.
+
+\section{\citet{collier2026} -- Working paper, April 2026}
+
+\paragraph{Focus relative to our question.}
+The headline outcome of interest is renewal of flood insurance among an
+extremely high-risk, heavily-subsidized subset of NFIP policyholders. The
+premium--coverage margin is the central object of the paper, not a
+by-product, so the relevant estimates are reported directly. The authors
+themselves compute a back-of-the-envelope first-year price elasticity of
+demand of approximately $-1$ (p.~20), which we adopt as the headline number
+and contextualize below.
+
+\paragraph{Setting and reform.}
+Severe Repetitive Loss (SRL) properties are NFIP-designated homes with
+either four claims of $\$5{,}000{+}$ or two claims summing to more than the
+property's value within ten years. They are 1\% of policies but $\sim$30\%
+of NFIP claims. Pre-reform, the median SRL policyholder paid $\$994$ in
+premium against an estimated $\$5{,}200$ in expected loss (median load
+$0.19$; Table~3, Figure~2). Biggert--Waters (2012) phased out these
+subsidies by raising SRL premiums 25\% per year until the actuarial rate
+was reached. Crucially, the renewal letter accompanying the first
+post-reform bill (Aug.\ 2013, Appendix Fig.~A1) explicitly told SRL
+policyholders that they had been subsidized, that premiums would rise 25\%
+annually, and that premiums would never exceed the full-risk rate.
+
+\paragraph{Identification strategy.}
+DiD on a policy--year panel of the 2009 cohort followed through 2018
+($\sim$2.05M policy-year observations on $\sim$476K unique policies, of
+which 2{,}050 are SRL). Treated and control are restricted to single-family
+primary residences, pre-FIRM rated, in Flood Zone~A, who paid
+\emph{identical} premium rates pre-reform; the rate schedules diverge
+only after Q4~2013 (Figure~3, Panel~a; Appendix Tables~A2--A3 reproduce the
+NFIP rating tables). The preferred specification (Equation~1, Table~4
+column~4) is
+\[
+y_{it} = \!\!\sum_{j=2010,\,j\ne 2012}^{2018}\!\!\gamma_j\,\mathbb{I}(t{=}j)\times \mathbb{I}(\mathrm{SRL}_i)
++ \beta\,\mathbb{I}(\mathrm{SRL}_i) + X_i'\delta + FE_{\text{tract}\times\text{year}} + \varepsilon_{it},
+\]
+with $y_{it}$ a renewal indicator, FY2012 the reference year, and standard
+errors clustered at the policy level. A quarterly version (Equation~2,
+Figure~4) is used for timing.
+
+\paragraph{Headline estimates (Table~4, col.~4; Figure~4).}
+\begin{itemize}
+\item \textbf{Annual DiD coefficients on $\mathbb{I}(\mathrm{SRL})\times\mathbb{I}(t)$:}
+$\hat\gamma_{2013} = -0.18$ (s.e.\ 0.02), $\hat\gamma_{2014} = -0.21$
+(s.e.\ 0.02). All later years are statistically indistinguishable from zero.
+\item \textbf{Cumulative non-renewal due to the reform: 26\%}
+(footnote~17, p.~18; computed as $0.77\times 0.74 - (0.77{-}0.18)(0.74{-}0.21)
+\approx 0.257$, using the non-SRL renewal rates as counterfactuals).
+\item \textbf{Quarterly peak (Figure~4):} SRL policies due to renew in Q1~2014
+were $\sim$50~pp less likely to renew. Effects begin in Q4~2012 (after BW
+passage but \emph{before} any premium change) and end by Q3~2014.
+\item \textbf{Intensive margin: zero detectable response.} Coverage limits
+of those who continue to insure do not move with the reform in 2013--14;
+small effects appear only in 2017--18 and may be selection-driven (Internet
+Appendix~B.6, Table~B5; Figure~B4).
+\end{itemize}
+
+\paragraph{Author-reported elasticity and conversion notes.}
+The authors write (p.~20): ``a 25\% price increase reduces renewal by 26\%
+during the first year of the reform,'' yielding an implied elasticity
+$\approx -1.0$. This is roughly $1.5\times$ the magnitude of the
+\citet{hennighausen2023} aggregate Wald ratio. Two important qualifications:
+\begin{itemize}
+\item \textbf{The first-year elasticity does not extrapolate.} Prices keep
+rising 25\% per year through 2019 (Figure~3a; SRL premium roughly doubles
+relative to control by 2019), but no additional non-renewal occurs after
+FY2014. Computed naively over the full 2013--2019 window, the implied
+elasticity would be much smaller in absolute value. The authors interpret
+this as a kinked, L-shaped demand curve (Internet Appendix~B.2,
+Figure~B2): one group drops in anticipation, a second group drops at the
+first price increase, and the remaining group is highly inelastic.
+\item \textbf{Cumulative-vs.-flow elasticity.}$^\dagger$ The 26\% figure is
+a cumulative two-year non-renewal effect against a 25\% \emph{first-year}
+price increase. A more conservative read uses the cumulative two-year
+price increase ($\sim$56\% above pre-reform on a compounded base): then
+$-0.26/0.56 \approx -0.46$. We flag the headline $-1.0$ as the
+authors' figure but caution against using it as a generic price elasticity
+of NFIP demand outside this specific high-subsidy, high-risk population
+and the first year of treatment.
+\item \textbf{Survival vs.\ flow.} The Internet Appendix~B.3 linear survival
+specification shows the effect is \emph{persistent}: by 2018, 9~pp fewer SRL
+than non-SRL properties from the 2009 cohort remain insured (Table~B1,
+col.~4), so this is not pure harvesting.
+\end{itemize}
+
+\paragraph{Margins and decomposition of non-renewals.}
+\textbf{Extensive margin only}, with the further breakdown (Section~4):
+$\sim$25\% of reform-induced non-renewals are policy \emph{cancellations}
+(typically associated with home sales / relocation; Figure~5b). Home sales
+in tracts with SRL properties rise by $\sim$1 per quarter immediately
+post-reform and by $\sim$2.5 per quarter by 2018 (Figure~6a); tract-level
+prices fall $\sim$10\% (Figure~6b). At end-of-period (2018), only 6.6\% of
+existing uninsured SRL homes had been mitigated (Table~5), implying that
+the bulk of non-renewers neither relocated nor mitigated --- they simply
+went unprotected.
+
+\paragraph{Heterogeneity / mechanisms (Section~5, Internet Appendix~C--D).}
+Treatment-intensity DiD (Eq.~D1, Figure~C2) shows: \emph{no} gradient in
+non-renewal with pre-reform contract load (rules out adverse selection on
+observables); \emph{no} gradient with announced premium-increase magnitude
+or with tract-level income (no support for liquidity constraints);
+significant gradient with tract-level low-education share. The timing of
+non-renewals tracks media coverage of BW (Figure~C3) more tightly than the
+price path itself, which the authors offer as suggestive of belief- /
+attention-driven responses rather than purely price-driven ones.
+
+\paragraph{Threats to identification the authors discuss.}
+(i) Parallel trends: pre-reform $\hat\gamma_{2010}$ and $\hat\gamma_{2011}$
+are 0.01 or smaller and statistically zero (Table~4); the quarterly event
+study shows nine flat pre-reform quarters (Figure~4).
+(ii) Load imbalance between groups: results are essentially unchanged when
+the sample is restricted to loads $<$1, $<$0.75, $<$0.50 (Internet
+Appendix~B.4, Table~B2): $\hat\gamma_{2013}$, $\hat\gamma_{2014}$ stay in
+$[-0.22, -0.18]$.
+(iii) Cohort-specific shocks: re-estimating on the 2010 cohort gives
+essentially the same coefficients (Internet Appendix~B.5, Tables~B3--B4).
+(iv) HFIAA (2014) confound: the HFIAA capped general NFIP rate increases at
+18\% but did not roll back SRL increases, and control-group premiums in
+fact grew 4--5\%/yr both before and after (Figure~3a), consistent with
+broader homeowners-insurance inflation.
+
+\paragraph{Welfare estimate (for context, not focal).}
+A sufficient-statistics calibration (Section~6, Table~6) returns a welfare
+loss of $\$4{,}200$ per SRL homeowner per year ($\sigma=3$, $\lambda=1.3$,
+$y_{\min}=\$4{,}000$); the indifference threshold would require 18\% of SRL
+owners to fully mitigate, far above the $\le$4.2\% upper bound from the
+property-level data.
+
+\paragraph{Population to which the estimate applies.}
+Highly selected: pre-FIRM, single-family, primary-residence, Flood-Zone-A,
+SRL-designated properties whose pre-reform premiums were on average
+$\sim$1/5 of expected loss. The first-year elasticity of $\approx -1$ is a
+local estimate for households told they were heavily subsidized and that
+their subsidy was being removed; it is \emph{not} a generic NFIP price
+elasticity.
+
+\section{\citet{mulder2024} -- Working paper, September 2024}
+
+\paragraph{Focus relative to our question.}
+The paper's headline contribution is a sufficient-statistics welfare model
+of flood-risk \emph{misclassification}, combining a price effect, an
+information effect, and an adaptation effect. Our question maps onto the
+``price effect'' alone (Section~5.1, Table~1, p.~46; Appendix~F).
+The estimate is reported directly by the author as a price elasticity, with
+a separate mandate-adjusted version that he uses in the welfare model.
+
+\paragraph{Setting and reform.}
+The Newly Mapped Subsidy (started 2015) lets homes \emph{remapped} into the
+SFHA pay non-floodplain premiums for two calendar years, after which
+premiums increase $\sim$15\% per year toward the floodplain rate. The
+phase-out is keyed to the \emph{calendar year} of the new map, not the
+month, which is the source of identifying variation.
+
+\paragraph{Identification strategy.}
+Linear probability model on a panel of newly-mapped policies, 2015--2019:
+\[
+\text{Renew}_{iqt} = \alpha_{qt} + \beta X_{iqt} + \sigma\,\Delta P_{iqt} + \varepsilon_{iqt},
+\]
+where Renew is a 0/1 indicator, $\Delta P_{iqt}$ is the scheduled \%
+premium change at renewal under the Newly Mapped subsidy schedule,
+$\alpha_{qt}$ are first-policy-year~$\times$~renewal-year fixed effects,
+and standard errors are clustered by county (78{,}174 obs.). The key
+exclusion: two policyholders mapped into the SFHA close in time but
+straddling a calendar-year boundary face different scheduled premium
+changes at the same renewal date despite identical map vintages
+(Section~5.1.1, p.~18). Identifying assumption: those two groups would
+have had the same renewal propensity absent the differential scheduled
+price increase.
+
+\paragraph{Headline estimate (Table~1, p.~46).}
+\begin{itemize}
+\item \textbf{Coefficient on \% premium increase, col.~4 (preferred):}
+$\hat\sigma = -0.177$ (s.e.\ 0.040), with state FEs, past county-level
+claims controls, and month-written FEs. Coefficients are stable across
+columns~1--4 in $[-0.148, -0.177]$.
+\item Author phrases this as ``a 1\% increase in premiums decreases policy
+renewal by $0.17$ percentage points'' (Section~1, p.~3) and refers to
+$|\hat\sigma|=0.177$ as the ``flood insurance price elasticity'' (Section~6.1,
+p.~30).
+\item \textbf{Mandate adjustment (Appendix~F, p.~74):} using survey
+evidence that $\sim$54\% of floodplain buyers carry insurance only because
+of the lender mandate, the author scales up to a voluntary-purchaser
+elasticity of $0.177/0.46 \approx 0.37$. This is the value plugged into
+the welfare model and used to calibrate the isoelastic demand curve $W(I)$
+(Section~6.1, p.~30).
+\end{itemize}
+
+\paragraph{What kind of object is $\hat\sigma$? (conversion / flag$^\dagger$)}
+$\hat\sigma$ is strictly a \emph{semi-elasticity}: $\Delta$(renewal probability,
+0--1) per 1\% premium change. The author treats it as a price elasticity
+of demand, which assumes the mean renewal rate among the relevant
+population is approximately~1. Because newly-mapped policy renewal rates
+are very high (the policy data show year-over-year retention well above
+85\%; Appendix~E, Figure~A8), the gap between the semi-elasticity
+($-0.177$) and a true elasticity ($-0.177/\bar{R}$, with $\bar{R}\approx 0.85$)
+is on the order of $0.03$. We therefore record $-0.18$ as the headline
+elasticity but flag that:
+\begin{itemize}
+\item the conversion implicit in the welfare calibration assumes
+$\bar{R}\approx 1$ and is mildly attenuating;
+\item the mandate-adjusted version ($0.37$) further assumes that
+\emph{none} of the observed non-renewals come from mandated buyers and
+\emph{all} come from the 46\% voluntary share, which is the strongest
+direction the data can support;
+\item the local treatment is the response of \emph{policyholders} (those
+who already bought) to a known scheduled price path; it is not the
+elasticity of new purchase, nor of the broader SFHA stock.
+\end{itemize}
+
+\paragraph{Margins captured.}
+\textbf{Extensive margin}, renewal only. The panel does not separately
+identify cancellations from non-renewals due to home sales. Coverage
+amount (intensive margin) is not analyzed in the price-elasticity
+exercise.
+
+\paragraph{Threats to identification the author discusses.}
+(i) Selection on map vintage within year: addressed by adding state FEs,
+past-claims controls, and month-written FEs across columns 2--4 of
+Table~1; the coefficient is stable.
+(ii) Mandatory purchase requirement: directly addressed via the survey
+share adjustment in Appendix~F.
+(iii) Salience / information confounds: by design, $\hat\sigma$ is
+identified from premium variation \emph{within} the newly-mapped
+population, all of whom received the same map-update information signal,
+which is what separates this from the floodplain-vs.-non-floodplain
+take-up comparison (Table~2). Other dynamics (decaying salience,
+mandatory-purchase enforcement) are flagged on p.~18 but cannot be
+fully ruled out.
+
+\paragraph{Comparison the author draws.}
+The author cites \citet{bradt2021} ($\sim 0.25$) and \citet{wagner2022}
+($\sim 0.29$) as similar inelastic estimates and offers the
+mandate-adjusted $0.37$ as consistent with these once the mandatory
+purchase share is netted out (p.~19, p.~30).
+
+\paragraph{Population to which the estimate applies.}
+NFIP policyholders newly mapped into the SFHA between 2015 and 2019, who
+purchased at non-floodplain rates and face the scheduled 15\%/yr phase-out
+toward floodplain rates. The variation is in scheduled prices set by the
+NFIP rate manual, not in market-driven price changes; renewal decisions
+are made one year at a time. This is the right population for thinking
+about how an existing NFIP policyholder responds when their premium
+increment is known and incremental, and a relatively narrow benchmark for
+extrapolating to either (a) very large one-shot price increases (cf.\
+\citet{collier2026}) or (b) the new-purchase margin.
+
+\paragraph{Other relevant results in the paper (not focal here).}
+The author's main object of interest is not $\hat\sigma$ in isolation but
+its combination with a positive ``information effect'' that pushes
+floodplain take-up \emph{up} despite higher prices. Table~2 (p.~47) shows
+floodplain designation raises voluntary take-up by 17~pp conditional on
+modeled risk, controls, and demographics ($+21$~pp under an IV using a
+zip-code mismapping index). This is a net effect bundling price and
+information; the welfare model uses $\hat\sigma$ to net out the price
+component and recover an information-only elasticity of demand
+(Section~5.2.3, p.~23: holding premiums fixed, floodplain classification
+would raise take-up by over 30~pp).
+
+\section{Additional papers (brief synopses, $^\ddagger$)}
+
+\textit{The entries below are based on third-party summaries of the literature
+rather than my own read of the source papers. Magnitudes, sample windows, and
+specification details should be verified against the originals before citation.
+They are included here to broaden the comparison set and triangulate the more
+detailed entries above.}
+
+\subsection*{\citet{bradt2021} -- \textit{JEEM}}
+A quasi-experimental analysis of the BW-2012 / HFIAA-2014 reforms using NFIP
+policy-level data, with the distinctive feature of covering both SFHA properties
+(subject to the mandatory purchase requirement) and non-SFHA properties
+(voluntary demand). Reports a price elasticity of flood insurance demand of
+roughly $-0.25$ to $-0.29$. The SFHA / non-SFHA split is the value added relative
+to other BW/HFIAA studies: it lets the reader gauge how much of the elasticity
+estimate is dampened by the mandate. Cited as a benchmark by Mulder, Collier
+et al., and Hennighausen et al. The paper also includes one of the more careful
+tests for adverse selection in flood insurance (none detected), which is why
+it is also a standard reference in the welfare literature.
+
+\subsection*{\citet{wagner2022} -- \textit{AEJ: Economic Policy}}
+Uses house-level variation in NFIP premiums induced by Biggert--Waters / HFIAA
+across 20 Atlantic and Gulf Coast states, 2009--2017, and complements this with
+construction-code-induced premium variation as a separate identification source.
+Estimates a structural demand model with endogenous adaptation, recovering a
+demand elasticity in the $-0.25$ to $-0.30$ range and willingness-to-pay below
+$2/3$ of expected loss inside the SFHA. The paper is the natural structural
+counterpart to the reduced-form papers in the table and is the most-cited
+elasticity estimate in this literature. Wagner is also the source of the
+``no adverse selection but adverse selection on adaptation'' finding that
+Mulder builds on. House-level (rather than tract- or ZIP-level) premium
+variation is what gives Wagner sharper individual-level identification than
+the aggregate DiDs in Hennighausen.
+
+\subsection*{\citet{gourevitch2025} -- \textit{J.~Catastrophe Risk and Resilience}}
+The first quasi-experimental evidence on the NFIP's Risk Rating 2.0 reform
+(2021--2023). Compares ZIP codes by quartile of RR2.0-induced premium increase
+and reports an $11$--$39\%$ decline in new NFIP policies and a $5$--$13\%$
+decline in renewals, with effects largest in lower-income ZIPs. The summaries
+report implied elasticities ranging from $-1.38$ to $-0.26$ across
+subgroups$^\dagger$. The headline contribution relative to the BW/HFIAA papers
+is twofold: (i) RR2.0 is the current pricing regime, so this is the
+forward-looking elasticity, and (ii) the income-quartile heterogeneity is
+sharper than anything in the earlier reforms. The wide elasticity range across
+subgroups makes a single ``RR2.0 elasticity'' ill-defined; reporting the lower-
+and upper-quartile estimates separately is preferable.
+
+\subsection*{\citet{ortega2025} -- \textit{JEEM}}
+A companion to \citet{gourevitch2025} on Risk Rating 2.0, but uses individual
+NFIP insurance histories (rather than ZIP-level aggregates) and an instrumental
+variables strategy. Reports increased exit and reduced entry on the extensive
+margin, both inside the SFHA and in its periphery, alongside intensive-margin
+adjustments in coverage limits and deductibles --- the latter being something
+the ZIP-level papers cannot identify. Available summaries do not give a clean
+single elasticity figure; the paper's value-added is the within-policyholder
+margin and the SFHA-periphery effect. Worth pairing with Gourevitch et al.\
+when discussing the RR2.0 evidence base.
+
+\subsection*{\citet{browne2000} -- \textit{J.~Risk and Uncertainty}}
+The classic empirical paper on flood insurance demand. Uses state-year NFIP
+aggregates with cross-sectional premium variation and reports two distinct
+elasticities: $-0.32$ for policies in force (extensive) and $-1.22$ for total
+insured amount (intensive). The intensive-margin elasticity is markedly larger
+in magnitude than the extensive-margin one --- a decomposition the recent
+quasi-experimental papers (Hennighausen, Collier, Mulder) do not replicate
+because their data and designs target the extensive margin. The identification
+is weak by modern standards: premiums and policy counts are both equilibrium
+objects driven by underlying flood risk and prior loss history, so
+state-year correlations are difficult to interpret causally. Useful as a
+historical anchor and as the headline reference for the extensive-vs.-intensive
+margin distinction.
+
+\subsection*{\citet{atreya2015} -- \textit{Ecological Economics}}
+A 32-year county panel for Georgia, with within-county premium variation
+identifying take-up responses. Reports elasticities in the $-0.14$ to $-0.31$
+range depending on specification. Pre-BW data, so it functions as a
+``before-reforms'' benchmark for the later quasi-experimental literature; the
+range overlaps with Bradt et al. and Wagner despite very different
+identification, which the recent papers cite as a robustness signal.
+Identification is weaker than the BW/HFIAA designs (no sharp shock; relies on
+within-county time-series variation), so the estimate is best read as a
+descriptive long-run aggregate response rather than a causal price elasticity.
+
+\bibliographystyle{abbrvnat}
+\begin{thebibliography}{9}
+\bibitem[Atreya et al.(2015)]{atreya2015}
+Atreya, A., Ferreira, S., Michel-Kerjan, E. (2015).
+What drives households to buy flood insurance? New evidence from Georgia.
+\textit{Ecological Economics}, 117, 153--161.
+
+\bibitem[Bradt et al.(2021)]{bradt2021}
+Bradt, J.\,T., Kousky, C., Wing, O.\,E.\,J. (2021).
+Voluntary purchases and adverse selection in the market for flood insurance.
+\textit{Journal of Environmental Economics and Management}, 110, 102515.
+
+\bibitem[Browne and Hoyt(2000)]{browne2000}
+Browne, M.\,J., Hoyt, R.\,E. (2000).
+The demand for flood insurance: Empirical evidence.
+\textit{Journal of Risk and Uncertainty}, 20(3), 291--306.
+
+\bibitem[Collier et al.(2026)]{collier2026}
+Collier, B.\,L., Huber, T., Jaspersen, J.\,G., Richter, A. (2026).
+Homeowners' willingness to insure flood risks as prices increase.
+\textit{Working Paper}, April 22, 2026.
+
+\bibitem[Gourevitch et al.(2025)]{gourevitch2025}
+Gourevitch, J.\,D., Snyder, S.\,A., Kousky, C. (2025).
+Effects of risk-based pricing reform on flood insurance uptake.
+\textit{Journal of Catastrophe Risk and Resilience}.
+
+\bibitem[Hennighausen et al.(2023)]{hennighausen2023}
+Hennighausen, H., Liao, Y., Nolte, C., Pollack, A. (2023).
+Flood insurance reforms, housing market dynamics, and adaptation to climate risks.
+\textit{Journal of Housing Economics}, 62, 101953.
+
+\bibitem[Mulder(2024)]{mulder2024}
+Mulder, P. (2024).
+Mismeasuring risk: The welfare effects of flood risk information.
+\textit{Working Paper}, September 24, 2024.
+
+\bibitem[Ortega and Petkov(2025)]{ortega2025}
+Ortega, F., Petkov, I. (2025).
+To improve is to change: The effects of Risk Rating 2.0 on flood insurance demand.
+\textit{Journal of Environmental Economics and Management}.
+
+\bibitem[Wagner(2022)]{wagner2022}
+Wagner, K.\,R.\,H. (2022).
+Adaptation and adverse selection in markets for natural disaster insurance.
+\textit{American Economic Journal: Economic Policy}, 14(3), 380--421.
+\end{thebibliography}
+
+\end{document}
