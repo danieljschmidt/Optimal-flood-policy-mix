@@ -1,0 +1,604 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+
+% Math
+\usepackage{amsmath, mathtools}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{natbib}
+\usepackage{comment}
+
+\title{One-region model with private adaptation}
+\author{Taco Prins, Lennard Schlattmann, Daniel Schmidt}
+\date{May 2026}
+
+\begin{document}
+
+\maketitle
+
+We extend the baseline one-region model to allow households to invest in private flood adaptation measures (e.g.\ flood-proofing, elevating foundations, installing barriers) that reduce flood damage. We consider two cases: a discrete adaptation decision (Section~\ref{sec:discrete}), in which adaptation is a binary choice, and a continuous adaptation choice (Section~\ref{sec:continuous}), in which households choose how much to invest. Throughout, the government has up to three instruments: an insurance subsidy $s$, a disaster relief fraction $a$, and an adaptation subsidy $b$.
+
+\paragraph{Common assumption.} We assume throughout that insurance contracts do not condition premiums on households' private adaptation status (due to moral hazard or observability constraints). As a consequence, insured households bear no residual flood risk and therefore have no incentive to adapt; adaptation is only chosen by uninsured households.\footnote{This assumption can be relaxed. If insurers observe adaptation and adjust premiums accordingly, insured households would also adapt. The qualitative results on the interaction between adaptation subsidies and insurance subsidies are unchanged.}
+
+%-------------------------------------------------------------------
+\section{Discrete adaptation}
+\label{sec:discrete}
+%-------------------------------------------------------------------
+
+\subsection{Household Problem}
+
+\textbf{Setup.} Each household has wealth $w$ and faces a flood that occurs with true probability $p$ and causes damage $d$. Households differ in their subjective flood probability $q$, distributed according to the CDF $F(q)$.
+
+Uninsured households can pay a fixed adaptation cost $k$ (e.g.\ install flood barriers) that reduces flood damage from $d$ to $\delta d$, where $\delta\in(0,1)$. The government subsidizes adaptation at rate $b$, so the household's net cost is $(1-b)k$. We assume that adaptation is worthwhile in the flood state net of costs:
+\begin{equation}
+    (1-a)(1-\delta)d > (1-b)k, \label{eq:adaptation_worthwhile}
+\end{equation}
+so that an uninsured household that adapts and experiences a flood is strictly better off than one that does not adapt.
+
+\textbf{Consumption levels.}
+\begin{itemize}
+    \item Insured: $c_I = w - (1-s)pd$ (certain)
+    \item Uninsured, not adapted, no flood: $c_{U,N} = w$
+    \item Uninsured, not adapted, flood: $c_{U,F} = w - (1-a)d$
+    \item Uninsured, adapted, no flood: $c_{A,N} = w - (1-b)k$
+    \item Uninsured, adapted, flood: $c_{A,F} = w - (1-b)k - (1-a)\delta d$
+\end{itemize}
+Note that condition~\eqref{eq:adaptation_worthwhile} is equivalent to $c_{A,F} > c_{U,F}$: adaptation strictly raises consumption in the flood state.
+
+\textbf{Value functions.} The social planner evaluates household welfare using the true flood probability $p$. Define:
+\begin{align}
+    V_I(s) &= u(c_I), \\
+    V_U(a) &= (1-p)\,u(c_{U,N}) + p\,u(c_{U,F}), \\
+    V_A(a,b) &= (1-p)\,u(c_{A,N}) + p\,u(c_{A,F}).
+\end{align}
+From the perspective of a household with subjective flood probability $q$:
+\begin{align}
+    \tilde{V}_U(q,a) &= (1-q)\,u(c_{U,N}) + q\,u(c_{U,F}), \\
+    \tilde{V}_A(q,a,b) &= (1-q)\,u(c_{A,N}) + q\,u(c_{A,F}).
+\end{align}
+
+\textbf{Household decision.} Each household chooses the option with highest subjective expected utility among $\{V_I(s),\, \tilde{V}_U(q,a),\, \tilde{V}_A(q,a,b)\}$.
+
+\textbf{Adaptation threshold.} An uninsured household adapts if and only if $\tilde{V}_A(q,a,b) \geq \tilde{V}_U(q,a)$. Setting $\tilde{V}_A = \tilde{V}_U$ and rearranging:
+\begin{equation}
+    (1-q^{**})\underbrace{\bigl[u(c_{U,N})-u(c_{A,N})\bigr]}_{\Delta u_N\,>\,0}
+    =
+    q^{**}\underbrace{\bigl[u(c_{A,F})-u(c_{U,F})\bigr]}_{\Delta u_F\,>\,0},
+\end{equation}
+which gives
+\begin{equation}
+    q^{**}(a,b) = \frac{\Delta u_N}{\Delta u_N + \Delta u_F}
+    = \frac{u(c_{U,N})-u(c_{A,N})}{u(c_{U,N})-u(c_{A,N})+u(c_{A,F})-u(c_{U,F})}. \label{eq:qstarstar}
+\end{equation}
+Households with $q > q^{**}$ adapt (if uninsured); those with $q \leq q^{**}$ do not.
+
+\textbf{Insurance threshold.} Among households that adapt ($q > q^{**}$), a household insures if and only if $V_I(s) \geq \tilde{V}_A(q,a,b)$. Setting $V_I(s) = \tilde{V}_A(q^*,a,b)$:
+\begin{equation}
+    u(c_I) = (1-q^*)\,u(c_{A,N}) + q^*\,u(c_{A,F}), \label{eq:qstar_def}
+\end{equation}
+which gives
+\begin{equation}
+    q^*(s,a,b) = \frac{u(c_I)-u(c_{A,N})}{u(c_{A,F})-u(c_{A,N})}. \label{eq:qstar}
+\end{equation}
+Households with $q > q^*(s,a,b)$ insure; those with $q^{**} < q \leq q^*$ adapt but do not insure; those with $q \leq q^{**}$ do neither. The next lemma characterises when this three-region ordering obtains.
+
+\subsubsection*{When does $q^{**} < q^*$ hold?}
+
+Since $\tilde{V}_U(q)$, $\tilde{V}_A(q)$, and $V_I$ are all linear (or constant) in $q$, the three-region structure has a clean geometric interpretation. Both $\tilde{V}_U$ and $\tilde{V}_A$ are decreasing in $q$ (floods are bad), but $\tilde{V}_A$ declines more slowly because adaptation reduces the flood loss: its slope is $-(u(c_{A,N})-u(c_{A,F})) = -\Delta u_A$, versus $-(u(c_{U,N})-u(c_{U,F})) = -\Delta u_U < -\Delta u_A$. Starting below $\tilde{V}_U$ at $q=0$ (adaptation costs money even when there is no flood), $\tilde{V}_A$ eventually overtakes $\tilde{V}_U$ at $q^{**}$. For the adapt-region to exist before households switch to insurance, $\tilde{V}_A$ must still exceed $V_I$ at $q^{**}$.
+
+\begin{quote}
+\textbf{Lemma (three-region ordering).} $q^{**} < q^*$ if and only if
+\begin{equation}
+    (1-q^{**})\,u(c_{A,N}) + q^{**}\,u(c_{A,F}) > u(c_I). \label{eq:ordering_condition}
+\end{equation}
+\end{quote}
+
+\textit{Proof.} $q^{**} < q^*$ iff $\tilde{V}_A(q^{**}) > V_I(s)$, which is exactly \eqref{eq:ordering_condition}. $\square$
+
+Substituting $q^{**} = \Delta u_N/(\Delta u_N + \Delta u_F)$ and rearranging, condition \eqref{eq:ordering_condition} is equivalent to
+\begin{equation}
+    \Delta u_F\,\bigl(u(c_{A,N})-u(c_I)\bigr) > \Delta u_N\,\bigl(u(c_I)-u(c_{A,F})\bigr). \label{eq:ordering_condition2}
+\end{equation}
+
+\textbf{Necessary condition.} The left-hand side of \eqref{eq:ordering_condition2} is positive only if $u(c_{A,N}) > u(c_I)$, i.e., $c_{A,N} > c_I$. Hence a necessary condition is
+\begin{equation}
+    (1-b)k < (1-s)pd. \label{eq:necessary}
+\end{equation}
+The net adaptation cost must be less than the insurance premium. If this fails, insured households face a lower certain cost than adapted households in the no-flood state, and insurance dominates adaptation for all $q$: the adapt-region is empty.
+
+\textbf{Necessary and sufficient condition.} Given \eqref{eq:necessary}, we have $c_{A,F} \leq c_I < c_{A,N}$ or $c_I < c_{A,F}$:
+\begin{itemize}
+    \item If $c_I \leq c_{A,F}$, i.e., $(1-s)pd \geq (1-b)k + (1-a)\delta d$: the insurance premium is so large that even the adapted household in the flood state has higher consumption. The left-hand side of \eqref{eq:ordering_condition2} is positive and the right-hand side is non-positive, so \eqref{eq:ordering_condition} holds automatically.
+    \item If $c_{A,F} < c_I < c_{A,N}$ (the empirically relevant case): both sides of \eqref{eq:ordering_condition2} are positive and the condition becomes
+    \begin{equation}
+        \frac{u(c_{A,N})-u(c_I)}{u(c_I)-u(c_{A,F})} > \frac{\Delta u_N}{\Delta u_F}. \label{eq:ordering_ratio}
+    \end{equation}
+    The right-hand side is determined by the adaptation threshold $q^{**}$: a lower $q^{**}$ (adaptation is attractive at low beliefs) means a smaller ratio $\Delta u_N/\Delta u_F$, making the condition easier to satisfy. The left-hand side measures how far $c_I$ lies from $c_{A,N}$ relative to $c_{A,F}$: a high insurance premium (low $s$, or high $p$ and $d$) pushes $c_I$ toward $c_{A,F}$, increasing the left-hand side and making \eqref{eq:ordering_ratio} easier to satisfy.
+\end{itemize}
+
+\textbf{Economic interpretation.} Condition \eqref{eq:ordering_condition} says that, at the belief $q^{**}$ where the household is exactly indifferent between adapting and doing nothing, adaptation must still be preferred over insurance. The adapt-region collapses whenever insurance is sufficiently generous (high $s$) or adaptation sufficiently costly (high $(1-b)k$) that the ordering reverses. Policies that increase the insurance subsidy (raise $c_I$ toward $c_{A,N}$) shrink the adapt-region; policies that increase the adaptation subsidy (raise $c_{A,N}$ and $c_{A,F}$) expand it.
+
+\subsection{Government Problem}
+
+\textbf{Take-up rates.} Define:
+\begin{align}
+    I(s,a,b) &= 1 - F(q^*), \quad\text{(insurance take-up rate)} \\
+    A(s,a,b) &= F(q^*) - F(q^{**}), \quad\text{(adaptation take-up rate, among uninsured)} \\
+    N(s,a,b) &= F(q^{**}). \quad\text{(uninsured, unadapted fraction)}
+\end{align}
+
+\textbf{Social welfare.} The planner maximizes:
+\begin{equation}
+    S(s,a,b) = V_I(s)\cdot I + V_A(a,b)\cdot A + V_U(a)\cdot N. \label{eq:welfare_discrete}
+\end{equation}
+
+\textbf{Budget constraint.} Government expenditure covers three items:
+\begin{equation}
+    B = \underbrace{spd\cdot I}_{\text{insurance subsidies}}
+    + \underbrace{ap\bigl[\delta d\cdot A + d\cdot N\bigr]}_{\text{disaster relief}}
+    + \underbrace{bk\cdot A}_{\text{adaptation subsidies}}. \label{eq:budget_discrete}
+\end{equation}
+
+\textbf{Lagrangian.}
+\begin{equation}
+    \mathcal{L}(s,a,b,\lambda) = S(s,a,b) - \lambda\Bigl[spd\cdot I + ap(\delta d\cdot A + d\cdot N) + bk\cdot A - B\Bigr].
+\end{equation}
+
+\subsection{First-Order Conditions}
+
+Let $f(\cdot)$ denote the density of $F$. Applying the chain rule and using the envelope theorem with respect to household optimization (noting that the insurance threshold $q^*$ depends on $s$, $a$, and $b$, and the adaptation threshold $q^{**}$ depends on $a$ and $b$), the three first-order conditions are:
+
+\begin{align}
+\frac{\partial\mathcal{L}}{\partial s}
+&=
+\underbrace{\bigl(V_I - V_A\bigr)\frac{\partial I}{\partial s}}_{\text{internality: switching to insurance}}
++\underbrace{\frac{\partial V_I}{\partial s}\cdot I}_{\text{transfer to insured}}
+-\lambda\,pd\Biggl[I + \Bigl(s - a\delta\Bigr)\frac{\partial I}{\partial s}\Biggr]
+= 0, \label{eq:foc_s_discrete}
+\\[10pt]
+\frac{\partial\mathcal{L}}{\partial a}
+&=
+\underbrace{\bigl(V_I - V_A\bigr)\frac{\partial I}{\partial a}}_{\text{crowd-out from insurance}}
++\underbrace{\bigl(V_A - V_U\bigr)\frac{\partial A}{\partial a}}_{\text{crowd-out from adaptation}}
++\underbrace{\frac{\partial V_A}{\partial a}\cdot A + \frac{\partial V_U}{\partial a}\cdot N}_{\text{transfer to uninsured}}
+\notag\\
+&\qquad
+-\lambda\Bigl[ap\bigl(\delta d\,\frac{\partial A}{\partial a} + d\,\frac{\partial N}{\partial a}\bigr)
++ p(\delta d\cdot A + d\cdot N)
++ (s-a\delta)\,pd\,\frac{\partial I}{\partial a}
++ bk\,\frac{\partial A}{\partial a}
+\Bigr]
+= 0, \label{eq:foc_a_discrete}
+\\[10pt]
+\frac{\partial\mathcal{L}}{\partial b}
+&=
+\underbrace{\bigl(V_I - V_A\bigr)\frac{\partial I}{\partial b}}_{\text{crowd-out from insurance}}
++\underbrace{\bigl(V_A - V_U\bigr)\frac{\partial A}{\partial b}}_{\text{internality: switching to adaptation}}
++\underbrace{\frac{\partial V_A}{\partial b}\cdot A}_{\text{transfer to adapted}}
+\notag\\
+&\qquad
+-\lambda\Bigl[bk\,\frac{\partial A}{\partial b} + k\cdot A
++ ap\delta d\,\frac{\partial A}{\partial b}
++ (s-a\delta)\,pd\,\frac{\partial I}{\partial b}
+\Bigr]
+= 0. \label{eq:foc_b_discrete}
+\end{align}
+
+Each FOC balances the same three forces as in the baseline model --- internality correction, direct transfer to recipients, and fiscal costs --- but the presence of a third household type (uninsured, adapted) generates additional crowd-out margins.
+
+\textbf{Internality corrections.} At the insurance threshold $q^*$, the marginal household is indifferent between insuring and adapting: $V_I(s) = \tilde{V}_A(q^*,a,b)$. The welfare gap between the insured and adapted outcomes, evaluated at the true probability $p$, is
+\begin{equation}
+    V_I(s) - V_A(a,b) = \tilde{V}_A(q^*,a,b) - V_A(a,b) = (p - q^*)\Delta u_A,
+    \label{eq:internality_insurance}
+\end{equation}
+where $\Delta u_A \equiv u(c_{A,N}) - u(c_{A,F}) > 0$ is the utility loss from a flood for an adapted, uninsured household. This is positive when $q^* < p$: the marginal insured household underestimates flood risk.
+
+At the adaptation threshold $q^{**}$, the marginal household is indifferent between adapting and doing nothing: $\tilde{V}_A(q^{**},a,b) = \tilde{V}_U(q^{**},a)$. The true welfare gap decomposes as
+\begin{equation}
+    V_A(a,b) - V_U(a) = \underbrace{(V_A - \tilde{V}_A(q^{**}))}_{-(p-q^{**})\Delta u_A}
+    + \underbrace{(\tilde{V}_A(q^{**}) - \tilde{V}_U(q^{**}))}_{=\,0}
+    + \underbrace{(\tilde{V}_U(q^{**}) - V_U)}_{(p-q^{**})\Delta u_U},
+\end{equation}
+where $\Delta u_U \equiv u(c_{U,N}) - u(c_{U,F}) > 0$ is the utility loss from a flood for an unadapted household. Since $\Delta u_U > \Delta u_A$ (adaptation reduces the utility loss from flooding), this gives
+\begin{equation}
+    V_A(a,b) - V_U(a) = (p - q^{**})(\Delta u_U - \Delta u_A) > 0 \quad \text{when } p > q^{**}.
+    \label{eq:internality_adaptation}
+\end{equation}
+
+\textbf{Threshold derivatives.} By the implicit function theorem, differentiating the condition $V_I(s) = \tilde{V}_A(q^*,a,b)$:
+\begin{align}
+    \frac{\partial q^*}{\partial s}
+    &= -\frac{\partial V_I/\partial s}{\partial \tilde{V}_A/\partial q^*}
+    = -\frac{pd\,u'(c_I)}{u(c_{A,F})-u(c_{A,N})}
+    < 0, \label{eq:dqstar_ds}
+    \\[6pt]
+    \frac{\partial q^*}{\partial a}
+    &= -\frac{\partial \tilde{V}_A/\partial a\big|_{q=q^*}}{\partial \tilde{V}_A/\partial q^*}
+    = \frac{q^*\delta d\,u'(c_{A,F})}{u(c_{A,N})-u(c_{A,F})}
+    > 0, \label{eq:dqstar_da}
+    \\[6pt]
+    \frac{\partial q^*}{\partial b}
+    &= -\frac{\partial \tilde{V}_A/\partial b\big|_{q=q^*}}{\partial \tilde{V}_A/\partial q^*}
+    = \frac{k\bigl[(1-q^*)u'(c_{A,N})+q^*u'(c_{A,F})\bigr]}{u(c_{A,N})-u(c_{A,F})}
+    > 0, \label{eq:dqstar_db}
+\end{align}
+and differentiating the condition $\tilde{V}_A(q^{**},a,b) = \tilde{V}_U(q^{**},a)$:
+\begin{align}
+    \frac{\partial q^{**}}{\partial a}
+    &= -\frac{\partial(\tilde{V}_A - \tilde{V}_U)/\partial a\big|_{q=q^{**}}}{\partial(\tilde{V}_A - \tilde{V}_U)/\partial q\big|_{q=q^{**}}}
+    = \frac{q^{**}\bigl[d\,u'(c_{U,F}) - \delta d\,u'(c_{A,F})\bigr]}{\Delta u_N + \Delta u_F}
+    > 0, \label{eq:dqstarstar_da}
+    \\[6pt]
+    \frac{\partial q^{**}}{\partial b}
+    &= -\frac{\partial(\tilde{V}_A - \tilde{V}_U)/\partial b\big|_{q=q^{**}}}{\partial(\tilde{V}_A - \tilde{V}_U)/\partial q\big|_{q=q^{**}}}
+    = -\frac{k\bigl[(1-q^{**})u'(c_{A,N})+q^{**}u'(c_{A,F})\bigr]}{\Delta u_N + \Delta u_F}
+    < 0. \label{eq:dqstarstar_db}
+\end{align}
+Equation~\eqref{eq:dqstar_ds} confirms that the insurance subsidy draws households into insurance (lower $q^*$, higher take-up $I$). By contrast, equations~\eqref{eq:dqstar_da} and~\eqref{eq:dqstar_db} show that disaster relief and the adaptation subsidy both raise $q^*$, pushing households toward adaptation rather than insurance. Equation~\eqref{eq:dqstarstar_da} is positive because a higher disaster relief rate benefits unadapted uninsured households more than adapted ones (their unmitigated damage $d$ exceeds $\delta d$), so the relative return to adaptation falls and fewer households adapt: $u'(c_{U,F}) > u'(c_{A,F})$ ensures $d\,u'(c_{U,F}) > \delta d\,u'(c_{A,F})$. Equation~\eqref{eq:dqstarstar_db} confirms that a larger adaptation subsidy lowers $q^{**}$, drawing more households into adaptation.
+
+\subsection{Sufficient Statistics Representation}
+
+Rearranging each FOC so that welfare gain per dollar of fiscal cost equals $\lambda$ gives MVPF expressions. Define the semi-elasticities of insurance take-up and adaptation take-up with respect to each instrument:
+\begin{align}
+    \varepsilon_s \equiv \frac{1}{I}\frac{\partial I}{\partial s}, \quad
+    \varepsilon_a \equiv \frac{1}{I}\frac{\partial I}{\partial a}, \quad
+    \varepsilon_b \equiv \frac{1}{I}\frac{\partial I}{\partial b}, \quad
+    \varepsilon_a^{**} \equiv \frac{1}{A}\frac{\partial A}{\partial a}, \quad
+    \varepsilon_b^{**} \equiv \frac{1}{A}\frac{\partial A}{\partial b}.
+\end{align}
+
+The MVPF for the insurance subsidy is:
+\begin{equation}
+    \mathrm{MVPF}_s = \frac{(p-q^*)\Delta u_A\cdot I\varepsilon_s + pd\,u'(c_I)\cdot I}{pd\bigl[I + (s-a\delta)\,I\varepsilon_s\bigr]}.
+    \label{eq:mvpf_s_disc}
+\end{equation}
+The numerator has two terms: the internality correction (proportional to the belief gap $p-q^*$, and positive when the marginal insured household underestimates flood risk) and the mechanical transfer to existing insured households. The denominator is the net fiscal cost of raising $s$: the direct subsidy bill $pd\cdot I$ plus the net change in budget from households switching at the $q^*$ margin (each switcher costs $spd$ in insurance subsidies but saves $ap\delta d$ in disaster relief).
+
+The MVPF for disaster relief is:
+\begin{equation}
+    \mathrm{MVPF}_a = \frac{(p-q^*)\Delta u_A\cdot I\varepsilon_a
+    + (p-q^{**})(\Delta u_U - \Delta u_A)\cdot A\varepsilon_a^{**}
+    + p\delta d\,u'(c_{A,F})\cdot A + pd\,u'(c_{U,F})\cdot N}{\partial\mathrm{Budget}/\partial a},
+    \label{eq:mvpf_a_disc}
+\end{equation}
+where $\Delta u_U - \Delta u_A = [u(c_{U,N})-u(c_{U,F})]-[u(c_{A,N})-u(c_{A,F})]>0$ is the extra utility loss borne by an unadapted household in a flood. The numerator therefore contains: the internality at the insurance margin; the internality at the adaptation margin (positive when $p > q^{**}$, since unadapted households bear excess flood risk); and the direct transfers from disaster relief to adapted and unadapted uninsured households. The fiscal derivative is:
+\begin{equation}
+    \frac{\partial\mathrm{Budget}}{\partial a} = p(\delta d\cdot A + d\cdot N)
+    + ap\!\left(\delta d\,\frac{\partial A}{\partial a} + d\,\frac{\partial N}{\partial a}\right)
+    + (s-a\delta)\,pd\,\frac{\partial I}{\partial a}
+    + bk\,\frac{\partial A}{\partial a}. \label{eq:budget_a_disc}
+\end{equation}
+
+The MVPF for the adaptation subsidy is:
+\begin{equation}
+    \mathrm{MVPF}_b = \frac{(p-q^*)\Delta u_A\cdot I\varepsilon_b
+    + (p-q^{**})(\Delta u_U - \Delta u_A)\cdot A\varepsilon_b^{**}
+    + k\bigl[(1-p)\,u'(c_{A,N}) + p\,u'(c_{A,F})\bigr]\cdot A}{\partial\mathrm{Budget}/\partial b},
+    \label{eq:mvpf_b_disc}
+\end{equation}
+where the direct transfer term $k[(1-p)u'(c_{A,N})+pu'(c_{A,F})]\cdot A$ reflects the fact that a higher adaptation subsidy reduces the net adaptation cost by $k$ per household, valued at the true expected marginal utility. The fiscal derivative is:
+\begin{equation}
+    \frac{\partial\mathrm{Budget}}{\partial b} = k\cdot A
+    + (ap\delta d + bk)\,\frac{\partial A}{\partial b}
+    + (s-a\delta)\,pd\,\frac{\partial I}{\partial b}. \label{eq:budget_b_disc}
+\end{equation}
+At an interior optimum, $\mathrm{MVPF}_s = \mathrm{MVPF}_a = \mathrm{MVPF}_b = \lambda$.
+
+\textbf{Comparison with continuous case.} The MVPF expressions in equations~\eqref{eq:mvpf_s_disc}--\eqref{eq:mvpf_b_disc} have the same structure as those in Section~\ref{sec:continuous}. The key difference is that the internality at the adaptation margin uses $\Delta u_U - \Delta u_A$ in the discrete case, while the continuous case uses $\Delta u_U(a)$ evaluated at the adaptation threshold. This is because in the discrete case the marginal household at $q^{**}$ is indifferent between adapting (with a fixed investment $k$) and doing nothing, so the welfare gain of switching is the full difference between the uninsured-adapted and uninsured-unadapted true values. In the continuous case, the marginal household is at $k^* = 0$, so the welfare gain reduces to $(p-q^{**})\Delta u_U(a)$, identical to the baseline one-region model.
+
+%-------------------------------------------------------------------
+\section{Continuous adaptation}
+\label{sec:continuous}
+%-------------------------------------------------------------------
+
+\subsection{Household Problem}
+
+\textbf{Setup.} The setup is as in Section~\ref{sec:discrete}, except that the adaptation investment $k \geq 0$ is now a continuous choice. Investing $k$ reduces flood damage by $m(k)$, where $m(0)=0$, $m'(k)>0$, and $m''(k)<0$ (strictly concave, diminishing returns). Effective flood damage for an uninsured household that invests $k$ is $d - m(k)$. The net cost to the household is $(1-b)k$.
+
+\textbf{Consumption levels.}
+\begin{itemize}
+    \item Insured: $c_I = w - (1-s)pd$ (unchanged)
+    \item Uninsured, investment $k$, no flood: $c_{A,N}(k) = w - (1-b)k$
+    \item Uninsured, investment $k$, flood: $c_{A,F}(k) = w - (1-b)k - (1-a)\bigl(d-m(k)\bigr)$
+\end{itemize}
+
+\textbf{Value functions.} The perceived and true value functions for an uninsured household choosing $k$ are:
+\begin{align}
+    \tilde{V}_A(q,a,b,k) &= (1-q)\,u\!\bigl(c_{A,N}(k)\bigr) + q\,u\!\bigl(c_{A,F}(k)\bigr), \\
+    V_A(a,b,k) &= (1-p)\,u\!\bigl(c_{A,N}(k)\bigr) + p\,u\!\bigl(c_{A,F}(k)\bigr).
+\end{align}
+
+\textbf{Optimal adaptation.} An uninsured household with beliefs $q$ chooses $k$ to maximize $\tilde{V}_A(q,a,b,k)$. The first-order condition is
+\begin{equation}
+    q(1-a)m'(k)\,u'\!\bigl(c_{A,F}(k)\bigr)
+    = (1-b)\Bigl[(1-q)\,u'\!\bigl(c_{A,N}(k)\bigr) + q\,u'\!\bigl(c_{A,F}(k)\bigr)\Bigr]. \label{eq:foc_k}
+\end{equation}
+The left-hand side is the subjective expected marginal benefit of adaptation (higher consumption in the flood state, weighted by subjective flood probability and the marginal utility therein). The right-hand side is the marginal cost (net adaptation expenditure reduces consumption in both states). Let $k^*(q,a,b)$ denote the solution, with $k^* = 0$ at the corner solution.
+
+\textbf{Adaptation threshold.} A household sets $k^* = 0$ (corner solution) when the FOC~\eqref{eq:foc_k} holds with weak inequality at $k=0$. Evaluating at $k=0$ (so $c_{A,N}=w$ and $c_{A,F}=w-(1-a)d$) and solving for the threshold belief:
+\begin{equation}
+    q^{**}(a,b) = \frac{(1-b)\,u'(w)}{(1-a)m'(0)\,u'\!\bigl(w-(1-a)d\bigr) + (1-b)\bigl[u'(w) - u'\!\bigl(w-(1-a)d\bigr)\bigr]}. \label{eq:qstarstar_cont}
+\end{equation}
+Households with $q \leq q^{**}$ do not adapt; those with $q > q^{**}$ choose a strictly positive $k^*(q,a,b)$.
+
+\textbf{Comparative statics of optimal $k^*$.} Differentiating the interior FOC~\eqref{eq:foc_k} implicitly:
+\begin{itemize}
+    \item $\partial k^*/\partial q > 0$: higher subjective flood risk induces more adaptation.
+    \item $\partial k^*/\partial a < 0$: more generous disaster relief reduces the net loss in the flood state, lowering the marginal benefit of adaptation. Disaster relief and private adaptation are substitutes.
+    \item $\partial k^*/\partial b > 0$: a higher adaptation subsidy reduces the marginal cost of adaptation, unambiguously raising $k^*$.
+\end{itemize}
+
+\textbf{Insurance threshold.} A household with beliefs $q$ insures if $V_I(s) \geq \tilde{V}_A(q,a,b,k^*(q,a,b))$. The insurance threshold $q^*(s,a,b)$ solves
+\begin{equation}
+    u(c_I) = \tilde{V}_A\!\bigl(q^*,a,b,k^*(q^*,a,b)\bigr). \label{eq:qstar_cont}
+\end{equation}
+As in the discrete case, we assume $0 < q^{**} < q^* < 1$.
+
+\subsection{Government Problem}
+
+\textbf{Social welfare.} Using the take-up rates $I = 1-F(q^*)$ and $A = F(q^*) - F(q^{**})$ as before, the planner's objective is
+\begin{equation}
+    S(s,a,b) = V_I(s)\cdot I + \int_{q^{**}}^{q^*} V_A\!\bigl(a,b,k^*(q,a,b)\bigr)\,f(q)\,dq + V_U(a)\cdot N, \label{eq:welfare_cont}
+\end{equation}
+where $V_U(a) = (1-p)u(w) + pu(w-(1-a)d)$ is the true value of being uninsured without any adaptation ($k=0$).
+
+\textbf{Budget constraint.}
+\begin{equation}
+    B = spd\cdot I
+    + b\int_{q^{**}}^{q^*} k^*(q,a,b)\,f(q)\,dq
+    + ap\int_{q^{**}}^{q^*} \bigl(d - m(k^*(q,a,b))\bigr)\,f(q)\,dq
+    + apd\cdot N. \label{eq:budget_cont}
+\end{equation}
+
+\textbf{Envelope theorem.} Since households choose $k^*$ optimally, we can apply the envelope theorem when differentiating $S$ with respect to $a$ and $b$: the indirect effect through $k^*(q,a,b)$ drops out of the welfare calculation. However, $k^*$ still appears in the budget constraint, so the fiscal effects of $a$ and $b$ acting through $k^*$ must be accounted for.
+
+\textbf{Lagrangian.}
+\begin{equation}
+    \mathcal{L}(s,a,b,\lambda) = S(s,a,b)
+    - \lambda\Bigl[spd\cdot I + b\!\int_{q^{**}}^{q^*}\! k^*\,f\,dq
+    + ap\!\int_{q^{**}}^{q^*}\!(d-m(k^*))\,f\,dq + apd\cdot N - B\Bigr].
+\end{equation}
+
+\subsection{First-Order Conditions}
+
+The FOC for the insurance subsidy is structurally identical to the discrete case:
+\begin{equation}
+    \frac{\partial\mathcal{L}}{\partial s}
+    =
+    \underbrace{\bigl(V_I - V_A^*\bigr)\frac{\partial I}{\partial s}}_{\text{internality: switching to insurance}}
+    + \underbrace{\frac{\partial V_I}{\partial s}\cdot I}_{\text{transfer to insured}}
+    - \lambda\,pd\Biggl[I + \Bigl(s - a\frac{d - m(k^*)}{d}\Bigr)\frac{\partial I}{\partial s}\Biggr]
+    = 0, \label{eq:foc_s_cont}
+\end{equation}
+where $V_A^* \equiv V_A(a,b,k^*(q^*,a,b))$ is the true value of being optimally adapted at the insurance threshold.
+
+The FOC for disaster relief must account for its direct effect on the welfare of all uninsured households and its indirect fiscal effect through $k^*$:
+\begin{align}
+    \frac{\partial\mathcal{L}}{\partial a}
+    &=
+    \underbrace{\bigl(V_I - V_A^*\bigr)\frac{\partial I}{\partial a}}_{\text{crowd-out from insurance}}
+    + \underbrace{\bigl(V_{A,q^{**}}^* - V_U\bigr)\frac{\partial A}{\partial a}}_{\text{crowd-out from adaptation}}
+    \notag\\
+    &\quad
+    + \underbrace{\int_{q^{**}}^{q^*} \frac{\partial V_A}{\partial a}\,f(q)\,dq
+    + \frac{\partial V_U}{\partial a}\cdot N}_{\text{direct transfer to uninsured}}
+    - \lambda\,\frac{\partial\text{Budget}}{\partial a}
+    = 0, \label{eq:foc_a_cont}
+\end{align}
+where $V_{A,q^{**}}^* \equiv V_A(a,b,k^*(q^{**},a,b))$ and
+\begin{equation}
+    \frac{\partial V_A}{\partial a} = p\bigl(d-m(k^*)\bigr)\,u'\!\bigl(c_{A,F}(k^*)\bigr).
+\end{equation}
+The fiscal derivative of the budget with respect to $a$ is
+\begin{equation}
+    \frac{\partial\text{Budget}}{\partial a}
+    = (s-a\hat{d})\,pd\,\frac{\partial I}{\partial a}
+    + (a\delta_k p - bk'_a)\,d\,\frac{\partial A}{\partial a}
+    + p\!\int_{q^{**}}^{q^*}\!(d-m(k^*))\,f(q)\,dq
+    + apd\,\frac{\partial N}{\partial a}, \label{eq:budget_deriv_a}
+\end{equation}
+where $\hat{d} \equiv (d-m(k^*))/d$ is the effective damage fraction at the threshold and $k'_a \equiv \partial k^*/\partial a$ accounts for households adjusting their adaptation in response to changes in disaster relief.
+
+The FOC for the adaptation subsidy is:
+\begin{align}
+    \frac{\partial\mathcal{L}}{\partial b}
+    &=
+    \underbrace{\bigl(V_I - V_A^*\bigr)\frac{\partial I}{\partial b}}_{\text{crowd-out from insurance}}
+    + \underbrace{\bigl(V_{A,q^{**}}^* - V_U\bigr)\frac{\partial A}{\partial b}}_{\text{internality: switching to adaptation}}
+    \notag\\
+    &\quad
+    + \underbrace{\int_{q^{**}}^{q^*} \frac{\partial V_A}{\partial b}\,f(q)\,dq}_{\text{direct transfer to adapted}}
+    - \lambda\,\frac{\partial\text{Budget}}{\partial b}
+    = 0, \label{eq:foc_b_cont}
+\end{align}
+where
+\begin{equation}
+    \frac{\partial V_A}{\partial b} = k^*\Bigl[(1-p)\,u'\!\bigl(c_{A,N}(k^*)\bigr) + p\,u'\!\bigl(c_{A,F}(k^*)\bigr)\Bigr]
+\end{equation}
+is the direct transfer to adapted households from the subsidy (reducing the net cost of their chosen adaptation level by $k^*$ per unit of $b$). The fiscal derivative of the budget with respect to $b$ is
+\begin{equation}
+    \frac{\partial\text{Budget}}{\partial b}
+    = (s - a\hat{d})\,pd\,\frac{\partial I}{\partial b}
+    + \Bigl(ap(d-m(k^*))+bk\Bigr)\frac{\partial A}{\partial b}
+    + \int_{q^{**}}^{q^*}\! k^*\,f(q)\,dq
+    - b\int_{q^{**}}^{q^*}\! m'(k^*)\,k'_b\,f(q)\,dq. \label{eq:budget_deriv_b}
+\end{equation}
+
+\textbf{Internality corrections.} At the insurance threshold $q^*$, condition~\eqref{eq:qstar_cont} gives $V_I(s) = \tilde{V}_A(q^*,a,b,k^*)$. The welfare gap is:
+\begin{equation}
+    V_I(s) - V_A^* = \tilde{V}_A(q^*,a,b,k^*) - V_A(a,b,k^*)
+    = (p - q^*)\,\Delta u_A(k^*), \label{eq:internality_cont}
+\end{equation}
+where $\Delta u_A(k^*) \equiv u(c_{A,N}(k^*)) - u(c_{A,F}(k^*)) > 0$. This mirrors the baseline formula, with flood damage $d$ replaced by the residual damage $d - m(k^*)$ faced by optimally adapted households.
+
+At the adaptation threshold $q^{**}$, the welfare gap between adapting (at $k^* = 0$) and not adapting is:
+\begin{equation}
+    V_{A,q^{**}}^* - V_U(a) = (p - q^{**})\,\Delta u_U(a) + (V_A(a,b,0) - V_U(a)), \label{eq:internality_adapt}
+\end{equation}
+where the second term captures the true welfare gain from adaptation even at zero investment (which is zero by continuity of $m$), so at the margin $V_{A,q^{**}}^* - V_U(a) = (p - q^{**})\Delta u_U(a)$, the same internality correction as in the baseline one-region model.
+
+\subsection{Sufficient Statistics Representation}
+
+Rearranging the FOCs so that the welfare gain per dollar of fiscal cost equals $\lambda$ gives MVPF expressions for each instrument. Define the semi-elasticities:
+\begin{align}
+    \varepsilon_s &\equiv \frac{1}{I}\frac{\partial I}{\partial s}, \quad
+    \varepsilon_a \equiv \frac{1}{I}\frac{\partial I}{\partial a}, \quad
+    \varepsilon_b \equiv \frac{1}{I}\frac{\partial I}{\partial b}.
+\end{align}
+The MVPF for the insurance subsidy is:
+\begin{equation}
+    \mathrm{MVPF}_s =
+    \frac{(p-q^*)\,\Delta u_A(k^*)\cdot I\varepsilon_s + pd\,u'(c_I)\cdot I}{pd\!\left[I + (s - a\hat{d})\,I\varepsilon_s\right]}, \label{eq:mvpf_s}
+\end{equation}
+the MVPF for disaster relief is:
+\begin{equation}
+    \mathrm{MVPF}_a =
+    \frac{(p-q^*)\,\Delta u_A(k^*)\cdot I\varepsilon_a + (p-q^{**})\Delta u_U\cdot A\varepsilon_a^{**}
+    + p\int_{q^{**}}^{q^*}\!(d-m(k^*))\,u'(c_{A,F})\,f\,dq + pd\,u'(c_{U,F})\cdot N}{\partial\text{Budget}/\partial a},
+    \label{eq:mvpf_a}
+\end{equation}
+and the MVPF for the adaptation subsidy is:
+\begin{equation}
+    \mathrm{MVPF}_b =
+    \frac{(p-q^*)\,\Delta u_A(k^*)\cdot I\varepsilon_b + (p-q^{**})\Delta u_U\cdot A\varepsilon_b^{**}
+    + \int_{q^{**}}^{q^*} k^*\bigl[(1-p)u'(c_{A,N})+pu'(c_{A,F})\bigr]\,f\,dq}{\partial\text{Budget}/\partial b},
+    \label{eq:mvpf_b}
+\end{equation}
+where $\varepsilon_a^{**}$ and $\varepsilon_b^{**}$ are the semi-elasticities of $A$ with respect to $a$ and $b$ respectively. At an interior optimum, $\mathrm{MVPF}_s = \mathrm{MVPF}_a = \mathrm{MVPF}_b = \lambda$.
+
+%-------------------------------------------------------------------
+\section{Premium-adjusted insurance}
+\label{sec:premium}
+%-------------------------------------------------------------------
+
+In Sections~\ref{sec:discrete} and~\ref{sec:continuous} we assumed that insurance premiums are independent of adaptation status, so insured households have no incentive to adapt. We now relax this assumption: the insurer observes adaptation and sets the premium equal to the actuarially fair expected loss given the household's adaptation level, subsidized at rate $s$. This creates an incentive for insured households to adapt as well.
+
+\subsection{Discrete adaptation}
+
+\textbf{Consumption levels.} With premium adjustment there are now four possible strategies:
+\begin{itemize}
+    \item Insured, not adapted: $c_{IN} = w - (1-s)pd$
+    \item Insured, adapted: $c_{IA} = w - (1-b)k - (1-s)p\delta d$
+    \item Uninsured, not adapted: $c_{U,N} = w$ (no flood), $c_{U,F} = w-(1-a)d$ (flood)
+    \item Uninsured, adapted: $c_{A,N} = w-(1-b)k$ (no flood), $c_{A,F} = w-(1-b)k-(1-a)\delta d$ (flood)
+\end{itemize}
+
+\textbf{Adaptation decision of insured households.} An insured household prefers to adapt if and only if $V_{IA}(s,b) > V_{IN}(s)$, i.e.,
+\begin{equation}
+    (1-s)p(1-\delta)d > (1-b)k. \label{eq:insured_adapt_condition}
+\end{equation}
+This condition depends only on parameters, not on beliefs $q$: either all insured households adapt or none do. We assume \eqref{eq:insured_adapt_condition} holds throughout, so all insured households adapt.\footnote{This holds when the premium saving from adaptation, $(1-s)p(1-\delta)d$, exceeds the net adaptation cost $(1-b)k$. Both a higher adaptation subsidy $b$ and a lower insurance subsidy $s$ make this more likely to hold.}
+
+\textbf{Thresholds.} The adaptation threshold $q^{**}$ for uninsured households is unchanged from Section~\ref{sec:discrete}. Since insured households now also adapt, the insurance threshold $q^*$ is determined by indifference between insure-and-adapt and uninsure-and-adapt:
+\begin{equation}
+    V_{IA}(s,b) = \tilde{V}_{UA}(q^*,a,b),
+\end{equation}
+which gives
+\begin{equation}
+    q^*(s,a,b) = \frac{u(c_{A,N}) - u(c_{IA})}{u(c_{A,N}) - u(c_{A,F})}
+    = \frac{u(w-(1-b)k)-u(w-(1-b)k-(1-s)p\delta d)}{u(w-(1-b)k)-u(w-(1-b)k-(1-a)\delta d)}.
+    \label{eq:qstar_premium}
+\end{equation}
+Comparing with equation~\eqref{eq:qstar} from Section~\ref{sec:discrete}, $q^*$ now has the same structural form as the baseline, but with damage $d$ replaced by the reduced damage $\delta d$ and wealth $w$ replaced by $w-(1-b)k$: the marginal household compares the insured and uninsured outcomes both net of the adaptation cost. In particular, a higher adaptation subsidy $b$ shifts both $c_{IA}$ and $c_{A,N}$, $c_{A,F}$ by the same amount, leaving $q^*$ unchanged if $u$ is CRRA, but affecting it through income effects under general $u$.
+
+\textbf{Government problem.} Social welfare is:
+\begin{equation}
+    S(s,a,b) = V_{IA}(s,b)\cdot I + V_A(a,b)\cdot A + V_U(a)\cdot N, \label{eq:welfare_premium_disc}
+\end{equation}
+where $V_{IA}(s,b) = u(c_{IA})$ and $V_A$, $V_U$ are as defined in Section~\ref{sec:discrete}. The budget constraint now reflects that insured households adapt as well:
+\begin{equation}
+    B = \underbrace{sp\delta d\cdot I}_{\text{insurance subsidies}}
+    + \underbrace{ap(\delta d\cdot A + d\cdot N)}_{\text{disaster relief}}
+    + \underbrace{bk\cdot (I + A)}_{\text{adaptation subsidies}}. \label{eq:budget_premium_disc}
+\end{equation}
+Compared to equation~\eqref{eq:budget_discrete}, the insurance subsidy bill is lower (premiums fall from $pd$ to $p\delta d$ per insured household) but the adaptation subsidy bill is larger (now covers both insured and uninsured adapted households).
+
+\textbf{First-order conditions.} The Lagrangian is
+\begin{equation}
+    \mathcal{L} = S(s,a,b) - \lambda\Bigl[sp\delta d\cdot I + ap(\delta d\cdot A + d\cdot N) + bk(I+A) - B\Bigr].
+\end{equation}
+The three FOCs are structurally identical to those in Section~\ref{sec:discrete}, with two modifications: (i) the direct fiscal cost of insuring is $p\delta d$ per household instead of $pd$, and (ii) the adaptation subsidy creates a fiscal externality for insured households as well. The FOC for the adaptation subsidy now reads:
+\begin{align}
+    \frac{\partial\mathcal{L}}{\partial b}
+    &= \underbrace{\bigl(V_{IA} - V_A\bigr)\frac{\partial I}{\partial b}}_{\text{crowd-out from insurance}}
+    + \underbrace{\bigl(V_A - V_U\bigr)\frac{\partial A}{\partial b}}_{\text{internality: switching to adaptation}}
+    \notag\\
+    &\quad
+    + \underbrace{\frac{\partial V_{IA}}{\partial b}\cdot I + \frac{\partial V_A}{\partial b}\cdot A}_{\text{transfer to adapted (insured and uninsured)}}
+    - \lambda\Bigl[bk\frac{\partial (I+A)}{\partial b} + k(I+A) + sp\delta d\frac{\partial I}{\partial b} + ap\delta d\frac{\partial A}{\partial b}\Bigr]
+    = 0, \label{eq:foc_b_premium_disc}
+\end{align}
+where $\partial V_{IA}/\partial b = k\,u'(c_{IA})$. The key difference from equation~\eqref{eq:foc_b_discrete} is the additional term $\partial V_{IA}/\partial b \cdot I$ and the larger fiscal cost $k(I+A)$: the adaptation subsidy now generates a transfer to all adapted households, whether insured or not.
+
+\textbf{Internality correction.} The internality at the insurance margin is now:
+\begin{equation}
+    V_{IA}(s,b) - V_A(a,b) = \tilde{V}_{UA}(q^*,a,b) - V_A(a,b) = (p-q^*)\,\Delta u_A, \label{eq:internality_premium_disc}
+\end{equation}
+where $\Delta u_A = u(c_{A,N})-u(c_{A,F})$ as before. The form is identical to equation~\eqref{eq:internality_insurance}, confirming that the internality correction depends only on the belief gap $p-q^*$ and the utility loss from flood exposure at the margin, regardless of whether insured households adapt.
+
+\subsection{Continuous adaptation}
+
+\textbf{Optimal adaptation of insured households.} With premium adjustment, an insured household with adaptation $k$ pays $(1-s)p(d-m(k))$ in premiums and $(1-b)k$ in adaptation costs, giving consumption $c_{IA}(k) = w - (1-b)k - (1-s)p(d-m(k))$. The household chooses $k$ to maximize $V_{IA}(k) = u(c_{IA}(k))$, yielding the FOC:
+\begin{equation}
+    (1-s)p\,m'(k^{IA}) = (1-b). \label{eq:foc_k_insured}
+\end{equation}
+The optimal adaptation level $k^{IA}(s,b)$ for insured households is determined solely by parameters and does not depend on beliefs $q$: all insured households choose the same $k^{IA}$. Differentiating \eqref{eq:foc_k_insured} implicitly with respect to $s$ and $b$ in turn:
+\begin{align}
+    -p\,m'(k^{IA}) + (1-s)p\,m''(k^{IA})\frac{\partial k^{IA}}{\partial s} = 0
+    &\implies
+    \frac{\partial k^{IA}}{\partial s} = \frac{m'(k^{IA})}{(1-s)\,m''(k^{IA})} = \frac{1-b}{(1-s)^2 p\,m''(k^{IA})} < 0, \label{eq:dkIA_ds}\\[6pt]
+    (1-s)p\,m''(k^{IA})\frac{\partial k^{IA}}{\partial b} = -1
+    &\implies
+    \frac{\partial k^{IA}}{\partial b} = \frac{-1}{(1-s)p\,m''(k^{IA})} > 0, \label{eq:dkIA_db}
+\end{align}
+where both signs follow from $m''(k^{IA}) < 0$. Summarizing:
+\begin{itemize}
+    \item $\partial k^{IA}/\partial b > 0$: a higher adaptation subsidy raises optimal adaptation for insured households.
+    \item $\partial k^{IA}/\partial s < 0$: a higher insurance subsidy lowers optimal adaptation for insured households, because it reduces the premium saving from adapting.
+\end{itemize}
+This last result is the key new interaction in this section: insurance and adaptation subsidies are \emph{substitutes} in the behavior of insured households. A more generous insurance subsidy crowds out private adaptation investment by reducing its financial return.
+
+\textbf{Optimal adaptation of uninsured households.} Unchanged from Section~\ref{sec:continuous}: the FOC~\eqref{eq:foc_k} determines $k^{UA}(q,a,b)$, which depends on beliefs $q$.
+
+\textbf{Insurance threshold.} The threshold $q^*(s,a,b)$ now solves:
+\begin{equation}
+    u\!\bigl(c_{IA}(k^{IA})\bigr) = \tilde{V}_{UA}\!\bigl(q^*, a, b, k^{UA}(q^*,a,b)\bigr). \label{eq:qstar_cont_premium}
+\end{equation}
+In general $k^{IA} \neq k^{UA}(q^*)$: insured and marginally uninsured households choose different adaptation levels, because the marginal return to adaptation differs between a household that bears full residual flood risk (uninsured) and one that only faces the actuarially-priced premium (insured).
+
+\textbf{Government problem.} Social welfare is:
+\begin{equation}
+    S(s,a,b) = V_{IA}(s,b,k^{IA})\cdot I
+    + \int_{q^{**}}^{q^*} V_A(a,b,k^{UA}(q))\,f(q)\,dq
+    + V_U(a)\cdot N. \label{eq:welfare_premium_cont}
+\end{equation}
+The budget constraint is:
+\begin{align}
+    B &= sp(d-m(k^{IA}))\cdot I
+    + bk^{IA}\cdot I
+    + b\!\int_{q^{**}}^{q^*}\! k^{UA}(q)\,f(q)\,dq
+    \notag\\
+    &\quad + ap\!\int_{q^{**}}^{q^*}\!\bigl(d-m(k^{UA}(q))\bigr)\,f(q)\,dq
+    + apd\cdot N. \label{eq:budget_premium_cont}
+\end{align}
+
+\textbf{Envelope theorem and policy interactions.} By the envelope theorem, when differentiating social welfare with respect to $a$ and $b$, the indirect effects through $k^{UA}(q,a,b)$ vanish (as in Section~\ref{sec:continuous}). However, the indirect effect through $k^{IA}(s,b)$ also vanishes from the welfare term, but \emph{not} from the budget: changes in $s$ or $b$ shift $k^{IA}$, which alters both the insurance premium paid and the relief owed, creating additional fiscal interactions that are absent in Sections~\ref{sec:discrete} and~\ref{sec:continuous}.
+
+Specifically, the budget derivative with respect to $s$ must now account for the behavioral response of insured households' adaptation:
+\begin{equation}
+    \frac{\partial\text{Budget}}{\partial s}
+    = p(d-m(k^{IA}))\cdot I
+    + \bigl[sp(1-m'(k^{IA})\tfrac{\partial k^{IA}}{\partial s}) + bk^{IA}\bigr]\frac{\partial I}{\partial s}
+    - sp\,m'(k^{IA})\frac{\partial k^{IA}}{\partial s}\cdot I. \label{eq:budget_s_premium_cont}
+\end{equation}
+The last term, $-sp\,m'(k^{IA})\frac{\partial k^{IA}}{\partial s}\cdot I$, is new: it captures the fiscal saving (or cost) from insured households adjusting their adaptation in response to changes in the insurance subsidy. Since $\partial k^{IA}/\partial s < 0$, a higher insurance subsidy reduces $k^{IA}$, which increases expected damage and thus the premium payout, partially offsetting the fiscal benefit of subsidizing insurance. Using \eqref{eq:foc_k_insured}, $m'(k^{IA}) = (1-b)/[(1-s)p]$, so:
+\begin{equation}
+    -sp\,m'(k^{IA})\frac{\partial k^{IA}}{\partial s}\cdot I
+    = -\frac{s(1-b)}{1-s}\cdot\frac{\partial k^{IA}}{\partial s}\cdot I > 0,
+\end{equation}
+where the sign follows from $\partial k^{IA}/\partial s < 0$. Thus, the behavioral crowd-out of adaptation by a higher insurance subsidy \emph{raises} the fiscal cost of the insurance program — an additional source of fiscal externality that is absent when premiums are independent of adaptation.
+
+\end{document}
