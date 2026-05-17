@@ -29,10 +29,11 @@ $I$ (take-up rate)
     & $\approx 30\%$ in high-risk areas
     & \href{https://www.fema.gov/openfema-data-page/nfip-residential-penetration-rates-v1}{FEMA OpenFEMA NFIP Penetration Rates}; \href{https://www.rand.org/content/dam/rand/pubs/technical_reports/2006/RAND_TR300.pdf}{Dixon et al.\ (2006)} \\
 $\varepsilon$ (price semi-elasticity)
-    & $-0.17$ to $-1.38$
+    & $-0.32$ (preferred); range $-0.17$ to $-1.38$
     & \href{https://faculty.wharton.upenn.edu/wp-content/uploads/2017/07/MismeasuringRisk_Mulder2021.pdf}{Mulder (2021)};
       \href{https://journalofcrr.com/research/03-07-gourevitch-et-al/}{Gourevitch et al.\ (2023)};
-      \href{https://link.springer.com/article/10.1023/A:1007823631497}{Browne \& Hoyt (2000)} \\
+      \href{https://link.springer.com/article/10.1023/A:1007823631497}{Browne \& Hoyt (2000)};
+      Gruber \& Solomon (2026) \\
 $\partial I / \partial a$ (crowd-out)
     & $-3\%$ of coverage
     & \href{https://www.sciencedirect.com/science/article/abs/pii/S0095069617303479}{Kousky, Michel-Kerjan \& Raschky (2018)} \\
@@ -62,27 +63,28 @@ $s$ (current subsidy rate)
     & \href{https://www.gao.gov/assets/gao-23-105977.pdf}{GAO (2023)};
       \href{https://www.fema.gov/flood-insurance/risk-rating}{FEMA Risk Rating 2.0} \\
 $a$ (current relief fraction)
-    & $\approx 4\%$--$7\%$
-    & Computed from avg.\ FEMA IA grant (\$3k) over avg.\ claim (\$44k--\$83k);
+    & $\approx 14\%$ (preferred); range $4\%$--$7\%$
+    & Gruber \& Solomon (2026): avg.\ IHP payout \$20k vs.\ avg.\ damage \$144k in flood-damage-weighted sample;
+      lower range from avg.\ FEMA IA grant (\$3k) over avg.\ claim (\$44k--\$83k);
       \href{https://www.sciencedirect.com/science/article/abs/pii/S0095069617303479}{Kousky et al.\ (2018)} \\
 $\lambda$ (shadow value of budget)
     & $0.5$--$2$
     & \href{https://academic.oup.com/qje/article/135/3/1209/5781614}{Hendren \& Sprung-Keyser (2020)} \\
 \bottomrule
 \end{tabularx}
-\caption{Empirical counterparts for the terms in MVPF$_s$ and MVPF$_a$. All estimates are from US data except where noted. The crowd-out estimate from Kousky et al.\ (2018) is identified on the intensive margin (coverage amount) rather than the binary take-up margin, partly due to a regulatory requirement that disaster aid recipients maintain insurance. The model calibration of $d/w = 0.5$ exceeds the empirical average of 10--16\%; the latter reflects average NFIP claims (\$44,000--\$83,000) relative to average US home values (\$500,000).}
+\caption{Empirical counterparts for the terms in MVPF$_s$ and MVPF$_a$. All estimates are from US data except where noted. Preferred values for $\varepsilon$ and $a$ are from Gruber \& Solomon (2026). The crowd-out estimate from Kousky et al.\ (2018) is identified on the intensive margin (coverage amount) rather than the binary take-up margin. The model calibration of $d/w = 0.15$ is consistent with average NFIP claims (\$44,000--\$83,000) relative to average US home values (\$300,000--\$500,000).}
 \end{table}
 
 \section*{Notes on Identification}
 
 \paragraph{Price semi-elasticity $\varepsilon$.}
-Since the household's premium is $\pi = (1-s)pd$, we have $\partial\pi/\partial s = -pd$ and therefore
+We define $\varepsilon \equiv \partial I/\partial\ln\pi < 0$ as the semi-elasticity of take-up with respect to the log-premium. Since $\ln\pi = \ln((1-s)pd)$, we have $\partial\ln\pi/\partial s = -1/(1-s)$ and therefore
 \[
-    \frac{\partial I}{\partial s} = -pd \cdot I \cdot \varepsilon,
+    \frac{\partial I}{\partial s} = -\frac{\varepsilon}{1-s}.
 \]
-where $\varepsilon \equiv (1/I)(\partial I / \partial \pi) < 0$.
 Mulder (2021) exploits variation from outdated FEMA flood maps that misclassify high-risk homes as low-risk, yielding $|\varepsilon| \approx 0.17$.
 Gourevitch et al.\ (2023) exploit the NFIP's Risk Rating~2.0 reform and find a wider range of $|\varepsilon|$ from 0.15 to 1.38 across subgroups.
+Gruber \& Solomon (2026) estimate $\varepsilon = -0.32$ using within-property variation in billed premiums as policies transition toward RR2.0 full-risk pricing; they explicitly report this as a semi-elasticity.
 
 \paragraph{Crowd-out $\partial I / \partial a$.}
 Direct quasi-experimental estimates of $\partial I/\partial a$ are rare because variation in disaster relief generosity is uncommon.
@@ -108,7 +110,7 @@ Hendren and Sprung-Keyser (2020) compute MVPFs for 133 US policy changes; their 
 
 \section*{Numerical MVPF Estimates at Current US Policy}
 
-Using the empirical parameter values above, we evaluate both MVPFs at the current US policy mix ($s = 0.47$, $a = 0.055$, $d/w = 0.15$).
+Using the preferred empirical parameter values above, we evaluate both MVPFs at the current US policy mix ($s = 0.47$, $a = 0.14$, $d/w = 0.15$, $\varepsilon = -0.32$).
 The crowd-out response $\partial I/\partial a$ is recovered via the ratio trick.
 Table~\ref{tab:mvpf} reports all intermediate quantities and the resulting MVPFs.
 
@@ -123,36 +125,35 @@ Table~\ref{tab:mvpf} reports all intermediate quantities and the resulting MVPFs
 $p$           & $0.02$ \\
 $d/w$         & $0.15$ \\
 $s$           & $0.47$ \\
-$a$           & $0.055$ \\
+$a$           & $0.14$ \\
 $I$           & $0.30$ \\
-$\varepsilon$ & $-0.17$ \\
+$\varepsilon$ & $-0.32$ \\
 $\gamma$      & $2.0$ \\
 \midrule
 \multicolumn{2}{l}{\textit{Consumption levels}} \\
 $c_I$     & $0.9984$ \\
-$c_{U,F}$ & $0.8583$ \\
+$c_{U,F}$ & $0.8710$ \\
 \midrule
 \multicolumn{2}{l}{\textit{Intermediate quantities}} \\
-$q^*$                         & $0.0096$ \\
-$(p - q^*)\,\Delta u$         & $0.00171$ \\
+$q^*$                         & $0.0108$ \\
+$(p - q^*)\,\Delta u$         & $0.00137$ \\
 $u'(c_I)$                     & $1.0032$ \\
-$u'(c_{U,F})$                 & $1.3576$ \\
-$\partial I/\partial s$       & $0.000153$ \\
-$\partial I/\partial a$       & $-0.000100$ \\
+$u'(c_{U,F})$                 & $1.3181$ \\
+$\partial I/\partial s$       & $0.604$ \\
+$\partial I/\partial a$       & $-0.427$ \\
 \midrule
 \multicolumn{2}{l}{\textit{MVPFs}} \\
-$\mathrm{MVPF}_s$ & $\mathbf{1.003}$ \\
-$\mathrm{MVPF}_a$ & $\mathbf{1.358}$ \\
+$\mathrm{MVPF}_s$ & $\mathbf{1.16}$ \\
+$\mathrm{MVPF}_a$ & $\mathbf{1.30}$ \\
 \bottomrule
 \end{tabular}
-\caption{MVPF estimates at current US policy ($s = 0.47$, $a = 0.055$, $I = 0.30$, $\varepsilon = -0.17$, $\gamma = 2$, $p = 0.02$, $d/w = 0.15$).}
+\caption{MVPF estimates at current US policy ($s = 0.47$, $a = 0.14$, $I = 0.30$, $\varepsilon = -0.32$, $\gamma = 2$, $p = 0.02$, $d/w = 0.15$). Preferred parameter values updated to reflect Gruber \& Solomon (2026): $\varepsilon = -0.32$ replaces the earlier $-0.17$ from Mulder (2021); $a = 0.14$ replaces $0.055$, based on the flood-damage-weighted IHP payout of \$20k against average damage of \$144k. The consumption level $c_{U,F} = w - (1-a)d = 1 - 0.86 \times 0.15 = 0.8710$. The semi-elasticity $\varepsilon = -0.32$ enters via $\partial I/\partial s = -\varepsilon/(1-s) = 0.604$; the crowd-out $\partial I/\partial a = -0.427$ is recovered from the ratio trick.}
 \label{tab:mvpf}
 \end{table}
 
-$\mathrm{MVPF}_a > \mathrm{MVPF}_s$, implying that the current US policy mix over-invests in insurance subsidies relative to disaster relief.
-The subsidy MVPF is close to 1 because insured households retain nearly all their wealth ($c_I \approx w$), leaving little room for a welfare gain beyond the direct transfer.
-The relief MVPF is substantially larger because flood victims suffer a significant consumption loss ($c_{U,F} \ll w$), so their marginal utility $u'(c_{U,F})$ is much higher.
-The internality correction $(p - q^*)\Delta u$ and fiscal externality terms are negligibly small, so the MVPFs are essentially determined by the direct transfer terms $pd\,u'(c_I)\,I$ and $pd\,u'(c_{U,F})\,(1-I)$.
+With the updated $a = 0.14$, flood victims retain more consumption ($c_{U,F} = 0.871$ vs.\ $0.858$ previously), reducing their marginal utility advantage over insured households. Interpreting $\varepsilon = -0.32$ as the semi-elasticity $\partial I/\partial\ln\pi$ yields $\partial I/\partial s = -\varepsilon/(1-s) = 0.604$, far larger than the old formula (which incorrectly treated $\varepsilon$ as a true elasticity $(1/I)(\partial I/\partial\pi)$) implied. Both MVPFs exceed 1: $\mathrm{MVPF}_s = 1.16$ and $\mathrm{MVPF}_a = 1.30$, indicating that both instruments generate positive net welfare gains at the current policy mix, with disaster relief having a somewhat higher return.
+
+As a cross-check on $a = 0.14$: with $p = 0.02$, $d/w = 0.15$, and $w = \$500{,}000$, the model implies a fiscal spillover of $a \times p \times d = 0.14 \times 0.02 \times \$75{,}000 = \$210$ per house per percentage-point increase in coverage. This is almost exactly Gruber \& Solomon's IV estimate of \$175--\$203, providing an external validation of the updated $a$.
 
 \paragraph{Utility function.}
 All computations use CRRA utility with $\gamma = 2$:
@@ -163,10 +164,10 @@ Utility is defined over total final consumption, with wealth normalized to $w = 
 The consumption levels entering the MVPF formulas are therefore
 \begin{align*}
     c_I     &= w - (1-s)\,pd = 1 - 0.53 \times 0.003 = 0.9984, \\
-    c_{U,F} &= w - (1-a)\,d = 1 - 0.945 \times 0.15 = 0.8583.
+    c_{U,F} &= w - (1-a)\,d = 1 - 0.86 \times 0.15 = 0.8710.
 \end{align*}
 Because the actuarially fair premium $pd = 0.02 \times 0.15 = 0.003$ is small, insured households barely move away from $w = 1$, so $u'(c_I) \approx 1$.
-This mechanically drives $\mathrm{MVPF}_s \approx 1$: the subsidy delivers one unit of welfare per unit of fiscal cost, with almost no amplification from the utility curvature.
-The gap $\mathrm{MVPF}_a - \mathrm{MVPF}_s$ is therefore driven almost entirely by the consumption loss of flood victims, i.e.\ by $c_{U,F} = 0.8583 < 1$, which raises $u'(c_{U,F}) = 1.36 > 1 \approx u'(c_I)$.
+This means the inframarginal welfare contribution to $\mathrm{MVPF}_s$ is approximately 1; the numerator exceeds 1 because the belief-gap internality $(p-q^*)f(q^*)$ adds to the effective recipient count.
+The gap $\mathrm{MVPF}_a - \mathrm{MVPF}_s$ is driven by the higher marginal utility of flood victims, though it is smaller under $a = 0.14$ than under the old $a = 0.055$ because better relief leaves flood victims closer to full consumption.
 
 \end{document}

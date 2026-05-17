@@ -75,6 +75,11 @@ summaries rather than my own read of the paper and should be verified before cit
 & RR2.0 premium changes
 & Increased exit, reduced entry both inside and just outside the SFHA; intensive-margin adjustments in coverage and deductibles
 & No clean elasticity reported in available summaries; complements \citet{gourevitch2025} via individual-level data and intensive margin \\
+\citet{grubersolomonp2026}
+& Within-policy panel exploiting within-property RR2.0 premium variation toward full-risk rate; NFIP policy-level FOIA dataset 2021--23
+& RR2.0 transition path (billed vs.\ full-risk premium, within property)
+& Renewal probability
+& Semi-elasticity $= -0.32$ (preferred estimate, Table~3). More elastic at lower subsidy levels; less elastic in SFHA ($\approx -0.25$) due to mandate. Intensive margin negligible (\$3{,}000 on \$300{,}000 base). Cleanest identification in recent literature: within-property variation, no compositional confounds \\
 \citet{browne2000}$^\ddagger$
 & State-year cross-sectional NFIP aggregates
 & Cross-sectional premium variation
@@ -446,6 +451,35 @@ component and recover an information-only elasticity of demand
 (Section~5.2.3, p.~23: holding premiums fixed, floodplain classification
 would raise take-up by over 30~pp).
 
+\section{\citet{grubersolomonp2026} -- Working paper, January 2026}
+
+\paragraph{Focus relative to our question.}
+The paper's headline contribution is a comprehensive cost-benefit analysis of flood insurance subsidies. The demand elasticity is one of five key parameters estimated; it is reported directly and feeds into the optimal subsidy formula. The identification is within-property and exploits the transition toward RR2.0 full-risk premiums, making it the cleanest estimate currently available.
+
+\paragraph{Setting and reform.}
+RR2.0 (rolled out 2021--2023) moved the NFIP from historically subsidized premiums (average $\approx 50\%$ below actuarial cost) to property-level risk-based pricing. By regulation, annual premium increases are capped at 18\%. Gruber and Solomon obtained, via FOIA, both the billed premium and the full RR2.0 full-risk premium for each policy in each year --- enabling within-property identification as premiums gradually converge to their full-risk level.
+
+\paragraph{Identification strategy.}
+Linear probability model with contract (policy) fixed effects:
+\[
+    y_{i,t+1} = \beta\,\ln\!\left(\frac{p_{i,t+1}^{\text{offer}}}{p_{i,t+1}^{\text{full}}}\right) + \mu_i + \varepsilon_{i,t+1},
+\]
+where $y_{i,t+1}$ is renewal, $p^{\text{offer}}$ is the capped billed premium, and $p^{\text{full}}$ is the RR2.0 full-risk premium. Policy fixed effects $\mu_i$ absorb all time-invariant property characteristics. Identification comes entirely from within-property variation in the billed-to-full-risk ratio as the transition path unfolds. Standard errors clustered at the policy level.
+
+\paragraph{Headline estimate.}
+Semi-elasticity of demand $= -0.32$: a 1\% increase in the billed premium reduces the renewal probability by 0.32 percentage points. This is in the middle of the existing literature. Additional findings:
+\begin{itemize}
+    \item Demand is more elastic at lower subsidy levels (the elasticity increases in absolute value as subsidies shrink), consistent with a convex demand curve.
+    \item The elasticity inside the SFHA is approximately $-0.25$, lower in magnitude than outside the SFHA, consistent with the imperfectly enforced mandate dampening price sensitivity.
+    \item The intensive margin (coverage amount) is negligible: conditional on renewing, coverage falls by only $\sim\$3{,}000$ on a $\$300{,}000$ base.
+\end{itemize}
+
+\paragraph{Why this is the preferred estimate.}
+Relative to prior studies, within-property variation eliminates compositional selection (different households facing different prices) and avoids the endogeneity concerns in cross-sectional designs. The cap at 18\% annual increases also means the variation is gradual and predictable, reducing the salience/attention confounds that complicate the BW/HFIAA-era estimates.
+
+\paragraph{Population and external validity.}
+NFIP policyholders transitioning to RR2.0 full-risk rates, 2021--2023. The estimate is most relevant for the voluntary margin of existing policyholders facing incremental, known price increases --- similar to the setting in Mulder (2024) but with better-identified within-property variation and a larger, nationally representative sample.
+
 \section{Additional papers (brief synopses, $^\ddagger$)}
 
 \textit{The entries below are based on third-party summaries of the literature
@@ -550,6 +584,11 @@ The demand for flood insurance: Empirical evidence.
 Collier, B.\,L., Huber, T., Jaspersen, J.\,G., Richter, A. (2026).
 Homeowners' willingness to insure flood risks as prices increase.
 \textit{Working Paper}, April 22, 2026.
+
+\bibitem[Gruber and Solomon(2026)]{grubersolomonp2026}
+Gruber, J., Solomon, A. (2026).
+Optimal flood insurance in a second-best world: Fiscal spillovers, reclassification risk and moral hazard.
+\textit{Working Paper}, January 26, 2026.
 
 \bibitem[Gourevitch et al.(2025)]{gourevitch2025}
 Gourevitch, J.\,D., Snyder, S.\,A., Kousky, C. (2025).

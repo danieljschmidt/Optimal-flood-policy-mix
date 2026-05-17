@@ -1,0 +1,150 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\title{Note on Gruber \& Solomon (2026)\\
+\large Summary and Comparison with Our Approach}
+\author{Lennard Schlattmann}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\onehalfspacing
+
+\tableofcontents
+\newpage
+
+%------------------------------------------------------------------
+\section{Summary of Gruber \& Solomon (2026)}
+%------------------------------------------------------------------
+
+\subsection{Research Question}
+
+Gruber and Solomon study the welfare effects of the NFIP's 2021 ``Risk Rating 2.0'' (RR2.0) reform, which replaced the NFIP's historically subsidized premiums (on average about 50\% below actuarial cost) with property-level risk-based pricing. The authors argue that RR2.0 is a classic example of the \emph{theory of the second best}: fixing one market failure (moral hazard from subsidized premiums) may reduce welfare when other market failures are present.
+
+Their central question is: \textbf{what is the optimal subsidy to flood insurance premiums, accounting for (i) the fiscal spillover from insurance coverage onto ex post FEMA disaster aid, (ii) the reclassification risk imposed on households by actuarially fair pricing under climate uncertainty, and (iii) the moral hazard costs of subsidies through inefficient mitigation and location choices?}
+
+\subsection{Institutional Background}
+
+The U.S. flood insurance market is dominated by the NFIP, which has roughly 4.7 million policies in force covering \$1.28 trillion of property. Only about 5\% of U.S. households have flood insurance; even in the highest-risk coastal areas coverage reaches at most 25\%. When households are uninsured, FEMA provides ex post disaster aid through four main channels: (1) Individual and Households Program (IHP) grants, (2) Small Business Administration (SBA) disaster loans, (3) Hazard Mitigation Grant Program (HMGP), and (4) implicit insurance via federally backed mortgage default. Total ex post federal disaster relief was approximately \$52 billion in fiscal year 2024. FEMA payouts are explicitly offset by insurance proceeds, so more ex ante insurance mechanically reduces ex post outlays, though the relationship is not one-for-one.
+
+\subsection{Model}
+
+The model features a representative household who faces two layers of risk: (i) idiosyncratic flood risk in the current period, and (ii) dynamic reclassification risk from uncertain future climate states. The household chooses insurance coverage $x \in [0,1]$, mitigation $m$, and location $l$ to maximize expected utility. The government chooses a premium subsidy $\tau$ (so the household pays $(1-\tau)\pi(\theta)$ rather than the actuarially fair premium $\pi(\theta)$). Uninsured flood losses are partially covered by a fixed ex post assistance rate $\alpha$, which the government takes as given throughout.
+
+Reclassification risk arises because premiums under RR2.0 are tied to local flood hazard, which is uncertain across future climate states $\theta$. A subsidy implicitly socializes the idiosyncratic component of this premium uncertainty. The aggregate component (all premiums rising together) is uninsurable in the cross-section.
+
+Under a set of simplifying assumptions (no adverse selection, no redistribution on predictable risk, small aggregate climate risk relative to the economy), the model delivers a tractable optimality condition. The optimal subsidy $\tau^*$ equates the marginal benefit of a subsidy---reclassification risk insurance value plus FEMA fiscal savings from higher coverage---to its marginal cost:
+\[
+    \underbrace{(1-\tau)\,\mathrm{Cov}(\pi - \bar\pi(\theta),\, u')
+    + \Delta_\mathrm{FEMA}}_{\text{benefits}}
+    =
+    \tau\!\left[\varepsilon_x \cdot \pi + \varepsilon_m \cdot c_m + \varepsilon_l \cdot c_l\right],
+\]
+where $\varepsilon_x$, $\varepsilon_m$, $\varepsilon_l$ are the elasticities of insurance demand, mitigation, and location choice with respect to the insurance price, and $c_m$, $c_l$ are the fiscal costs of moral hazard on the mitigation and location margins. The optimal condition can equivalently be expressed as an MVPF equal to 1, since the authors fund subsidies with non-distortionary lump-sum taxes.
+
+The model is extended in an appendix to incorporate risk misperceptions. When households underperceive their flood risk, there is an additional ``internality'' benefit from a subsidy: households induced into coverage have true benefit exceeding their perceived cost, generating first-order welfare gains.
+
+\subsection{Data}
+
+The empirical analysis draws on several datasets:
+
+\begin{itemize}
+    \item \textbf{NFIP policy panel (FOIA).} A policy-level panel of NFIP contracts including, uniquely, both the billed premium and the full RR2.0 risk-based premium for each policy in each year. This is the primary dataset for demand estimation.
+    \item \textbf{OpenFEMA.} County-year data on NFIP policies in force, NFIP claims, FEMA IHP grants, and HMGP spending.
+    \item \textbf{NOAA Storm Events Database.} County-level flood damage estimates matched to FEMA Presidentially Declared Disasters (PDDs).
+    \item \textbf{SBA disaster loan data.} Loan volumes by declared disaster and county.
+    \item \textbf{GSE mortgage performance data.} Freddie Mac and Fannie Mae quarterly loan-level data to estimate fiscal costs from flood-related mortgage defaults.
+    \item \textbf{Gori et al.\ (2022) climate projections.} Synthetic flood hazard projections for eight CMIP general circulation models under SSP5-8.5 for 2070, providing the source of reclassification risk variation.
+    \item \textbf{Florida Elevation Certificates.} The universe of elevation certificates filed since 2017, used to measure mitigation responses.
+    \item \textbf{USPS address data.} Quarterly census-tract-level occupied residential addresses, used to measure migration responses.
+\end{itemize}
+
+\subsection{Empirical Strategy and Key Parameters}
+
+The paper estimates five parameters needed to implement the optimal subsidy formula.
+
+\paragraph{1. Fiscal spillover (FEMA savings from insurance).}
+OLS and IV regressions of ex post FEMA spending per house on NFIP coverage rate, controlling flexibly for flood damage with county and year fixed effects. The instrument, following Gallagher (2014), is whether a neighboring county experienced a flood in the past five years---this increases own-county insurance take-up by roughly 3 percentage points (17\%) for up to five years. The IV estimate implies that each additional 1\% of insured households reduces ex post government spending by \$175--\$203 per house when a flood occurs, driven primarily by reduced FEMA IHP grants.
+
+\paragraph{2. Demand elasticity for NFIP coverage.}
+Within-policy panel regressions exploiting the within-property variation in billed premiums as households transition toward the RR2.0 full-risk premium. The estimated semi-elasticity is $-0.32$: a 1\% increase in the billed premium reduces renewal probability by 0.32 percentage points. The intensive margin (coverage amount) is negligible. Demand is more elastic at lower subsidy levels and somewhat less elastic inside the Special Flood Hazard Area, where a mandate exists.
+
+\paragraph{3. Reclassification risk.}
+An empirical premium model is trained on current RR2.0 premiums as a function of flood hazard metrics (100-year rainfall, storm surge, and joint flood probability) and building characteristics. This model is applied to the eight Gori et al.\ (2022) climate projections for 2070 to generate a distribution of future premiums for each policy. The average household faces a cross-model standard deviation of \$3,254 in future premiums. After removing aggregate (scenario-level) and household fixed effects, the idiosyncratic, diversifiable component has a standard deviation of \$1,426. Households' WTP to insure this idiosyncratic risk is approximately \$64 per house under a 50\% subsidy.
+
+\paragraph{4. Location elasticity (migration moral hazard).}
+Comparing census tracts where the median property's premium increased versus decreased under RR2.0 (in an event-study framework with common pre-trends), the authors estimate that a premium increase causes approximately 0.75\% of the population to migrate out of higher-risk areas. For reference, a typical natural disaster causes about 1.5\% out-migration (Boustan et al., 2020), so the price-induced effect is substantial.
+
+\paragraph{5. Mitigation elasticity.}
+Using the universe of Florida Elevation Certificates, properties exposed to higher premium increases under RR2.0 are 10\% more likely to elevate than those exposed to smaller increases, both inside and outside the Special Flood Hazard Area.
+
+\subsection{Results}
+
+Combining the five estimated parameters in the optimal subsidy formula, the authors find that the benefits of a subsidy---FEMA fiscal savings and reclassification risk insurance---substantially outweigh the moral hazard costs from inefficient mitigation and location choices. The central estimate of the \textbf{optimal subsidy is 46\%}, comparable to the pre-RR2.0 level. Moreover, a subsidy of up to approximately 5\% has infinite MVPF: it pays for itself entirely through FEMA savings. Results are robust to a wide range of alternative assumptions; even under the most adversarial set of assumptions, the lower bound on the optimal subsidy is above 20\%.
+
+%------------------------------------------------------------------
+\section{Comparison with Our Approach}
+%------------------------------------------------------------------
+
+\subsection{Overview}
+
+Both papers study optimal government intervention in flood insurance markets using an MVPF framework, take the Samaritan's Dilemma seriously, and use the U.S. NFIP as the institutional setting. Beyond these shared features, the two approaches differ substantially in their central market failure, policy instruments, and model structure.
+
+\subsection{Central Market Failure}
+
+Gruber \& Solomon's central market failure is \emph{externalities}: households do not internalize the fiscal spillover onto FEMA when they choose not to insure, and RR2.0 exposes risk-averse households to uninsurable reclassification risk. Moral hazard (from subsidies) is the countervailing force. Under-insurance is thus largely attributed to the price increase under RR2.0, not to a pre-existing failure in household decision-making.
+
+Our paper's central market failure is \emph{heterogeneous beliefs}: households systematically underestimate their flood risk. Households with $q < p$ choose not to insure even at the actuarially fair price, not because of FEMA crowding out but because they perceive the premium as too high relative to their (incorrect) perceived risk. This generates an internality $(p - q^*)\Delta u$ that provides a first-order justification for a subsidy---independent of any fiscal spillover. Gruber \& Solomon do note in their model appendix that risk misperceptions create an additional internality benefit of subsidies, but this remains a robustness extension rather than the paper's core framework.
+
+\subsection{Policy Instruments}
+
+Gruber \& Solomon optimize over a single instrument: the insurance subsidy $\tau$. Ex post FEMA aid $\alpha$ is \emph{held fixed} throughout; the paper asks how large a subsidy is justified given the current level of FEMA generosity.
+
+Our paper jointly optimizes over \emph{both} the insurance subsidy $s$ and the disaster relief fraction $a$. This richer policy space allows us to characterize the full optimal policy frontier and to ask whether it is ever optimal to rely exclusively on one instrument. The joint MVPF conditions make explicit the fiscal externality between the two instruments: a marginal switcher induced into insurance saves the government $apd$ in relief but costs $spd$ in subsidy, creating a $(s - a)pd$ net fiscal effect. This interaction is absent from Gruber \& Solomon because $a$ is fixed.
+
+\subsection{Model Structure}
+
+\begin{center}
+\small
+\begin{tabular}{p{4cm}p{5cm}p{5cm}}
+\toprule
+Feature & Gruber \& Solomon & Our paper \\
+\midrule
+Time horizon & Dynamic (reclassification risk) & Static baseline; dynamics in extensions \\
+Household heterogeneity & Homogeneous households & Heterogeneous beliefs $q \sim F(q)$ \\
+Moral hazard channels & Mitigation + location & Insurance crowd-out from relief \\
+Policy instruments & Subsidy only & Subsidy + disaster relief \\
+Ex post aid & Fixed & Jointly optimized \\
+Belief distortions & Appendix extension & Central to model \\
+Empirical or theoretical & Primarily empirical & Primarily theoretical, calibrated \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Internality Correction}
+
+Our model delivers an explicit internality correction $(p - q^*)\Delta u$ per marginal household that switches into insurance. This term vanishes when beliefs are correct ($q^* = p$), but is positive under underestimation, providing a first-order welfare gain from the subsidy that is \emph{increasing in the degree of misperception}. Gruber \& Solomon's formula has no direct analogue: in their setting, the marginal household has correct beliefs and the benefits of a subsidy come from externalities (FEMA savings and reclassification risk), not from correcting private decision-making errors.
+
+\subsection{Relationship and Potential Use}
+
+The two papers are complementary rather than competitive.
+
+\begin{itemize}
+    \item \textbf{Empirical inputs.} Gruber \& Solomon provide credible estimates of the demand elasticity ($\varepsilon = -0.32$), the FEMA fiscal spillover (\$175--\$203 per house per percentage point of coverage), and moral hazard elasticities that we can use directly in our calibration (Sections 4 and 8 of draft.tex).
+
+    \item \textbf{Optimal subsidy benchmark.} Their central estimate of 46\% is a natural reference point for evaluating the output of our model. If our calibration---which omits reclassification risk but adds the belief-heterogeneity channel---delivers a similar optimal subsidy, that strengthens the case for subsidies from a different angle.
+
+    \item \textbf{Missing channel.} Our paper currently abstracts from reclassification risk and the mitigation/location margins of moral hazard. The former is likely less central in our framework (since our model is static). For the latter, we could either use the two region model in our appendix or refer to Gruber \& Solomon's estimates as a robustness check.
+
+    \item \textbf{Policy counterfactuals.} Gruber \& Solomon hold FEMA aid fixed and ask only about the optimal subsidy. We can position our contribution as answering the complementary question: \emph{given that both instruments are on the table, what is the optimal policy mix?} This is a policy-relevant question that their paper explicitly does not address.
+\end{itemize}
+
+\end{document}
