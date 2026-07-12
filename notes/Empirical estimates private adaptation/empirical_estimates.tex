@@ -1,0 +1,82 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{Empirical Evidence for Adaptation Capital}
+\author{Taco Prins, Lennard Schlattmann, and Daniel Jonas Schmidt}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Fried RES 2022}
+Does not actually provide evidence on the amount of adaptation capital in the U.S. Instead, it calibrates an `effectiveness of adaptation capital' parameter $\theta$. This parameter features in an assumed functional form for the effect of $\textit{relative}$ adaptation capital (i.e. adaptation capital relative to housing capital) on flood damages:
+
+\begin{equation}
+F(a_{it}^h)=\text{exp}(-\theta(a_{it}^h)^{\frac{1}{\theta}})
+\end{equation}
+
+The calibration strategy for the parameter $\theta$ as follows:
+
+\begin{itemize}
+\item Estimate a relationship between the frequency of storm disasters and the damage per event (as measured by disaster aid). In practice, the difference in aggregate damages between a high-frequency region of the U.S. and a low-frequency region is measured.
+\item In doing so, control for the phyisical characteristics of different storms from NOAA data (wind speed)
+\end{itemize}
+
+The amount of flooding adaptation capital that emerges as a result of the calibration strategy is 1.17$\%$ of total U.S. residential and non-residential capital.
+
+\section*{Aerts et al. 2013 and Botzen et al. 2019}
+
+These papers -- Aerts, Botzen, De Moel and Bowman, `Cost estimates for flood resilience and protection strategies in New York City', 2013, Annals of the New York Academy of Sciences and Botzen Kunreuther Czajkowski and De Moel, `Adoption of Individual Flood Damage Mitigation Measures
+in New York City: An Extension of Protection
+Motivation Theory', Risk Analysis, 2019 -- are useful because it provides a summing up of costs of private adaptation measures in New York City. Aerts et al. provide detailed cost estimates of specific measures, differentiated by the type of housing, while Botzen et al. provide a summarising table (Table I) which is probably most useful for us. 
+
+\paragraph{Cost estimates}
+Table I of Botzen et al. divides measures into three categories: (i) Elevating (2 ft above baseline flood elevation), with cost \$44,208-\$91,732 per home (existing) or \$1,450-\$7,404 per home (newly built); (ii) Dry proofing (for flood 2 ft above baseline flood elevation) with cost \$11,026-\$21,126 per home; (iii) Wet proofing with cost \$2,861-\$19,307 per home. 
+
+\paragraph{External validity}
+The estimates are for 2012 costs in New York City. NYC has higher building costs than the rest of the U.S. In Aerts et al. a scaling-up factor seems to be used (see e.g. Table 2.18) that adds exactly 1/3 of costs. So, a reasonable strategy could be to multiply all costs from Botzen et al. by a factor 0.75.  
+
+\paragraph{Other results}
+Botzen et al. conduct a phone survey to investigate the determinants of the three different types of private adaptation measures. Interestingly, this includes expectations of federal disaster aid. The main findings are (i) respondents tend to overestimate the amount of individual aid they will receive after their home is flooded (32$\%$ of respondents expect to receive such aid, covering about half their damage); (ii) in the case of the elevation measure, expectations of federal disaster aid are negatively related to its implementation. Otherwise, the important variables were perceived response efficacy (i.e., does the individual believe the measure will help) and perceived self-efficacy.   
+
+\section*{Aerts et al. 2019}
+
+This paper (`A micro-scale cost-benefit analysis of building-level flood risk adaptation measures in Los Angeles') seems most helpful as it combines cost estimates for the three different types of adaptation expenditure with a calibration for the resulting reduction in damages. For costs, the crucial table is Table 1:
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{draft/figures/Aerts et al 2019 adaptation costs.png}
+    \caption{Table 1, Aerts et al}
+    \label{fig:aerts2019}
+\end{figure}
+
+
+For damage reduction
+
+\begin{itemize}
+\item Dry-floodproofing reduces risk by 75$\%$, but cease to provide any benefits once inundation levels overtop the floodproofing height.
+\item Wet-floodproofing reduces risk by 30$\%$ and continues to reduce damages after inundation levels exceed the floodproofed floor. I could not immediately determine by how much (I think it's not a disaster to leave wet-floodproofing out, as it seems small potatoes both in costs and benefits). 
+\item Elevation effectively `subtracts' the number of feet of elevation from the inundation depth.
+\end{itemize}
+
+All types of adaptation are assumed to have an effective life of 80 years. For cost-benefit analysis by households, we can probably collapse the 80 year stream of benefits in one, assuming a discount rate of 4$\%$ (or thereabouts). 
+
+\paragraph{Note} Many of the assumptions regarding adaptation's effectiveness come from an earlier paper in Science, Aerts et al., `Evaluating Flood Resilience Strategies for Coastal Megacities' (2014) -- effectively a short write-up of the Aerts et al. (2013) paper cited above. This one is perhaps nicest to cite. 
+
+\section*{Overall recommendation}
+\begin{itemize}
+\item Use the cost estimates of Aerts et al. (2019) (left column -- FEMA data)
+\item Make the simple assumption that dry-floodproofing prevents all damages up to its overtopping height, but no flood damages for inundation beyond this point, while elevation `shifts' the inundation depth to the left. Ignore wet-floodproofing
+\item Specify a continuous (or discrete) probability distribution for different inundation depths. 
+\item Scale cost numbers up by inflation for the U.S. since 2019, and compare to average house values to get a proportional cost.
+\item Create comparable numbers for benefits and damages by converting the stream of benefits (avoided yearly flood damages) into a single NPV, using a reasonable discount rate and an 80-year lifespan for the adaptation measures. 
+\item Let households maximise over no adaptation, and the two different adaptation measures for different heights.
+\end{itemize}
+\end{document}
