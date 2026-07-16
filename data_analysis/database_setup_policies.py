@@ -1,0 +1,96 @@
+policies_dtype_dict = {
+    # Boolean fields - use boolean (pandas nullable boolean)
+    "agricultureStructureIndicator": "boolean",
+    "construction": "boolean", 
+    "elevatedBuildingIndicator": "boolean",
+    "houseOfWorshipIndicator": "boolean",
+    "nonProfitIndicator": "boolean",
+    "postFIRMConstructionIndicator": "boolean",
+    "primaryResidenceIndicator": "boolean",
+    "smallBusinessIndicatorBuilding": "boolean",
+    "postFirmVzoneIndicator": "boolean",
+    "floodproofedIndicator": "boolean",
+    "rentalPropertyIndicator": "boolean",
+    "tenantIndicator": "boolean",
+    "stateOwnedIndicator": "boolean",
+    "mandatoryPurchaseFlag": "boolean",
+    "programTypeIndicator": "boolean",
+    
+    # Decimal/Float fields - use float64 for precision
+    "baseFloodElevation": "float64",
+    "lowestAdjacentGrade": "float64", 
+    "lowestFloorElevation": "float64",
+    "basicBuildingRate": "float64",
+    "additionalBuildingRate": "float64",
+    "basicContentsRate": "float64",
+    "AdditionalContentsRate": "float64",  # Note: Capital A as in your schema
+    "latitude": "float64",
+    "longitude": "float64",
+    
+    # Integer fields - use appropriate nullable integer types
+    "basementEnclosureCrawlspaceType": "Int16",
+    "elevationDifference": "Int32",
+    "federalPolicyFee": "Int16", 
+    "hfiaaSurcharge": "Int16",
+    "locationOfContents": "Int16",
+    "numberOfFloorsInInsuredBuilding": "Int16",
+    "obstructionType": "Int16",
+    "occupancyType": "Int16",
+    "policyCost": "Int32",
+    "policyCount": "Int16",
+    "policyTermIndicator": "Int16",
+    "totalBuildingInsuranceCoverage": "Int32",
+    "totalContentsInsuranceCoverage": "Int32", 
+    "totalInsurancePremiumOfThePolicy": "Int32",
+    "iccPremium": "Int16",
+    "reserveFundAssessment": "Int32",
+    "communityProbationSurcharge": "Int16",
+    "premiumPaymentIndicator": "Int16",
+    "buildingDescriptionCode": "Int16",
+    "insuranceToValueCode": "Int16",
+    "disasterAssistanceCoverageRequiredCode": "Int16",
+    "grandfatheringTypeCode": "Int16",
+    "femaRegion": "Int16",
+    
+    # Large integer fields
+    "buildingReplacementCost": "Int64",
+    
+    # Text/String fields - use category for low cardinality, string for high cardinality
+    "condominiumCoverageTypeCode": "category",
+    "crsClassCode": "Int16", 
+    "buildingDeductibleCode": "category",
+    "contentsDeductibleCode": "category", 
+    "elevationCertificateIndicator": "category",
+    "ratedFloodZone": "category",
+    "rateMethod": "category",
+    "regularEmergencyProgramIndicator": "category",
+    "cancellationVoidanceReasonCode": "category",
+    "subsidizedRateType": "category",
+    "enclosureTypeCode": "category",
+    "waitingPeriodType": "category",
+    "rolloverTransferCode": "category",
+    "nfipRatedCommunityNumber": "string",
+    "nfipCommunityNumberCurrent": "string", 
+    "nfipCommunityName": "string",
+    "mapPanelNumber": "string",
+    "mapPanelSuffix": "string",
+    "floodZoneCurrent": "category",
+    "propertyState": "category",
+    "reportedCity": "string",
+    "reportedZipCode": "string",
+    "countyCode": "string",
+    "censusTract": "string", 
+    "censusBlockGroupFips": "string",
+    "id": "string"
+}
+
+# Date columns to parse separately
+policies_date_cols = [
+    "cancellationDateOfFloodPolicy",
+    "originalConstructionDate", 
+    "originalNBDate",
+    "policyEffectiveDate",
+    "policyTerminationDate",
+    "endorsementEffectiveDate",
+    "propertyPurchaseDate"
+]
