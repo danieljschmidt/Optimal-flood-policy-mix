@@ -1,10 +1,24 @@
-# MVPF Computations — formulas, parameter values, and results
+# MVPF Computations — formulas, results, and the optimal policy mix
 
-*Foundational MVPF methodology for the flood-policy model: how MVPF$_s$ (subsidy) and MVPF$_a$
-(relief) are computed, the parameter values plugged in, a fully worked example, and the resulting MVPF
-values by belief concentration $\nu$. The **optimal-mix and complementarity analysis** (which instrument
-to fund, phase diagrams, complements-vs-substitutes) lives on the `mvpf-complementarity` branch. MVPF
-formulas verified numerically against `draft.tex` (value-function and deep-parameter forms).*
+## Headline: at empirically-grounded beliefs, the marginal public dollar favors **disaster relief**
+
+*Self-contained MVPF writeup for the flood-policy model: how MVPF$_s$ (subsidy) and MVPF$_a$ (relief)
+are computed, the parameters plugged in, a worked example, the resulting MVPF values by belief
+concentration $\nu$, and the implied **optimal policy mix** $(s^\ast,a^\ast)$. MVPF formulas verified
+numerically against `draft.tex` (value-function and deep-parameter forms). Parameters:
+`model_parameters.md`. The (secondary) complements-vs-substitutes diagnostics are on the
+`mvpf-complementarity` branch (`mvpf_complementarity.md`).*
+
+---
+
+## 0. Setup
+
+One-period, one-region model (draft.tex). Households with wealth $w$ face flood probability $p$ and
+damage $d$; they differ in subjective probability $q\sim F$. The government has two instruments — an
+insurance **subsidy** $s$ (insured pay $(1-s)pd$) and a **disaster-relief** fraction $a$ (uninsured
+flood victims receive $a\,d$). A household insures iff $q>q^\ast(s,a)$; take-up $I=1-F(q^\ast)$. We
+evaluate each instrument by its **MVPF** (marginal welfare gain per dollar of fiscal cost), and — using
+the MCPF $\lambda$ as the benchmark — solve for the optimal mix.
 
 ---
 
@@ -28,7 +42,9 @@ $q\sim\text{Beta}(\alpha,\beta)$, parametrized by mean $m$ and concentration $\n
 $$\alpha=m\nu,\quad\beta=(1-m)\nu,\quad \sigma_q=\sqrt{\tfrac{m(1-m)}{\nu+1}}.$$
 Take-up and marginal density:
 $$I=1-F(q^\ast)=1-I_{q^\ast}(\alpha,\beta),\qquad f(q^\ast)=\text{Beta pdf at }q^\ast,$$
-where $I_{q^\ast}$ is the regularized incomplete beta (CDF).
+where $I_{q^\ast}$ is the regularized incomplete beta (CDF). The empirical dispersion (from
+Bakkensen–Barrage) is $\nu\approx15$–$41$, anchored at $\nu=25$ (which reproduces the observed ~30%
+take-up).
 
 ## 3. Take-up responses (draft eqs. dI_s / dI_a)
 
@@ -73,6 +89,7 @@ $\overline{Du'}/\bar d$. All $pd$ become $p\bar d$.
 | $m$ | mean belief | 0.0114 $=0.57p$ | Bakkensen–Barrage $k_R$ |
 | $\nu$ | belief concentration | **swept** | empirical $\approx15$–$41$; anchor $25$ (reproduces observed take-up) |
 | CV | damage dispersion | 0.86 | continuous only |
+| $\lambda$ | MCPF | 1.2 | Gruber–Solomon (enters only the optimal mix, §10) |
 
 Full parameter documentation (values used vs. G&S estimates, sources) is in `model_parameters.md`.
 
@@ -125,6 +142,21 @@ Status quo $(s,a)=(0.47,0.055)$, $m=0.0114$. All rows share the §6 structural b
 data support) the MVPF$_a$ denominator goes negative because crowd-out $\partial I/\partial a$ is large —
 the ratio is still reported but the local linearization is strained there.)*
 
+MVPF$_s$ is close to 1 because insured households retain nearly all their wealth; MVPF$_a$ is higher
+because uninsured flood victims are poorer, so their marginal utility is larger. The ranking is
+**robust across the empirical belief dispersion**, and the empirical $\nu$ also reproduces observed
+take-up (the internal-consistency check).
+
+![Discrete: MVPFs (left) and optimal mix (right) vs belief heterogeneity](figures/figBC_optimalmix.png)
+
+**Who relief reaches — the low-belief tail.** Relief serves the uninsured, deep-underperceiving tail
+($q<q^\ast$) — households that no affordable subsidy would pull into insurance. That tail grows with
+belief heterogeneity: the fraction no *free* subsidy could reach ($F(q^\ast_{s=1})$) rises from 0.00
+(concentrated beliefs) to 0.46 (dispersed). This is why relief keeps a role even when subsidies are
+generous.
+
+![Discrete: segmentation — relief serves the low-belief tail](figures/figD_segmentation.png)
+
 ## 9. MVPF results — CONTINUOUS damage (CV=0.86), across $\nu$
 
 | $\nu$ | $\sigma_q$ | $I$ | $f(q^\ast)$ | $\partial I/\partial s$ | $\partial I/\partial a$ | **MVPF$_s$** | **MVPF$_a$** |
@@ -141,12 +173,115 @@ Continuous damage lifts **both** MVPFs, relief far more. Across the empirical ra
 *direct transfer* is unchanged ($c_I,\,u'(c_I)$ use the mean $\bar d$), but MVPF$_s$ also runs through
 the take-up margin, which does move: a larger $\Delta u$ (Jensen) lowers $q^\ast$ and enlarges the
 internality $(p-q^\ast)\Delta u$. MVPF$_a$ rises more because relief additionally insures damage
-*dispersion* ($\overline{Du'}/\bar d=2.05>u'(c_{U,F})$). A heavier tail (CV=1.3) widens the gap further
-(at $\nu=25$: MVPF$_s$=1.51, MVPF$_a$=4.95).
+*dispersion* ($\overline{Du'}/\bar d=2.05>u'(c_{U,F})$).
+
+**Status-quo comparison at $\nu=25$:**
+
+| | $q^*$ | $\Delta u$ | $I$ | MVPF$_s$ | MVPF$_a$ | ratio |
+|---|---|---|---|---|---|---|
+| discrete | 0.0096 | 0.165 | 0.300 | 1.116 | 1.355 | 1.21 |
+| **continuous** | 0.0081 | 0.197 | 0.329 | **1.251** | **2.078** | **1.66** |
+
+**Robustness — heavier damage tail (CV = 1.3).** Relief's value scales with the CV of $G$. Re-running
+with CV = 1.3 (damage capped at 90% of wealth so CRRA utility stays finite; figures in
+`figures_continuous_cv13/`), at $\nu=25$:
+
+| status quo ($\nu=25$) | $q^*$ | $\Delta u$ | MVPF$_s$ | MVPF$_a$ | ratio |
+|---|---|---|---|---|---|
+| discrete | 0.0096 | 0.165 | 1.12 | 1.36 | 1.21 |
+| continuous CV=0.86 | 0.0081 | 0.197 | 1.25 | 2.08 | 1.66 |
+| **continuous CV=1.3** | 0.0059 | 0.269 | 1.51 | **4.95** | **3.28** |
+
+A heavier tail more than doubles relief's MVPF again (2.08 → **4.95**). So relief's edge is, if anything,
+**understated** at CV = 0.86, since real NFIP claims are often more right-skewed.
+
+![Continuous: MVPFs and optimal mix](figures_continuous/figBC_optimalmix.png)
 
 ---
 
-## 10. How to reproduce
+## 10. Optimal policy mix (MCPF $\lambda=1.2$)
 
-The MVPF core modules are here on `main` (`code/mvpf_discrete.py`,
-`code/mvpf_continuous.py`).
+The MVPFs above are independent of $\lambda$. To turn them into a policy recommendation, solve
+$$(s^\ast,a^\ast)=\arg\max_{s,a}\ \big[\,S(s,a)-\lambda\,\text{cost}(s,a)\,\big],$$
+with $\lambda=1.2$ (G&S) the benchmark against which spending is scored. A higher MCPF concentrates
+spending in the higher-MVPF instrument, tilting the optimum toward relief.
+
+| | DISCRETE | | | CONTINUOUS | | |
+|---|---|---|---|---|---|---|
+| $\nu$ | $s^\ast$ | $a^\ast$ | regime | $s^\ast$ | $a^\ast$ | regime |
+| 5 | 0.00 | 0.39 | relief-only | 0.00 | 0.65 | relief-only |
+| **15** | 0.00 | 0.35 | relief-only | 0.06 | 0.62 | both |
+| **25** | 0.00 | 0.32 | relief-only | 0.30 | 0.62 | both |
+| **41** | 0.01 | 0.30 | both | 0.46 | 0.62 | both |
+| 100 | 0.29 | 0.27 | both | 0.61 | 0.61 | both |
+| 500 | 0.46 | 0.00 | subsidy-only | 0.64 | 0.00 | subsidy-only |
+
+At the empirical anchor $\nu=25$ (bold $\nu=15,25,41$ = Bakkensen–Barrage range), discrete damage puts
+the marginal dollar **entirely in relief** ($s^\ast=0$); continuous damage keeps a relief-heavy interior
+mix ($s^\ast=0.30,a^\ast=0.62$) because full-coverage insurance still covers the tail of $G(D)$ that a
+partial relief fraction leaves exposed. *(At $\lambda=1.10$ the discrete anchor is instead an interior
+mix, $s^\ast=0.35,a^\ast=0.63$; the MVPF tables are unaffected either way.)*
+
+The optimal policy over $(\text{mean underperception},\,\sigma_q)$ is relief-favored across most of the
+space — subsidy-only only for near-correct, tightly-concentrated beliefs. Our empirically-anchored point
+sits firmly in the **relief-only / relief-heavy** region.
+
+![Discrete: optimal-mix regime phase diagram](figures/figE_phase.png)
+
+![Continuous: optimal-mix regime phase diagram](figures_continuous/figE_phase.png)
+
+---
+
+## 11. A note on complementarity (secondary)
+
+We also asked whether the two instruments are formal *complements or substitutes*. The answer is a
+**null / weak-substitutes** result and is **not** the headline:
+
+- The welfare cross-partial $\partial^2 S/\partial s\,\partial a$ is **negative** (weak substitutes)
+  across the empirical belief range.
+- The welfare gain from optimally using **both** instruments, over the best single one, is
+  **negligible** (order $10^{-5}$ of wealth, ≈\$1–2/household-year).
+
+So the policy question is **which** instrument the marginal dollar should fund (answer: relief), and how
+that depends on beliefs and the damage distribution — not a super-additive "complementarity" gain. The
+detailed diagnostics and derivations are in `mvpf_complementarity.md` (on the `mvpf-complementarity`
+branch).
+
+---
+
+## 12. Verdict
+
+- **Relief-favored, robustly.** At current US policy and empirically-grounded beliefs, MVPF$_a>$ MVPF$_s$
+  in every specification; at G&S's MCPF the optimal marginal dollar is **relief** (relief-only under
+  discrete damage, relief-heavy under continuous).
+- **Continuous damage strengthens this** — relief additionally insures damage dispersion, widening its
+  MVPF advantage (more so with heavier tails).
+- **Relief's distinctive role** is reaching the low-belief uninsured tail that subsidies cannot.
+- The "complementarity" question is a secondary null (weak substitutes, negligible blend gain).
+
+## 13. Open next steps
+
+- Reconcile the relief calibration $a$ (IA-only 0.055 vs G&S's bundled $f\approx0.133$) — a larger $a$
+  raises both the benefit and the fiscal cost of relief; rerun the ranking.
+- Adopt G&S loss/premium anchors ($L_f,\bar P$) and the implied higher $p$; recheck take-up validation.
+- Fit $G$ to OpenFEMA claims microdata (mean + CV) rather than the illustrative CV=0.86.
+- Belief identification (over-identification via Mulder's information effect; contamination-share).
+
+---
+
+## 14. How to reproduce
+
+The MVPF core modules, the optimal-mix module, and the figure/table driver are all on `main`.
+
+```python
+import sys; sys.path.insert(0, "code")
+import mvpf_discrete as D, mvpf_continuous as C     # cores
+import mvpf_optimal_mix as A                        # optimal_mix, welfare, cost
+
+D.mvpf(D.S0, D.A0, D.M_REF, nu=25)      # -> (MVPF_s, MVPF_a) = (1.116, 1.355)
+C.mvpf(C.S0, C.A0, C.M_REF, nu=25)      # -> (1.251, 2.078)
+A.optimal_mix(D, D.M_REF, nu=25, lam=1.2)   # -> discrete optimal (s*, a*) at the anchor
+```
+
+Or run `python code/mvpf_reproduce.py` for all tables and the figures in
+`figures/`, `figures_continuous/`, and `figures_continuous_cv13/`.
