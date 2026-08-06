@@ -32,3 +32,13 @@ def optimal_mix(mod, m, nu, lam=LAM, ns=141, na=141):
     denom = max(s_star * I + a_star * (1 - I), 1e-12)
     return dict(s_star=s_star, a_star=a_star, premium=W_both - max(W_sub, W_rel),
                 relief_share=a_star * (1 - I) / denom)
+
+if __name__ == "__main__":
+    import mvpf_discrete as D, mvpf_continuous as C
+    print(f"mvpf_optimal_mix — optimal policy mix (s*, a*) at MCPF lambda={LAM}, nu=25.")
+    for mod, name in [(D, "discrete"), (C, "continuous")]:
+        o = optimal_mix(mod, mod.M_REF, 25, lam=LAM, ns=101, na=101)
+        reg = ("relief-only" if o["s_star"] < 1e-3 else
+               "subsidy-only" if o["a_star"] < 1e-3 else "both")
+        print(f"  {name:11s}: s*={o['s_star']:.2f}  a*={o['a_star']:.2f}  [{reg}]")
+    print("Full sweep across nu and the figures: mvpf_reproduce.py")
