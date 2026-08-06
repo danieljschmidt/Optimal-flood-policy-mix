@@ -48,6 +48,7 @@ __pycache__
 *.tmp
 *.temp
 *.backup
+*.stackdump
 
 # OS generated files
 .DS_Store
