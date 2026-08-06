@@ -24,7 +24,7 @@ Parameters: `../notes/model_parameters.md`. MVPF formulas match `draft.tex` (ver
 
 ## On the `mvpf-complementarity` branch
 
-`mvpf_analysis.py` extends the core with `optimal_mix`, `cross_partial_S`,
+`mvpf_diagnostics.py` extends the core with `optimal_mix`, `cross_partial_S`,
 `welfare`, `cost`, … (functions take a core module as their first argument), and `reproduce.py`
 regenerates all tables and figures. Legacy: `baseline_model.py`, `figures.py`,
 `preference_heterogeneity_model.py`, `one_region_model/`, `calibration_mvpf.py` (broken import).
