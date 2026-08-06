@@ -10,7 +10,7 @@ The belief distribution F(q) is unchanged; discrete = degenerate G at dbar.
 G = right-skewed Beta on [0, DMAX] with mean dbar (CV set by `configure_damage`).
 
 Provides structural objects, take-up, and the two MVPFs. The optimal-mix and
-complementarity diagnostics build on this core in `belief_complementarity_analysis.py`
+complementarity diagnostics build on this core in `mvpf_analysis.py`
 (on the `mvpf-complementarity` branch); see `notes/mvpf_computations.md`.
 """
 import numpy as np
@@ -107,8 +107,8 @@ def mvpf(s, a, m, nu):
     return Ms, Ma
 
 if __name__ == "__main__":
-    print("belief_complementarity_continuous — MVPF core module.")
+    print("mvpf_continuous — MVPF core module.")
     print(f"Damage G = Beta({DMG_ALPHA}, {DMG_BETA:.3f}), mean={DBAR}, CV={DMG_CV:.3f}")
     print("MVPF(nu=25) =", tuple(round(x, 3) for x in mvpf(S0, A0, M_REF, 25)))
-    print("Optimal-mix / complementarity: belief_complementarity_analysis.py + reproduce.py "
+    print("Optimal-mix / complementarity: mvpf_analysis.py + reproduce.py "
           "(mvpf-complementarity branch).")

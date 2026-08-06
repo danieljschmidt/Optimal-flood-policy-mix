@@ -8,9 +8,9 @@ Belief distribution F = Beta parametrised by mean m and concentration nu:
 
 This module provides the structural objects, take-up, and the two MVPFs (subsidy &
 relief). MVPF formulas match draft.tex (value-function / deep-parameter forms). The
-optimal-mix and complementarity diagnostics build on this core in
-`belief_complementarity_analysis.py` (on the `mvpf-complementarity` branch); see
-`notes/mvpf_computations.md` for the formulas and results.
+optimal-mix and complementarity diagnostics build on this core in `mvpf_analysis.py`
+(on the `mvpf-complementarity` branch); see `notes/mvpf_computations.md` for the
+formulas and results.
 """
 import numpy as np
 from scipy.special import betaln, betainc
@@ -57,8 +57,8 @@ def mvpf(s, a, m, nu):
     return Ms, Ma
 
 if __name__ == "__main__":
-    print("belief_complementarity (discrete) — MVPF core module.")
+    print("mvpf_discrete — MVPF core module.")
     print("status-quo q* =", round(struct(S0, A0)['qst'], 5),
           "  MVPF(nu=25) =", tuple(round(x, 3) for x in mvpf(S0, A0, M_REF, 25)))
-    print("Optimal-mix / complementarity: belief_complementarity_analysis.py + reproduce.py "
+    print("Optimal-mix / complementarity: mvpf_analysis.py + reproduce.py "
           "(mvpf-complementarity branch).")

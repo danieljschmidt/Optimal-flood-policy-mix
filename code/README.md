@@ -8,14 +8,14 @@ the figure/reproduce pipeline live on the `mvpf-complementarity` branch.
 
 | file | role |
 |---|---|
-| `belief_complementarity.py` | discrete-damage model: `struct`, `take_up`, `mvpf`, belief-Beta helpers |
-| `belief_complementarity_continuous.py` | continuous-damage model ($D\sim G$); `configure_damage(cv, dmax)` |
+| `mvpf_discrete.py` | discrete-damage model: `struct`, `take_up`, `mvpf`, belief-Beta helpers |
+| `mvpf_continuous.py` | continuous-damage model ($D\sim G$); `configure_damage(cv, dmax)` |
 
 ```python
 import sys; sys.path.insert(0, "code")
-import belief_complementarity as D
+import mvpf_discrete as D
 D.mvpf(D.S0, D.A0, D.M_REF, nu=25)     # -> (MVPF_s, MVPF_a) = (1.116, 1.355)
-import belief_complementarity_continuous as C
+import mvpf_continuous as C
 C.mvpf(C.S0, C.A0, C.M_REF, nu=25)     # -> (1.251, 2.078)
 ```
 
@@ -24,7 +24,7 @@ Parameters: `../notes/model_parameters.md`. MVPF formulas match `draft.tex` (ver
 
 ## On the `mvpf-complementarity` branch
 
-`belief_complementarity_analysis.py` extends the core with `optimal_mix`, `cross_partial_S`,
+`mvpf_analysis.py` extends the core with `optimal_mix`, `cross_partial_S`,
 `welfare`, `cost`, … (functions take a core module as their first argument), and `reproduce.py`
 regenerates all tables and figures. Legacy: `baseline_model.py`, `figures.py`,
 `preference_heterogeneity_model.py`, `one_region_model/`, `calibration_mvpf.py` (broken import).
