@@ -60,5 +60,3 @@ if __name__ == "__main__":
     print("mvpf_discrete — MVPF core module.")
     print("status-quo q* =", round(struct(S0, A0)['qst'], 5),
           "  MVPF(nu=25) =", tuple(round(x, 3) for x in mvpf(S0, A0, M_REF, 25)))
-    print("Optimal-mix / complementarity: mvpf_analysis.py + reproduce.py "
-          "(mvpf-complementarity branch).")

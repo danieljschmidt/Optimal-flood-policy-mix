@@ -149,19 +149,4 @@ internality $(p-q^\ast)\Delta u$. MVPF$_a$ rises more because relief additionall
 ## 10. How to reproduce
 
 The MVPF core modules are here on `main` (`code/mvpf_discrete.py`,
-`code/mvpf_continuous.py`); the `reproduce.py` driver and the optimal-mix / figure
-pipeline live on the `mvpf-complementarity` branch:
-
-```python
-import sys; sys.path.insert(0, "code")
-import mvpf_discrete as D                 # discrete
-import mvpf_continuous as C               # continuous (default CV=0.86)
-
-D.mvpf(D.S0, D.A0, D.M_REF, nu=25)     # -> (MVPF_s, MVPF_a) = (1.116, 1.355) at status quo
-C.mvpf(C.S0, C.A0, C.M_REF, nu=25)     # -> (1.251, 2.078)
-D.struct(D.S0, D.A0)                    # structural block (c_I, Du, q*, ...)
-```
-
-`struct()` = structural block; `take_up()`, `f_pdf()`, `f_cdf()` = take-up/density; `mvpf()` = MVPFs;
-`sigma_of(m, nu)` = concentration → dispersion; `C.configure_damage(cv, dmax)` = damage distribution.
-Or run `python code/reproduce.py` for all tables and figures.
+`code/mvpf_continuous.py`).

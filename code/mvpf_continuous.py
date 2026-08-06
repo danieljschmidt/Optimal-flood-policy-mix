@@ -110,5 +110,4 @@ if __name__ == "__main__":
     print("mvpf_continuous — MVPF core module.")
     print(f"Damage G = Beta({DMG_ALPHA}, {DMG_BETA:.3f}), mean={DBAR}, CV={DMG_CV:.3f}")
     print("MVPF(nu=25) =", tuple(round(x, 3) for x in mvpf(S0, A0, M_REF, 25)))
-    print("Optimal-mix / complementarity: mvpf_analysis.py + reproduce.py "
-          "(mvpf-complementarity branch).")
+    
