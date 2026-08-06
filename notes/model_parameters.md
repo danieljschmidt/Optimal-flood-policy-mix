@@ -5,7 +5,7 @@ Gruber–Solomon (NBER WP 35408) estimate where one exists; **Source (G&S)** is 
 **Reasoning** says whether we adopt G&S and, if not, why. Continuous-damage parameters are folded into
 §1b, tagged **[cont]**. §2 lists quantities that are **not model inputs** but are useful consistency
 checks. Cross-refs: `draft/draft.tex`, `code/belief_complementarity.py`,
-`code/belief_complementarity_continuous.py`, `calibration_moments_and_gs.md`, `daniel_notes/gruber_solomon.md`.*
+`code/belief_complementarity_continuous.py`, `daniel_notes/gruber_solomon.md`.*
 
 ---
 
@@ -154,7 +154,7 @@ damage" understates the true federal spillover. Neither is a model input — $\b
 
 ---
 
-## Appendix — G&S values available for planned extensions
+## Appendix — G&S values available for potential extensions
 (not in the current model, ready to slot into roadmap extensions)
 
 | Symbol | Meaning | Value (G&S) | Source (G&S) | Use |
