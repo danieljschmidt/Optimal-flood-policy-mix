@@ -5,7 +5,7 @@ Gruber–Solomon (NBER WP 35408) estimate where one exists; **Source (G&S)** is 
 **Reasoning** says whether we adopt G&S and, if not, why. Continuous-damage parameters are folded into
 §1b, tagged **[cont]**. §2 lists quantities that are **not model inputs** but are useful consistency
 checks. Cross-refs: `draft/draft.tex`, `code/mvpf_discrete.py`,
-`code/mvpf_continuous.py`, `daniel_notes/gruber_solomon.md`.*
+`code/mvpf_continuous.py`, `lit/gruber_solomon.md`.*
 
 ---
 

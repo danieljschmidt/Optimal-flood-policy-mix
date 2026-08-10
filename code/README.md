@@ -33,5 +33,15 @@ Parameters: `../notes/model_parameters.md`. MVPF formulas match `draft.tex` (ver
 (`cross_partial_S`, `f_prime`, `beta_mode`, `driver`, `unreachable_tail`; each takes a core module as
 its first argument), with working notes in `../notes/mvpf_complementarity.md`.
 
-Legacy (unused): `baseline_model.py`, `figures.py`, `preference_heterogeneity_model.py`,
-`one_region_model/`, `calibration_mvpf.py` (broken import).
+## Legacy (moved out of `code/`)
+
+Superseded modules now live in `../archive/legacy_code/`: `baseline_model.py`, `figures.py`,
+`preference_heterogeneity_model.py`, `baseline_model_test.ipynb`, and `calibration_mvpf.py`
+(broken — imports a non-existent `optimal_policy` module).
+
+One piece there is still wanted: `baseline_model.py` holds `recover_fqstar` and `fit_beta`, the
+sufficient-statistic belief recovery from `draft.tex`. Promoting those two functions back into
+`code/` is a planned improvement — see `../IMPROVEMENTS.md`.
+
+(`one_region_model/` no longer exists in any form; it became `draft/draft.tex` in commits
+`9babf38`/`5989d5e`.)
