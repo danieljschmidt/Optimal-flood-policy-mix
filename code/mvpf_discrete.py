@@ -6,21 +6,21 @@ Government subsidises insurance (rate s) and provides disaster relief (fraction 
 Belief distribution F = Beta parametrised by mean m and concentration nu:
     alpha = m*nu,  beta = (1-m)*nu,  sigma_q = sqrt(m(1-m)/(nu+1)).
 
-This module provides the structural objects, take-up, and the two MVPFs (subsidy &
-relief). MVPF formulas match draft.tex (value-function / deep-parameter forms). The
-the optimal-mix analysis (`mvpf_optimal_mix.py`) and the secondary complementarity
-diagnostics (`mvpf_complementarity.py`, on the branch) build on this core
-(on the `mvpf-complementarity` branch); see `notes/mvpf_computations.md` for the
-formulas and results.
+Functions here are generic in (m, nu). The calibrated belief distribution is
+fitted to (I_OBS, EPS) by `belief_identification.fit_beta`; the local MVPFs need
+no belief distribution at all (`belief_identification.mvpf_local`). Parameters
+live in `params.py`. MVPF formulas match draft.tex (value-function /
+deep-parameter forms). The optimal-mix analysis (`mvpf_optimal_mix.py`) and the
+secondary complementarity diagnostics (`mvpf_complementarity.py`, on the
+`mvpf-complementarity` branch) build on this core; formulas and results:
+`notes/mvpf_computations.md`.
 """
 import numpy as np
 from scipy.special import betaln, betainc
 
-# ---------------- primitives (status-quo calibration) -------------------------
-W, GAMMA, P, D = 1.0, 2.0, 0.02, 0.15
-S0, A0 = 0.47, 0.055          # status-quo policy
-M_REF = 0.0114                # mean belief (= 0.57 p, Bakkensen-Barrage)
-MEAN_D = D                    # mean damage (= D here; = DBAR in the continuous module)
+# ---------------- primitives (single source of truth: params.py) ---------------
+from params import W, GAMMA, P, MEAN_D, S0, A0
+D = MEAN_D                    # damage (= mean damage; = DBAR in the continuous module)
 
 def u(c):  return c ** (1 - GAMMA) / (1 - GAMMA)
 def up(c): return c ** (-GAMMA)
@@ -58,6 +58,9 @@ def mvpf(s, a, m, nu):
     return Ms, Ma
 
 if __name__ == "__main__":
+    import params, belief_identification as B
+    import mvpf_discrete as _self
     print("mvpf_discrete — MVPF core module.")
-    print("status-quo q* =", round(struct(S0, A0)['qst'], 5),
-          "  MVPF(nu=25) =", tuple(round(x, 3) for x in mvpf(S0, A0, M_REF, 25)))
+    Ms, Ma = B.mvpf_local(_self, S0, A0, params.I_OBS, params.EPS)
+    print(f"status-quo q* = {struct(S0, A0)['qst']:.5f}   "
+          f"local MVPF = ({Ms:.3f}, {Ma:.3f})")

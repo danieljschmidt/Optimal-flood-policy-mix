@@ -8,7 +8,7 @@ MCPF `lam` enters only the optimal mix. See `notes/mvpf_computations.md` §10.
 """
 import numpy as np
 
-LAM = 1.20                              # MCPF (G&S value)
+from params import LAM                  # MCPF benchmark (see params.py)
 
 # ---- welfare / cost (needed by the optimum) ----
 def welfare(mod, s, a, m, nu):
@@ -34,11 +34,14 @@ def optimal_mix(mod, m, nu, lam=LAM, ns=141, na=141):
                 relief_share=a_star * (1 - I) / denom)
 
 if __name__ == "__main__":
+    import params, belief_identification as B
     import mvpf_discrete as D, mvpf_continuous as C
-    print(f"mvpf_optimal_mix — optimal policy mix (s*, a*) at MCPF lambda={LAM}, nu=25.")
+    print(f"mvpf_optimal_mix — optimal policy mix (s*, a*) at MCPF lambda={LAM}, fitted beliefs.")
     for mod, name in [(D, "discrete"), (C, "continuous")]:
-        o = optimal_mix(mod, mod.M_REF, 25, lam=LAM, ns=101, na=101)
+        al, be = B.fit_beta(mod, params.S0, params.A0, params.I_OBS, params.EPS)
+        m, nu = al / (al + be), al + be
+        o = optimal_mix(mod, m, nu, lam=LAM, ns=101, na=101)
         reg = ("relief-only" if o["s_star"] < 1e-3 else
                "subsidy-only" if o["a_star"] < 1e-3 else "both")
         print(f"  {name:11s}: s*={o['s_star']:.2f}  a*={o['a_star']:.2f}  [{reg}]")
-    print("Full sweep across nu and the figures: mvpf_reproduce.py")
+    print("All tables and the figures: mvpf_reproduce.py")

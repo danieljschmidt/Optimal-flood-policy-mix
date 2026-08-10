@@ -1,47 +1,52 @@
 # Flood-policy MVPF model — code
 
-MVPF of the insurance **subsidy** ($s$) vs disaster **relief** ($a$) under heterogeneous flood-risk
-beliefs. `main` holds the **headline analysis** — the MVPF core, the optimal policy mix, and the
-figure/table driver. The (secondary) complements-vs-substitutes diagnostics live on the
-`mvpf-complementarity` branch.
+MVPF of the insurance **subsidy** ($s$) vs disaster **relief** ($a$) under heterogeneous
+flood-risk beliefs. Two layers of results:
 
-## Modules (here on `main`)
+- **Local (headline):** sufficient-statistic MVPFs at the status quo, computed from the observed
+  take-up and premium elasticity $(I, \varepsilon)$ alone — no belief distribution, no MCPF.
+- **Global (secondary):** the belief distribution (Beta) is fitted to the same two moments —
+  $F(q^*) = 1-I$ and $f(q^*) = \hat f(I,\varepsilon)$ — and used for the optimal policy mix
+  $(s^*, a^*)$ and the regime map over the belief space. Surveys (Bakkensen–Barrage) serve as
+  validation checks, not calibration inputs.
+
+## Modules
 
 | file | role |
 |---|---|
-| `mvpf_discrete.py` | discrete-damage core: `struct`, `take_up`, `mvpf`, belief-Beta helpers |
+| `params.py` | **single source of truth** for all parameters; edit values here only |
+| `belief_identification.py` | `mvpf_local` (sufficient statistics), `recover_fqstar`, `fit_beta`, `validation` |
+| `mvpf_discrete.py` | discrete-damage core: `struct`, `take_up`, `mvpf`, belief-Beta helpers (generic in $(m,\nu)$) |
 | `mvpf_continuous.py` | continuous-damage core ($D\sim G$); `configure_damage(cv, dmax)` |
-| `mvpf_optimal_mix.py` | optimal mix $(s^\ast,a^\ast)$: `welfare`, `cost`, `optimal_mix` (take a core module as first arg) |
-| `mvpf_reproduce.py` | driver: prints all tables and regenerates the figures |
+| `mvpf_optimal_mix.py` | optimal mix: `welfare`, `cost`, `optimal_mix` (take a core module as first argument) |
+| `mvpf_reproduce.py` | driver: prints the Local/Global tables and regenerates all figures |
+
+The damage distribution $G$ (Beta, CV = 0.86 baseline / 1.3 robustness) is a **placeholder**
+pending a FEMA claims-based distribution; swap it in via `configure_damage`.
+
+## Usage
 
 ```python
 import sys; sys.path.insert(0, "code")
+import params, belief_identification as B
 import mvpf_discrete as D, mvpf_continuous as C
 import mvpf_optimal_mix as A
-D.mvpf(D.S0, D.A0, D.M_REF, nu=25)          # -> (MVPF_s, MVPF_a) = (1.116, 1.355)
-C.mvpf(C.S0, C.A0, C.M_REF, nu=25)          # -> (1.251, 2.078)
-A.optimal_mix(D, D.M_REF, nu=25, lam=1.2)   # -> discrete optimal (s*, a*)
+
+B.mvpf_local(D, D.S0, D.A0, params.I_OBS, params.EPS)   # -> (MVPF_s, MVPF_a) = (1.072, 1.334)
+B.mvpf_local(C, C.S0, C.A0, params.I_OBS, params.EPS)   # -> (1.161, 1.944)
+al, be = B.fit_beta(D, D.S0, D.A0, params.I_OBS, params.EPS)   # -> Beta(0.143, 5.691)
+B.validation(D, al, be)                                  # survey checks
+A.optimal_mix(D, al/(al+be), al+be, lam=1.2)             # -> (s*, a*) = (0.00, 0.34)
 ```
-Or run `python code/mvpf_reproduce.py` for all tables and figures.
 
-Formulas, parameters, worked example, MVPF tables, and the optimal mix: `../notes/mvpf_computations.md`.
-Parameters: `../notes/model_parameters.md`. MVPF formulas match `draft.tex` (verified numerically).
+Or run `python code/mvpf_reproduce.py` for all tables and the figures in
+`../notes/figures{,_continuous,_continuous_cv13}/` (runtime dominated by the phase diagrams,
+~10–20 min).
 
-## On the `mvpf-complementarity` branch
+## Documentation
 
-`mvpf_complementarity.py` holds the secondary complements-vs-substitutes diagnostics
-(`cross_partial_S`, `f_prime`, `beta_mode`, `driver`, `unreachable_tail`; each takes a core module as
-its first argument), with working notes in `../notes/mvpf_complementarity.md`.
-
-## Legacy (moved out of `code/`)
-
-Superseded modules now live in `../archive/legacy_code/`: `baseline_model.py`, `figures.py`,
-`preference_heterogeneity_model.py`, `baseline_model_test.ipynb`, and `calibration_mvpf.py`
-(broken — imports a non-existent `optimal_policy` module).
-
-One piece there is still wanted: `baseline_model.py` holds `recover_fqstar` and `fit_beta`, the
-sufficient-statistic belief recovery from `draft.tex`. Promoting those two functions back into
-`code/` is a planned improvement — see `../IMPROVEMENTS.md`.
-
-(`one_region_model/` no longer exists in any form; it became `draft/draft.tex` in commits
-`9babf38`/`5989d5e`.)
+Formulas, worked example, and results: `../notes/mvpf_computations.md`. Parameter values and
+provenance: `../notes/model_parameters.md`. MVPF formulas match `../draft/draft.tex` (verified
+numerically).
+Secondary complements-vs-substitutes diagnostics: `mvpf_complementarity.py` on the
+`mvpf-complementarity` branch (not yet pushed).

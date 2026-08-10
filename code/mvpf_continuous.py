@@ -9,26 +9,28 @@ Only the DAMAGE side changes vs the discrete module:
 The belief distribution F(q) is unchanged; discrete = degenerate G at dbar.
 G = right-skewed Beta on [0, DMAX] with mean dbar (CV set by `configure_damage`).
 
-Provides structural objects, take-up, and the two MVPFs. The optimal-mix analysis
-(`mvpf_optimal_mix.py`) and the secondary complementarity diagnostics
-(`mvpf_complementarity.py`, on the branch) build on this core; see
-`notes/mvpf_computations.md`.
+Provides structural objects, take-up, and the two MVPFs; functions are generic in
+(m, nu) — the calibrated belief Beta comes from `belief_identification.fit_beta`
+and the local MVPFs from `belief_identification.mvpf_local` (parameters:
+`params.py`). The optimal-mix analysis (`mvpf_optimal_mix.py`) and the secondary
+complementarity diagnostics (`mvpf_complementarity.py`, on the branch) build on
+this core; see `notes/mvpf_computations.md`.
 """
 import numpy as np
 from scipy.special import betaln, betainc
 from scipy.integrate import quad
 from scipy.interpolate import PchipInterpolator
 
-# ---------------- primitives (status-quo calibration) -------------------------
-W, GAMMA, P, DBAR = 1.0, 2.0, 0.02, 0.15
-S0, A0 = 0.47, 0.055
-M_REF = 0.0114
-MEAN_D = DBAR                 # mean damage (uniform name shared with the discrete module)
+# ---------------- primitives (single source of truth: params.py) ---------------
+from params import W, GAMMA, P, MEAN_D, S0, A0
+DBAR = MEAN_D                 # mean damage (uniform name shared with the discrete module)
 
 def u(c):  return c ** (1 - GAMMA) / (1 - GAMMA)
 def up(c): return c ** (-GAMMA)
 
 # ---------------- damage distribution G (configurable) ------------------------
+# PLACEHOLDER: the Beta spec below (CV = 0.86 default, 1.3 robustness) stands in
+# until the FEMA claims-based damage distribution arrives; swap via configure_damage.
 # D = DMAX * B, with B ~ Beta(DMG_ALPHA, DMG_BETA) on [0,1], mean(D) = DBAR.
 # DMAX caps damage below total wealth loss so CRRA marginal utility stays finite
 # (needed once the tail is heavy: CV >= ~1.3). CV is scale-invariant, so the cap
@@ -108,7 +110,10 @@ def mvpf(s, a, m, nu):
     return Ms, Ma
 
 if __name__ == "__main__":
+    import params, belief_identification as B
+    import mvpf_continuous as _self
     print("mvpf_continuous — MVPF core module.")
     print(f"Damage G = Beta({DMG_ALPHA}, {DMG_BETA:.3f}), mean={DBAR}, CV={DMG_CV:.3f}")
-    print("MVPF(nu=25) =", tuple(round(x, 3) for x in mvpf(S0, A0, M_REF, 25)))
-    
+    Ms, Ma = B.mvpf_local(_self, S0, A0, params.I_OBS, params.EPS)
+    print(f"local MVPF = ({Ms:.3f}, {Ma:.3f})")
+
