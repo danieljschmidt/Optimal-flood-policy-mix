@@ -61,3 +61,6 @@ Thumbs.db
 
 # environment folder
 .venv
+
+# private notes (not shared)
+daniel_notes/
