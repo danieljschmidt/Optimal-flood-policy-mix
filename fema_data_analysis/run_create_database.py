@@ -2,8 +2,8 @@ import pandas as pd
 import sqlite3
 import gc
 
-from database_setup_claims import claims_dtype_dict, claims_date_cols
-from database_setup_policies import policies_dtype_dict, policies_date_cols
+from fema_data_analysis.database_setup_claims import claims_dtype_dict, claims_date_cols
+from fema_data_analysis.database_setup_policies import policies_dtype_dict, policies_date_cols
 
 csv_file_claims = "C:\\Data\\FEMA\\FimaNfipClaims_v2.csv"
 csv_file_policies = "C:\\Data\\FEMA\\FimaNfipPolicies.csv"
