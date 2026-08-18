@@ -7,7 +7,10 @@ Only the DAMAGE side changes vs the discrete module:
   * Delta_u(a) = u(w) - E[u(w-(1-a)D)]                    (Jensen: larger than discrete)
   * relief marginal-utility factor  u'(c_UF) -> Dubar(a)/dbar,  Dubar = E[D u'(c_UF)]
 The belief distribution F(q) is unchanged; discrete = degenerate G at dbar.
-G = right-skewed Beta on [0, DMAX] with mean dbar (CV set by `configure_damage`).
+G = the empirical FEMA claims-based damage distribution (20 bins, default: the
+main variant), loaded via `configure_damage(empirical=...)`; a Beta on [0, DMAX]
+remains available as an alternative mode (`configure_damage(cv=...)`). In the
+empirical mode dbar is the bin mean (NOT params.MEAN_D — the discrete anchor).
 
 Provides structural objects, take-up, and the two MVPFs; functions are generic in
 (m, nu) — the calibrated belief Beta comes from `belief_identification.fit_beta`

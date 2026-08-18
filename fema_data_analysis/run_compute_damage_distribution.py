@@ -10,7 +10,7 @@
 # (single-family residential, SFHA) so the damage and adaptation evidence describe the
 # same population.  Caveats that cannot be fixed in the data pipeline — the denominator
 # is building value, not wealth, and the sample is conditional on a claim being filed,
-# not on a flood occurring — are documented in damage_distribution_notes.md.
+# not on a flood occurring — are documented in notes/notes.md.
 
 from pathlib import Path
 
@@ -39,7 +39,7 @@ conn = sqlite3.connect(DB_PATH)
 
 # %% Load claims data
 #
-# Pulled once as a superset (single-family + SFHA, all years, both value concepts);
+# Pulled once as a superset (single-family + SFHA, all years);
 # every sample variant below is carved out of this frame in pandas.
 
 df_claims = pd.read_sql_query(
@@ -49,7 +49,6 @@ df_claims = pd.read_sql_query(
         floodEvent,
         buildingDamageAmount,
         buildingPropertyValue,
-        buildingReplacementCost,
         elevatedBuildingIndicator,
         postFIRMConstructionIndicator
     FROM claims
@@ -87,21 +86,11 @@ print(f"  dropped, denominator outside plausible band: {n_out_of_band:,}")
 print(f"  dropped, ratio non-finite                  : {n_nonfinite:,}")
 print(f"  clipped, ratio > 1 (damage above value)    : {n_above_one:,}")
 
-# Alternative denominator: replacement cost rather than depreciated cash value.
-rc_ok = df_claims["buildingReplacementCost"].between(VALUE_MIN, VALUE_MAX)
-df_claims["fracDamageRC"] = np.where(
-    rc_ok,
-    (df_claims["buildingDamageAmount"] / df_claims["buildingReplacementCost"]).clip(0, 1),
-    np.nan,
-)
-
 # %% Sample variants
 #
 # main            -- the baseline
 # excl_katrina    -- Katrina alone is 12% of the main sample and carries most of the upper tail
 # since_2010      -- post-Katrina window: cleaner reporting, current building stock
-# replacement_cost-- alternative denominator; differs from the baseline by almost exactly
-#                    the deterministic ACV/replacement-cost wedge (see notes section 3.1)
 
 modern = df_claims["yearOfLoss"] >= MIN_YEAR
 katrina = df_claims["floodEvent"] == "Hurricane Katrina"
@@ -118,10 +107,6 @@ VARIANTS = {
     "since_2010": (
         "main sample restricted to 2010 onward",
         df_claims["yearOfLoss"] >= 2010, "fracDamage",
-    ),
-    "replacement_cost": (
-        "main sample with buildingReplacementCost as denominator",
-        modern & rc_ok, "fracDamageRC",
     ),
 }
 

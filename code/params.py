@@ -14,7 +14,21 @@ P = 0.02           # true annual flood probability.
                    #   G&S report an implied p ~ 0.055 for the NFIP-insured population
                    #   (WP 35408, printed p. 31, p. 105). Population switch (SFHA "P1",
                    #   two-zone "P3") is an optional TODO.
-MEAN_D = 0.15      # (mean) flood damage as share of wealth (NFIP claims / home value)
+MEAN_D = 0.15      # (mean) flood damage as share of wealth (G&S L_f anchor).
+                   #   Used by the DISCRETE model. The continuous model overrides
+                   #   dbar with the empirical FEMA bin mean (0.3044 main / 0.2517
+                   #   excl. Katrina) via configure_damage(empirical=...) — so the
+                   #   two damage models are no longer mean-matched (caveat recorded
+                   #   in notes/model_parameters.md 1b).
+
+# ---- FEMA claims-based damage distribution (fema_data_analysis/) -------------
+# 20-bin discretizations of D = buildingDamageAmount / buildingPropertyValue,
+# single-family SFHA claims since 2000; see fema_data_analysis/notes/notes.md.
+import os as _os
+_FEMA_OUT = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                          "..", "fema_data_analysis", "output")
+FEMA_DIST_MAIN = _os.path.join(_FEMA_OUT, "damage_distribution_main.csv")
+FEMA_DIST_EXCL_KATRINA = _os.path.join(_FEMA_OUT, "damage_distribution_excl_katrina.csv")
 
 # ---- status-quo policy (evaluation point) ------------------------------------
 S0 = 0.47          # insurance subsidy rate (GAO 2023 / RR2.0 transition)
