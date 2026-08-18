@@ -11,9 +11,9 @@ Structure:
                        Bounds/regions over the calibration set: TODO.
 
 Figures (per damage spec):
-    notes/figures/                  discrete
-    notes/figures_continuous/       continuous, CV = 0.86
-    notes/figures_continuous_cv13/  continuous, CV = 1.3
+    notes/figures/                            discrete
+    notes/figures_continuous/                 continuous, FEMA empirical (main)
+    notes/figures_continuous_excl_katrina/    continuous, FEMA excl. Katrina (robustness)
   figD  — segmentation: fitted belief density, who each instrument reaches
   figE  — optimal-mix regime map over the belief space (global robustness object)
 (No sweep over the fitted belief parameters: (m, nu) are exactly identified by
@@ -37,7 +37,7 @@ import mvpf_optimal_mix as A    # optimal_mix, welfare, cost
 REPO  = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FD    = os.path.join(REPO, "notes", "figures")
 FC    = os.path.join(REPO, "notes", "figures_continuous")
-FC13  = os.path.join(REPO, "notes", "figures_continuous_cv13")
+FCX   = os.path.join(REPO, "notes", "figures_continuous_excl_katrina")
 BLUE, RED = "#2166ac", "#b2182b"
 LAMS = [1.1, 1.2]                       # lambda = 1.0 is degenerate (corner: both -> max)
 
@@ -147,19 +147,19 @@ def figE(mod, outdir, tag):
 # ---------------------------------------------------------------- main
 if __name__ == "__main__":
     print("\n########## TABLES ##########\n")
-    C.configure_damage(alpha=1.0, beta=5.66667, dmax=1.0)       # CV = 0.86 baseline
-    table_local([("DISCRETE", D), ("CONTINUOUS CV=0.86", C)])
-    table_global([("DISCRETE", D), ("CONTINUOUS CV=0.86", C)])
+    C.configure_damage(empirical=params.FEMA_DIST_MAIN)         # FEMA baseline
+    table_local([("DISCRETE", D), ("CONTINUOUS FEMA", C)])
+    table_global([("DISCRETE", D), ("CONTINUOUS FEMA", C)])
 
     print("\n########## FIGURES ##########\n")
-    for mod, outdir, tag in [(D, FD, "[discrete]"), (C, FC, "[continuous, CV=0.86]")]:
+    for mod, outdir, tag in [(D, FD, "[discrete]"), (C, FC, "[continuous, FEMA]")]:
         figD(mod, outdir, tag); figE(mod, outdir, tag)
 
-    C.configure_damage(cv=1.3, dmax=0.9)                        # heavy-tail robustness
+    C.configure_damage(empirical=params.FEMA_DIST_EXCL_KATRINA) # tail robustness
     print()
-    table_local([("CONTINUOUS CV=1.3", C)])
-    table_global([("CONTINUOUS CV=1.3", C)])
-    figD(C, FC13, "[continuous, CV=1.3]"); figE(C, FC13, "[continuous, CV=1.3]")
-    C.configure_damage(alpha=1.0, beta=5.66667, dmax=1.0)       # reset to CV=0.86
+    table_local([("CONT. EXCL-KATRINA", C)])
+    table_global([("CONT. EXCL-KATRINA", C)])
+    figD(C, FCX, "[continuous, excl. Katrina]"); figE(C, FCX, "[continuous, excl. Katrina]")
+    C.configure_damage(empirical=params.FEMA_DIST_MAIN)         # reset to FEMA baseline
 
-    print("\nDONE. Figures in notes/figures{,_continuous,_continuous_cv13}/")
+    print("\nDONE. Figures in notes/figures{,_continuous,_continuous_excl_katrina}/")

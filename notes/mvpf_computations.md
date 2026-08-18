@@ -63,8 +63,14 @@ $$\boxed{\;\text{MVPF}_a=\frac{(p-q^\ast)\Delta u\cdot\frac{\partial I}{\partial
 
 ## 5. Continuous-damage modification
 
-Only the damage side changes ($d\to D\sim G$, mean $\bar d$; $G=\text{Beta}(1,5.67)$ on $[0,1]$,
-CV $=0.86$ — a **placeholder** until the FEMA claims-based distribution arrives):
+Only the damage side changes ($d\to D\sim G$, mean $\bar d$). $G$ is the **empirical FEMA
+claims-based distribution**: 20 bins of $D=$ damage$/$building value over single-family SFHA
+claims since 2000, used at their conditional means with bin weights (expectations are exact
+weighted sums; `configure_damage(empirical=…)`). Main variant: mean 0.3044, CV 0.99, 6.0% mass in
+the top bin ($\bar D\approx0.993$); excl. Katrina (tail robustness): mean 0.2517, CV 1.02, 1.9%
+top-bin mass. Note $\bar d$ is now the *empirical* mean, not `params.MEAN_D` = 0.15 — the
+continuous and discrete specs are no longer mean-matched (provenance and caveats:
+`model_parameters.md` §1b):
 $$c_I=w-(1-s)p\bar d,\quad c_{U,F}(D)=w-(1-a)D,\quad
 \Delta u=u(w)-\mathbb{E}[u(c_{U,F}(D))].$$
 Define $\overline{Du'}\equiv\mathbb{E}[D\,u'(c_{U,F}(D))]$. Then $\partial I/\partial s$ uses $\bar d$,
@@ -81,12 +87,12 @@ $\overline{Du'}/\bar d$. All $pd$ become $p\bar d$.
 | $\gamma$ | CRRA | 2 | Chetty |
 | $w$ | wealth | 1 | normalized |
 | $p$ | flood probability | 0.02 | ⚠ round modelling choice — discussion point (`model_parameters.md` §1b) |
-| $d$ ($\bar d$) | damage / wealth | 0.15 | NFIP claims (mean of $G$ in continuous) |
+| $d$ ($\bar d$) | damage / base | 0.15 (discrete); 0.3044 / 0.2517 (continuous, FEMA main / excl. Katrina) | discrete: G&S anchor; continuous: FEMA claim-ratio mean — specs no longer mean-matched |
 | $s$ | subsidy rate | 0.47 | status quo (GAO) |
 | $a$ | relief fraction | **0.10** | interim decision 2026-08-12; final choice TODO |
 | $I$ | take-up | 0.30 | ⚠ discussion point (population); voluntary correction TODO |
 | $\varepsilon$ | take-up elasticity | −0.32 | G&S, Reading A; Mulder dual-report TODO |
-| CV | damage dispersion | 0.86 (1.3 robustness) | continuous only; **placeholder** pending FEMA distribution |
+| $G$ | damage distribution | FEMA empirical 20-bin (CV 0.99 main / 1.02 excl. Katrina) | continuous only; replaces the Beta CV=0.86/1.3 placeholders (2026-08-18) |
 | $\lambda$ | MCPF | 1.1–1.2 | enters only the global optimal mix (§8) |
 
 Single source of truth: `code/params.py`. Full provenance: `model_parameters.md`.
@@ -96,9 +102,13 @@ Single source of truth: `code/params.py`. Full provenance: `model_parameters.md`
 | | $c_I$ | $c_{U,F}$ | $\Delta u$ | $q^\ast$ | $u'(c_I)$ | $u'(c_{U,F})$ | $(p-q^\ast)\Delta u$ | $\hat f$ |
 |---|---|---|---|---|---|---|---|---|
 | **discrete** | 0.99841 | 0.86500 | 0.15607 | 0.01020 | 1.00319 | 1.33650 | 0.001529 | 9.39 |
-| **continuous** | 0.99841 | — (random) | 0.18332 | 0.00869 | 1.00319 | $\overline{Du'}/\bar d=1.9377$ | 0.002074 | 11.03 |
+| **cont. FEMA (main)** | 0.99677 | — (random) | 1.01902 | 0.00318 | 1.00648 | $\overline{Du'}/\bar d=23.119$ | 0.017140 | 30.12 |
+| **cont. FEMA (excl. K)** | 0.99733 | — (random) | 0.59994 | 0.00446 | 1.00536 | $\overline{Du'}/\bar d=11.501$ | 0.009329 | 21.48 |
 
-($pd=0.003$; $\pi=(1-s)pd=0.00159$; continuous $\overline{Du'}=0.29065$.)
+(discrete: $pd=0.003$, $\pi=0.00159$. FEMA main: $p\bar d=0.006088$, $\pi=0.003227$,
+$\overline{Du'}=7.0377$. Excl. Katrina: $p\bar d=0.005034$, $\pi=0.002668$,
+$\overline{Du'}=2.8943$. The huge $\overline{Du'}/\bar d$ values are driven by the total-loss
+atom: at $a=0.10$ the top bin has $c_{U,F}\approx0.106$, $u'\approx89$.)
 
 ---
 
@@ -125,15 +135,20 @@ $$\text{MVPF}_a=\frac{0.001529\times(-0.12312)+0.003\times1.33650\times0.70}
 | spec | $q^\ast$ | $\Delta u$ | $\hat f$ | **MVPF$_s$** | **MVPF$_a$** | ratio |
 |---|---|---|---|---|---|---|
 | discrete | 0.01020 | 0.156 | 9.39 | **1.072** | **1.334** | 1.24 |
-| continuous CV=0.86 | 0.00869 | 0.183 | 11.03 | **1.161** | **1.944** | 1.67 |
-| continuous CV=1.3 | 0.00659 | 0.242 | 14.54 | **1.353** | **3.882** | 2.87 |
+| continuous FEMA (main) | 0.00318 | 1.019 | 30.12 | **2.212** | **31.44** | 14.2 |
+| continuous FEMA (excl. Katrina) | 0.00446 | 0.600 | 21.48 | **1.736** | **13.60** | 7.8 |
 
 MVPF$_s$ is close to 1 because insured households retain nearly all their wealth; MVPF$_a$ is higher
-because uninsured flood victims are poorer, so their marginal utility is larger. Continuous damage
-lifts both MVPFs, relief far more — relief additionally insures damage *dispersion*
-($\overline{Du'}/\bar d>u'(c_{U,F}(\bar d))$), and a heavier tail (CV = 1.3) widens the gap again.
-So relief's edge is, if anything, **understated** at CV = 0.86, since real NFIP claims are often
-more right-skewed.
+because uninsured flood victims are poorer, so their marginal utility is larger. The empirical
+damage distribution lifts both MVPFs far above the old Beta-placeholder values (1.16/1.94 at
+CV = 0.86) — relief enormously more, because relief additionally insures damage *dispersion*
+($\overline{Du'}/\bar d \gg u'(c_{U,F}(\bar d))$) and the FEMA data put 6.0% (1.9% excl. Katrina)
+of claim mass at near-total loss, where CRRA marginal utility explodes. **Honesty caveat
+(calibration_decisions.md):** these magnitudes inherit the *linear, uncapped* pass-through of
+damage to consumption — with a consumption floor / equity-cap loss function $\ell(\cdot)$ or a
+capped-aid specification, the tail's contribution (and hence MVPF$_a$) would be materially
+smaller. The excl. Katrina column shows the tail sensitivity directly. The *direction*
+MVPF$_a>$ MVPF$_s$ survives every specification; the *magnitude* under the full tail does not yet.
 
 *(Belief-input sensitivity — varying $(I,\varepsilon,p,a)$ over their candidate ranges rather than
 any fitted parameter — is the planned bounds exercise; an open TODO. The former
@@ -150,15 +165,17 @@ model):
 | spec | Beta$(\alpha,\beta)$ | mean $m$ ($\times p$) | $\nu$ | $\sigma_q$ |
 |---|---|---|---|---|
 | discrete | (0.143, 5.69) | 0.0245 (1.22$p$) | 5.83 | 0.059 |
-| continuous CV=0.86 | (0.143, 6.63) | 0.0211 (1.05$p$) | 6.78 | 0.052 |
-| continuous CV=1.3 | (0.143, 8.65) | 0.0163 (0.81$p$) | 8.79 | 0.041 |
+| continuous FEMA (main) | (0.143, 17.52) | 0.0081 (0.41$p$) | 17.66 | 0.021 |
+| continuous FEMA (excl. Katrina) | (0.143, 12.59) | 0.0112 (0.56$p$) | 12.74 | 0.028 |
 
-**Survey validation (checks, not inputs).** The fitted mean is 0.81–1.22$p$ against
-Bakkensen–Barrage's $k_R=0.57$ (mean check **fails** — a thin ≈7% tail above $q=0.10$ drags the
-mean up while 77–81% of mass sits below $p$, median ≈0.03–0.05$p$); the fitted share with 10-year
-belief ≤5% is 0.64–0.68 against B–B's 0.35 (quantile check **overshoots**). Both say the
-revealed-preference fit implies more dispersed beliefs than the elicitation — the identification
-discussion (Mulder over-ID test, contamination share) is the designated home for this tension.
+**Survey validation (checks, not inputs).** Against Bakkensen–Barrage's $k_R=0.57$, the fitted
+means are 0.41$p$ (main) and 0.56$p$ (excl. Katrina) — the continuous mean check now **roughly
+passes** (excl. Katrina almost exactly); the discrete fit (1.22$p$) still overshoots. The fitted
+share with 10-year belief ≤5% is 0.64 (discrete) / 0.75 (main) / 0.71 (excl. Katrina) against
+B–B's 0.35 (quantile check **overshoots**, more so under FEMA damages: mass below $p$ is
+0.85–0.88, median 0.015–0.020$p$). The revealed-preference fit implies more extreme
+under-perception than the elicitation — the identification discussion (Mulder over-ID test,
+contamination share) is the designated home for this tension.
 
 **Optimal policy mix** $(s^\ast,a^\ast)=\arg\max_{s,a} [S(s,a)-\lambda\,\text{cost}(s,a)]$ at the
 fitted beliefs ($\lambda=1.0$ is degenerate — both MVPFs exceed 1 at the status quo, so the optimum
@@ -167,17 +184,21 @@ runs to the corner; reported values use the 101-point grid):
 | spec | $\lambda=1.1$ | $\lambda=1.2$ |
 |---|---|---|
 | discrete | $s^\ast=0.00,\ a^\ast=0.62$ (relief-only) | $s^\ast=0.00,\ a^\ast=0.34$ (relief-only) |
-| continuous CV=0.86 | $s^\ast=0.00,\ a^\ast=0.76$ (relief-only) | $s^\ast=0.00,\ a^\ast=0.62$ (relief-only) |
-| continuous CV=1.3 | $s^\ast=0.51,\ a^\ast=0.86$ (both) | $s^\ast=0.02,\ a^\ast=0.73$ (both) |
+| continuous FEMA (main) | $s^\ast=0.81,\ a^\ast=0.91$ (both) | $s^\ast=0.66,\ a^\ast=0.84$ (both) |
+| continuous FEMA (excl. Katrina) | $s^\ast=0.72,\ a^\ast=0.89$ (both) | $s^\ast=0.46,\ a^\ast=0.80$ (both) |
 
-At the fitted beliefs the optimum is relief-only (or relief-heavy under the heaviest damage tail,
-where full-coverage insurance still protects the tail of $G$ that a partial relief fraction leaves
-exposed). **TODO:** replace these point results with bounds over the surviving calibration set.
+The discrete optimum is relief-only, but under the empirical damage distribution the optimum funds
+**both** instruments generously: the total-loss atom makes *complete* tail coverage — which only
+insurance sells — valuable enough that a large subsidy pays alongside near-complete relief (the
+pattern the old CV=1.3 robustness spec hinted at). A higher $\lambda$ shrinks the subsidy much
+faster than relief. Same honesty caveat as §7: with capped aid or a consumption-floor loss
+function the tail motive would weaken. **TODO:** replace these point results with bounds over the
+surviving calibration set.
 
 **Who relief reaches — the low-belief tail.** Relief serves the uninsured, deep-underperceiving
 tail ($q<q^\ast$) — households that no affordable subsidy would pull into insurance. At the fitted
-beliefs, the fraction no *free* subsidy could reach ($F(q^\ast_{s=1})$) is 0.29. This is why relief
-keeps a role even when subsidies are generous.
+beliefs, the fraction no *free* subsidy could reach ($F(q^\ast_{s=1})$) is ≈0.29 in every damage
+spec. This is why relief keeps a role even when subsidies are generous.
 
 ![Segmentation — relief serves the low-belief tail (discrete)](figures/figD_segmentation.png)
 
@@ -212,18 +233,28 @@ branch). *(Numbers there predate the 2026-08-12 recalibration.)*
 - **Relief-favored, robustly.** At current US policy, MVPF$_a>$ MVPF$_s$ in every damage
   specification — a sufficient-statistic result independent of $\lambda$ and of the belief
   distribution's shape.
-- **Continuous damage strengthens this** — relief additionally insures damage dispersion, widening
-  its MVPF advantage (more so with heavier tails).
+- **The empirical FEMA damage distribution strengthens this dramatically** — relief additionally
+  insures damage dispersion, and the near-total-loss atom (6.0% main / 1.9% excl. Katrina) pushes
+  MVPF$_a$ to 31 (14) vs MVPF$_s$'s 2.2 (1.7). *Magnitudes, not the ranking, hinge on the linear
+  uncapped pass-through* — the loss-function/capped-aid variants (calibration_decisions.md) are
+  the required honesty check before these numbers headline.
 - **Relief's distinctive role** is reaching the low-belief uninsured tail that subsidies cannot.
-- The global optimal mix at the fitted beliefs is relief-only / relief-heavy at
+- The global optimal mix at the fitted beliefs is relief-only in the discrete spec but funds
+  **both** instruments under FEMA damages (complete tail coverage becomes valuable) at
   $\lambda\in\{1.1,1.2\}$ — graded lower-confidence pending the bounds TODO.
-- The "complementarity" question is a secondary null (weak substitutes, negligible blend gain).
+- The "complementarity" question is a secondary null (weak substitutes, negligible blend gain) —
+  *computed under the retired placeholder calibration; worth re-checking under FEMA damages, where
+  the optimal mix now funds both instruments.*
 
 ## 11. Open items
 
 Mulder dual-report and over-identification test; voluntary-$I$ / mandate segment; population and
-$p$; final $a$ and the benefit/cost wedge; global bounds; swap-in of the FEMA damage distribution
-replacing the placeholder $G$.
+$p$; final $a$ and the benefit/cost wedge; global bounds. From the FEMA swap-in (done 2026-08-18):
+**(p, G) consistency** — $G$ is claim-conditional, so adopt claim frequency per policy-year as $p$
+(computable from the same database; `fema_data_analysis/notes/notes.md`); the **$\bar d$ gap**
+(discrete 0.15 vs FEMA 0.3044 on a depreciated-building-value base) — reconcile via the utility
+base / $\phi$-sweep; the **loss function $\ell(\cdot)$ and capped-aid variant**
+(calibration_decisions.md Option 2C), which the tail-driven MVPF$_a$ magnitudes now make urgent.
 
 ---
 
@@ -236,11 +267,12 @@ import mvpf_discrete as D, mvpf_continuous as C
 import mvpf_optimal_mix as A
 
 B.mvpf_local(D, D.S0, D.A0, params.I_OBS, params.EPS)   # -> (1.072, 1.334)
-B.mvpf_local(C, C.S0, C.A0, params.I_OBS, params.EPS)   # -> (1.161, 1.944)
+B.mvpf_local(C, C.S0, C.A0, params.I_OBS, params.EPS)   # -> (2.212, 31.445)  [FEMA main]
+C.configure_damage(empirical=params.FEMA_DIST_EXCL_KATRINA)   # tail robustness
 al, be = B.fit_beta(D, D.S0, D.A0, params.I_OBS, params.EPS)
 B.validation(D, al, be)                                  # survey checks
 A.optimal_mix(D, al/(al+be), al+be, lam=1.2)             # -> (0.00, 0.34)
 ```
 
 Or run `python code/mvpf_reproduce.py` for all tables and the figures in
-`figures/`, `figures_continuous/`, and `figures_continuous_cv13/`.
+`figures/`, `figures_continuous/`, and `figures_continuous_excl_katrina/`.

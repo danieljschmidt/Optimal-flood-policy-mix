@@ -1,6 +1,6 @@
 # FEMA damage distribution — data notes
 
-*Produced by `run_compute_damage_distribution.py`; outputs in `fema_data_analysis/output/`. The distribution is saved but not yet wired into the model. How to use it in the model — the utility base, the loss function, mean versus full distribution — is decided in `calibration_decisions.md`; this note documents the data itself and its caveats.*
+*Produced by `run_compute_damage_distribution.py`; outputs in `fema_data_analysis/output/`. The distribution is wired into the model (2026-08-18) via `code/mvpf_continuous.configure_damage(empirical=…)` — main variant as the continuous baseline, excl_katrina as tail robustness, raw damage/house-value ratios (house-value base; `scale` hook for the MPC×damage/income reading). How to use it in the model — the utility base, the loss function, mean versus full distribution — is decided in `calibration_decisions.md`; this note documents the data itself and its caveats.*
 
 ## What is computed
 
