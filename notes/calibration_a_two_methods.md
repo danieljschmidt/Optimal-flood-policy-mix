@@ -80,11 +80,15 @@ restricting the \$216 total to IHP's \$183.4 gives:
 
 $$f_{\text{IHP}} = 0.133 \times \frac{183.4}{216} \approx 0.113$$
 
-Adding SBA back at its subsidy-equivalent value (13% of its \$9.3 decomposed spillover, ≈\$1.2):
+Adding SBA back in at its own decomposed spillover, \$9.3: G&S's Appendix Table A3 reports this
+figure directly as fiscal cost, not loan face value — they convert SBA loan amounts to their
+13-cents-per-dollar subsidy-equivalent *before* running the regression (Table 1's notes; Table A3 is
+titled "SBA Fiscal Cost"). So no further 13% haircut applies here — applying one would double-count
+the same conversion G&S already made:
 
-$$f_{\text{IHP+SBA-equiv}} = 0.133 \times \frac{183.4 + 1.2}{216} \approx 0.114$$
+$$f_{\text{IHP+SBA-equiv}} = 0.133 \times \frac{183.4 + 9.3}{216} \approx 0.119$$
 
-So on this project's scope, the G&S method gives **$f \approx 0.11$**, essentially unchanged by
+So on this project's scope, the G&S method gives **$f \approx 0.12$**, essentially unchanged by
 whether SBA is included.
 
 **Method 2 (bottom-up), scoped to IHP + SBA subsidy-equivalent, residential denominator.**
@@ -139,10 +143,10 @@ SBA's inclusion barely moves the number at any flood share.
 
 | | Method 1: G&S spillover, same scope | Method 2: bottom-up |
 |---|---|---|
-| **Value** | **0.11** | **0.052** (range 0.010–0.093) |
-| Ratio to Method 1 | — | ≈2.1× smaller |
+| **Value** | **0.12** | **0.052** (range 0.010–0.093) |
+| Ratio to Method 1 | — | ≈2.3× smaller |
 
-Program bundling remains a real but secondary source of the disagreement, moving the aid parameter from 0.13 to 0.11, most of the gap is that a
+Program bundling remains a real but secondary source of the disagreement, moving the aid parameter from 0.13 to 0.12, most of the gap is that a
 spillover coefficient captures *substitution* (NFIP-payout offsets, correlated triggers, other
 general-equilibrium effects on FEMA's response), not a clean per-dollar-of-damage transfer, even
 once scoped to the same two programs.
@@ -165,7 +169,7 @@ a_{\text{IHP+SBA-equiv, G\&S-levels}} &= \frac{861.71/0.82}{29{,}267} \approx 0.
 \end{aligned}
 $$
 
-This is a genuinely independent third route to $a$, built entirely from G&S's own per-house sample averages, using none of the CRS national totals or First Street's residential-damage denominator that Method 2 in Section 4 relies on. It lands close to Method 2's own range (0.010–0.093, midpoint 0.052): two structurally different data sources converge on the same rough magnitude (≈0.03–0.05) rather than diverging the way Method 1's spillover-based 0.11 does.
+This is a genuinely independent third route to $a$, built entirely from G&S's own per-house sample averages, using none of the CRS national totals or First Street's residential-damage denominator that Method 2 in Section 4 relies on. It lands close to Method 2's own range (0.010–0.093, midpoint 0.052): two structurally different data sources converge on the same rough magnitude (≈0.03–0.05) rather than diverging the way Method 1's spillover-based 0.12 does.
 Caveats: it implicitly assumes damage-per-house doesn't differ much between insured and uninsured
 subgroups (if insured properties, concentrated in the highest-risk zones, suffer more raw damage on
 average, true uninsured-only damage would be lower than \$29,267 and this estimate would be biased
@@ -174,8 +178,8 @@ severe, officially recognized floods, rather than reflecting all flood damage na
 
 | | Method 1: G&S spillover, same scope | Method 2: bottom-up | Cross-check: G&S aid levels |
 |---|---|---|---|
-| **Value** | **0.11** | **0.052** (range 0.010–0.093) | **0.031–0.036** |
-| Ratio to Method 1 | — | ≈2.1× smaller | ≈3.1–3.5× smaller |
+| **Value** | **0.12** | **0.052** (range 0.010–0.093) | **0.031–0.036** |
+| Ratio to Method 1 | — | ≈2.3× smaller | ≈3.3–3.8× smaller |
 
 **Further check — take-up rate consistency with the project's own code.** The 82% uninsured-damage
 share in Section 4 rests on G&S's *own sample's* 18% take-up rate. But `code/params.py` calibrates the
@@ -201,11 +205,11 @@ Using the project's own take-up rate pushes the midpoint up further, to ≈0.060
 ## 6. Recommendation
 
 **Use Method 2 (bottom-up), $a \approx 0.052$ (range 0.010–0.093), as the primary calibration.** It
-directly targets the quantity the model actually needs, a rate that is *both* the household's benefit and the government's cost by construction, since it's built from program dollars that are paid straight to households with no repayment. Method 1's spillover estimate is contaminated for this purpose by channels beyond direct relief (NFIP-payout interactions, correlated triggers, general-equilibrium effects), so even scoped to the right two programs, it likely overstates the pure transfer rate rather than just measuring it more precisely. Section 5's cross-check (0.031–0.036, built entirely from G&S's own per-house aid levels rather than CRS/First-Street national totals) lands in the same rough neighborhood as Method 2 rather than near Method 1's 0.11, which is independent support for Method 2's magnitude over Method 1's.
+directly targets the quantity the model actually needs, a rate that is *both* the household's benefit and the government's cost by construction, since it's built from program dollars that are paid straight to households with no repayment. Method 1's spillover estimate is contaminated for this purpose by channels beyond direct relief (NFIP-payout interactions, correlated triggers, general-equilibrium effects), so even scoped to the right two programs, it likely overstates the pure transfer rate rather than just measuring it more precisely. Section 5's cross-check (0.031–0.036, built entirely from G&S's own per-house aid levels rather than CRS/First-Street national totals) lands in the same rough neighborhood as Method 2 rather than near Method 1's 0.12, which is independent support for Method 2's magnitude over Method 1's.
 
 That said, Method 2 has its own weak points, like the flood-share correction (the all-hazard → flood-only adjustment it needs and Method 1 doesn't, genuinely wide, 9.3–88.6%, driven almost entirely by whether `Hurricane`-labeled IHP spending counts as flood relief) and the insured/uninsured correction (≈82%, resting on G&S's single sample-specific take-up rate rather than a direct national estimate, Section 5's further check shows this moving to ≈0.060 under the project's own take-up rate). Both remain sources of uncertainty in the 0.052 figure.
-Report $f_{\text{IHP+SBA-equiv}}\approx0.114$ alongside $a\approx0.052$ as a **sensitivity/upper-bound
+Report $f_{\text{IHP+SBA-equiv}}\approx0.119$ alongside $a\approx0.052$ as a **sensitivity/upper-bound
 case** rather than discarding it. If the true fiscal externality of relief runs closer to G&S's
 number, that has first-order consequences for the MVPF/budget side of the model regardless of which
-estimate anchors the household-benefit side. The ~2.2× gap between the two methods, even after
+estimate anchors the household-benefit side. The ~2.3× gap between the two methods, even after
 matching program scope, is worth flagging explicitly in the paper rather than presented as resolved.
