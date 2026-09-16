@@ -52,6 +52,8 @@ Some terms in our welfare formulas evaluate the transfers to different household
 
 The remaining terms arise from the behavioural response to the policy instruments. First,  more generous disaster aid reduces households' use of subsidised insurance and vice versa. There is a fiscal spillover between disaster aid and premium subsidies as part of the cost of one policy is recouped through reduced spending on the other. Second, when households that underestimate flood risk are indifferent between buying insurance or not, a policy change that induces them to buy makes them better off.\footnote{The household's utility then increases by the difference between its subjective welfare estimate, conditional on being uninsured, and an objective estimate calculated using the true probability of flooding.}  This welfare gain appears in our formulas as a so-called behavioural internality. To quantify it, we posit a distribution of household beliefs over flood risk. Unlike the fiscal spillover, which depends only on the total change in insurance demand, the size of the internality follows from the location in the belief distribution where the change in insurance demand occurs.
 
+We focus our analysis on Special Flood Hazard Areas (SFHAs), which by definition suffer a flood with an annual probability of 1$\%$ or more. The fraction of homeowners inside SFHAs with some flood insurance is much higher than in other flood-prone areas (59.5$\%$ versus 22$\%$, see \cite{amornsiripanitch2025measuring}), which reflects homeowners' greater risk awareness as well as the regulatory requirement that holders of federally backed mortgages must be insured. Our premise that homeowners maximise utility given their flood risk perception seems most appropriate to SFHAs, where it is plausible to claim that homeowners consciously decide to buy insurance or not.  
+
 % DANIEL: this leads with the budget-share result, which implies global evaluation with fitted Beta distribution. The robust headline is the local MVPF ranking (1.33 vs 1.07, no beliefs, no lambda).
 % DANIEL: "Errors in flood risk perception thus decrease the sensitivity ... to both" - I think you mean belief dispersion here, not average underestimation
 Our key finding is that, over the range of plausible calibrations, optimal spending on disaster aid as a proportion of the total flood policy budget is higher than its current level. Although cumulative funding allocated to the NFIP programme has far exceeded the amount of disaster aid granted by FEMA, a substantial fraction of homeowners do not perceive flooding to be a sufficiently significant risk to purchase insurance even at a subsidised rate. This leaves disaster aid as the major safety net for this group. Moreover, the moral hazard effect of increased disaster aid is weaker when flood risk beliefs are subjective. The intuition is that households far away from the point where willingness to pay for insurance equals the actual premium are not responsive to marginal changes to the cost or benefit of insurance. Errors in flood risk perception thus decrease the sensitivity of insurance demand to both premium subsidies and disaster aid.    
@@ -120,7 +122,7 @@ Households hold heterogeneous subjective beliefs $q$ about the probability that 
 
 \subsection{Household insurance decisions}
 
-We assume that household choose between no insurance and full insurance. An insured household's consumption is therefore unaffected by whether a flood occurs. Its utility is
+We assume that household chooses between no insurance and full insurance. An insured household's consumption is therefore unaffected by whether a flood occurs. Its utility is
 \begin{align}
     V_I(s) = u(c_I), \quad \text{with} \quad c_I = w - (1-s)p\overline{d}.
 \end{align}
@@ -132,11 +134,13 @@ where $\Delta u \equiv u(c_{U,N})-\mathbb{E}[u(c_{U,F}(d))]>0$ is the expected u
 \begin{equation}
     \tilde{V}_U(q,a) = u(c_{U,N}) - q\cdot\Delta u.
 \end{equation}
-The household buys insurance whenever $V_I(s) > \tilde{V}_U(q,a)$, that is, whenever its subjective belief exceeds a threshold $q^*(s,a)$ implicitly defined by indifference between the two options:
+The household voluntarily buys insurance whenever $V_I(s) > \tilde{V}_U(q,a)$, that is, whenever its subjective belief exceeds a threshold $q^*(s,a)$ implicitly defined by indifference between the two options:
 \begin{equation}
     q^*\cdot\Delta u = u(c_{U,N}) - u(c_I). \label{eq:qstar_prog}
 \end{equation}
-Given the CDF for flood risk beliefs $F(q)$, the insurance take-up rate is $I(s,a) = 1-F(q^*(s,a))$. The threshold $q^*(s,a)$ itself is independent of the distribution of beliefs.
+Furthermore, given the legal requirement that homeowners with a federally backed mortgage hold flood risk insurance, we assume that with probability $\phi$ the household is required to buy insurance independently of its subjective belief $q$.\footnote{In reality, compliance with the regulatory requirement falls over the lifetime of the mortgage as insurance needs to be renewed annually. No precise estimate of overall non-compliance exists, and we ignore the issue.}  
+
+Given the CDF for flood risk beliefs $F(q)$, the insurance take-up rate is $I(s,a) = \phi+(1-\phi)(1-F(q^*(s,a)))$. The threshold $q^*(s,a)$ itself is independent of the distribution of beliefs.
 
 \subsection{The social planner's problem}
 
@@ -149,7 +153,7 @@ which the planner seeks to maximise subject to the budget constraint that total 
     B = p\overline{d}\bigl[s\,I(s,a) + a\,\bigl(1-I(s,a)\bigr)\bigr]. \label{eq:budget_prog}
 \end{equation}
 
-\subsubsection{The marginal value of insurance subsidies and disaster aid given $(s,a)$}
+\subsubsection{MVPF given current policy $(s,a)$}
 
 Attaching multiplier $\lambda$, the shadow value of the budget constraint, to~\eqref{eq:budget_prog} and differentiating the resulting Lagrangian with respect to $s$ and $a$ yields two first-order conditions. Rearranging each so that the welfare gain per dollar of fiscal cost equals $\lambda$ gives the marginal value of public funds (MVPF) of the subsidy and of disaster aid,
 \begin{equation}
@@ -170,26 +174,26 @@ For the planner's choice $(s,a)$ for the policy instruments to reach an interior
 
 Each numerator combines two channels through which the corresponding instrument affects welfare. The first is the value of the transfer to households who do not change their decision as a result of the marginal change in policy: the subsidy benefits every insured household by $\partial V_I/\partial s = p\overline{d}\,u'(c_I)$ per unit, while aid benefits every uninsured household by $\partial V_U/\partial a = p\mathbb{E}[d\,u'(c_{U,F}(d))]$ per unit. Because utility is concave (marginal utility is decreasing in consumption), Jensen's inequality guarantees that $V_U/\partial a >V_U/\partial s $. Holding household decisions fixed, disaster aid thus increases social welfare by more than the insurance subsidy. 
 
-The second channel takes account of the households which are induced by the policy change to switch between insurance and no insurance. Households hold mistaken beliefs, so the envelope theorem does not apply. Instead, households' behavioural responses to marginal policy changes directly affect welfare. Each switcher generates a behavioural internality that scales with the difference between the true probability $p$ and the belief of the marginal household $q^*$:
+The second channel takes account of the households which are induced by the policy change to switch between insurance and no insurance. Households hold mistaken beliefs, so the envelope theorem does not apply. Instead, households' behavioural responses to marginal policy changes affect their own welfare. Each switcher generates a behavioural internality that scales with the difference between the true probability $p$ and the belief of the marginal household $q^*$:
 \begin{equation}
     V_I - V_U = \tilde{V}_U(q^*,a) - V_U(a) = (p-q^*)\,\Delta u, \label{eq:internality_prog}
 \end{equation}
-where we follow the internality terminology of \cite{allcott2019regressive}. The utility loss from flooding $\Delta u$ is positive, so the internality as a whole is positive provided that $p>q^*$. Given that the insurance premium before subsidies is actuarially fair and households are risk-averse, this requires that $a$ does not exceed $s$ by too much. In section \ref{sec:results}, we find that the internality is positive for current policy and for all $(s,a)$ we consider as candidates for optimal policy. Therefore, in line with the policy debate about underinsurance referenced in Section ~\ref{sec:motivation}, increased insurance take-up improves social welfare. The behavioural internality term creates a case for the insurance subsidy and against disaster aid if $\partial I/\partial s>0$ and $\partial I/\partial a<0$.   
+where we follow the internality terminology of \cite{allcott2019regressive}. The utility loss from flooding $\Delta u$ is positive, so the internality as a whole is positive provided that $p>q^*$. Given that the insurance premium before subsidies is actuarially fair and households are risk-averse, this requires that $a$ does not exceed $s$ by too much. In section \ref{sec:results}, we find that the internality is positive for current policy and for all $(s,a)$ we consider as candidates for optimal policy. Therefore, in line with the policy debate about underinsurance referenced in Section ~\ref{sec:motivation}, increased insurance take-up improves social welfare. The behavioural internality term creates a case for the insurance subsidy (if $\partial I/\partial s>0$) and against disaster aid  (if $\partial I/\partial a<0$).   
 
 The denominator is the marginal cost of each policy instrument. This sums, firstly, the direct transfer from each instrument to the households it targets and, secondly, the cost from switching households net of the fiscal spillover between the instruments. To understand the latter, note that if an increased insurance subsidy causes a household to purchase insurance, the cost to the government is only $(s-a)p\overline{d}$ because the household will no longer require disaster aid once it suffers a flood (and, similarly, expanding disaster aid saves on subsidies).    
 
 
 
-Note that, so far, we have not made any assumptions about the difficult-to-observe distribution $F(q)$ of flood risk belief across households. The terms in \eqref{eq:mvpf_prog} are current policy $(s,a)$, a process for flooding, assumptions regarding household wealth and risk aversion, and finally empirically observable insurance demand. We are thus able to calibrate each term and obtain the marginal value of each policy instrument while remaining agnostic about the distribution of household beliefs (although clearly not about the belief $q^*$ of the marginal household). 
+Note that, so far, we have not made any assumptions about the difficult-to-observe distribution $F(q)$ of flood risk belief across households. The terms in \eqref{eq:mvpf_prog} are current policy $(s,a)$, a process for flooding, assumptions regarding household wealth and risk aversion, and finally empirically observable insurance demand. We are thus able to calibrate each term and obtain the marginal value of each policy instrument while remaining agnostic about the distribution of household beliefs (although clearly not about the belief $q^*$ of the marginal household). Furthermore, the parameter $\phi$ does not appear in the terms, since it does not matter to the social planner whether homeowners purchase insurance voluntarily or otherwise.
 
-\subsubsection{Optimal policy $(s^*,a^*)$}
-Away from current policy $(s,a)$, the empirical values of the behavioural terms in \eqref{eq:mvpf_prog} obtained from recent data (namely, the insurance take-up $I$ and its derivatives w.r.t. the policy instruments) are no longer valid. Therefore, to find the optimal combination of policy instruments $(s^*,a^*)$, we must posit a distribution of flood risk beliefs $F(q)$. This distribution then implies the insurance take-up rate $I=1-F(q^*(s^*,a^*))$ and its marginal response to policy.
+\subsubsection{MVPF given optimal policy $(s^*,a^*)$}
+Away from current policy $(s,a)$, the empirical values of the behavioural terms in \eqref{eq:mvpf_prog} obtained from recent data (namely, the insurance take-up $I$ and its derivatives w.r.t. the policy instruments) are no longer valid. To find the optimal combination of policy instruments $(s^*,a^*)$, we must posit a distribution of flood risk beliefs $F(q)$. This distribution then implies the insurance take-up rate $I=\phi+(1-\phi)(1-F(q^*(s,a)))$ and its marginal response to policy.
 
 
 The chain rule tells us that 
 \begin{equation}\label{eq:partialsinsurance}
-    \frac{\partial I}{\partial s} = -f(q^*)\,\frac{\partial q^*}{\partial s}, \qquad
-    \frac{\partial I}{\partial a} = -f(q^*)\,\frac{\partial q^*}{\partial a},
+    \frac{\partial I}{\partial s} = -(1-\phi)f(q^*)\,\frac{\partial q^*}{\partial s}, \qquad
+    \frac{\partial I}{\partial a} = -(1-\phi)f(q^*)\,\frac{\partial q^*}{\partial a},
 \end{equation}
 while from the indifference condition~\eqref{eq:qstar_prog} 
 \begin{equation}\label{eq:partialsqstar}
@@ -201,13 +205,13 @@ The response of insurance uptake to the two policy instruments is not symmetric.
 
 Substituting these responses, together with $\partial V_I/\partial s$, $\partial V_U/\partial a$, and the internality~\eqref{eq:internality_prog}, into~\eqref{eq:mvpf_prog} and cancelling the common factors $p\overline{d}$ and $\Delta u$ yields the marginal value of public funds in terms of the model's deep parameters:
 \begin{align}
-    \text{MVPF}_s &= \frac{u'(c_I)\bigl[I + (p-q^*)\,f(q^*)\bigr]}{I + (s-a)\,\dfrac{p\overline{d}\,u'(c_I)\,f(q^*)}{\Delta u}}, \notag \\
-    \text{MVPF}_a &= \frac{\dfrac{\mathbb{E}[d\,u'(c_{U,F}(d))]}{\overline{d}} \! \left[(1-I) - \dfrac{(p-q^*)q^*f(q^*)}{p}\right]}{(1-I) - (s-a)\,\dfrac{q^*d\,\mathbb{E}[d\,u'(c_{U,F}(d))]\,f(q^*)}{\Delta u}}. \label{eq:mvpf_deep_prog}
+    \text{MVPF}_s &= \frac{u'(c_I)\bigl[I + (p-q^*)\,(1-\phi)f(q^*)\bigr]}{I + (s-a)\,\dfrac{p\overline{d}\,u'(c_I)\,(1-\phi)f(q^*)}{\Delta u}}, \notag \\
+    \text{MVPF}_a &= \frac{\dfrac{\mathbb{E}[d\,u'(c_{U,F}(d))]}{\overline{d}} \! \left[(1-I) - \dfrac{(p-q^*)q^*(1-\phi)f(q^*)}{p}\right]}{(1-I) - (s-a)\,\dfrac{q^*d\,\mathbb{E}[d\,u'(c_{U,F}(d))]\,(1-\phi)f(q^*)}{\Delta u}}. \label{eq:mvpf_deep_prog}
 \end{align}
 
-These terms summarise the arguments rehearsed above. Recall that the numerator of each term describes the utility effect of the policy and the denominator its cost. Net of any behavioural effect, disaster aid has a stronger effect than the insurance subsidy on utility (in the numerator, $\mathbb{E}[d\,u'(c_{U,F}(d))]/\overline{d}>u'(c_I)$). Meanwhile, the behavioural effect of the subsidy on utility is positive and that of disaster aid is negative (in the numerator, see the terms containing the belief wedge $(p-q^*)$). However, the behavioural response to disaster aid is dampened given that $q^*<p$ (both in the numerator and denominator of the second term). Finally, in the denominator, the fiscal spillover is represented by the difference $(s-a)$ as before. 
+These terms summarise the arguments rehearsed above. The numerator of each term describes the utility effect of the policy and the denominator its cost. Net of any behavioural effect, disaster aid has a stronger effect than the insurance subsidy on utility ($\mathbb{E}[d\,u'(c_{U,F}(d))]/\overline{d}>u'(c_I)$). Meanwhile, the behavioural effect of the subsidy on utility is positive and that of disaster aid is negative (the terms in the numerator containing the belief wedge $(p-q^*)$). However, the behavioural effect of disaster aid is dampened given that $q^*<p$ (both in the numerator and denominator of the second term). Finally, in the denominator, the fiscal spillover is represented by the difference $(s-a)$ as before. 
 
-As mentioned, the terms in \eqref{eq:mvpf_deep_prog} can only be quantified given a belief distribution $F(q)$. Although we cannot observe this distribution directly, clearly a minimum requirement of a candidate distribution is that it ensures \eqref{eq:mvpf_prog} and \eqref{eq:mvpf_deep_prog} are consistent: given current policy $(s,a)$, the insurance take-up $I=1-F(q^*(s,a))$ should match its observed level, and the density $f(q^*(s,a))$ should reproduce the marginal response of insurance demand to policy which we insert directly into \eqref{eq:mvpf_prog} using empirical estimates. We describe our calibration strategy for both equations in greater detail below. 
+As mentioned, the terms in \eqref{eq:mvpf_deep_prog} can only be quantified given a belief distribution $F(q)$. Although we cannot observe this distribution directly, clearly a minimum requirement of a candidate distribution is that it ensures \eqref{eq:mvpf_prog} and \eqref{eq:mvpf_deep_prog} are consistent: given current policy $(s,a)$, the insurance take-up $I$ should match its observed level, and the density $f(q^*(s,a))$ should reproduce the marginal response of insurance demand to policy which we insert directly into \eqref{eq:mvpf_prog} using empirical estimates. We describe our calibration strategy for both equations in greater detail below. We will refer to the terms in \eqref{eq:mvpf_prog} as the `current policy MVPF' and to the terms in \eqref{eq:mvpf_deep_prog} as the `optimal policy MVPF'. 
 
 %Each numerator is the marginal utility of the instrument's direct recipients, $u'(c_I)$ or $u'(c_{U,F})$, scaled by an effective recipient count: the inframarginal share of households already making that choice, plus a belief-gap correction contributed by switching households equal to their probability mistake $(p-q^*)$, weighted by the density $f(q^*)$ of households located at the margin. The correction is smaller for aid by a factor $q^*/p<1$, reflecting the weaker behavioural response documented above. When no households are located exactly at the margin, $f(q^*)=0$, all behavioural terms vanish, and each instrument's marginal value collapses to the marginal utility of consumption of its direct recipients: $\text{MVPF}_s=u'(c_I)$ and $\text{MVPF}_a=u'(c_{U,F})$.
 
@@ -230,15 +234,48 @@ We can integrate this semi-elasticity in our model as follows. Since the premium
 Combining with \eqref{eq:partialsinsurance} and \eqref{eq:partialsqstar} gives
 
 \begin{equation}
-f(q^*)=\frac{-\epsilon}{\pi}\frac{\Delta u}{u'(c_I)}
+f(q^*)=\frac{1}{1-\phi}\frac{-\epsilon}{\pi}\frac{\Delta u}{u'(c_I)}
 \end{equation}
 
 
 \section{Calibration}
 \label{sec:calibration}
 
+\subsection{Current policy MVPF}
+
+
+
+\subsubsection{The flooding process}
+
+
+To do's
+\begin{itemize}
+\item Convert distribution of damages as $\%$ of house value to wealth loss as in model. How? Using simple toy model with MPV? If so should be introduced in section 3, and made consistent with welfare formulas...
+\item For flood arrival rate -- given the distribution of damages, make consistent with AAL reported in \cite{amornsiripanitch2025measuring}?
+\end{itemize}
+
+
+\subsubsection{Current policy $(s,a)$}
+
+
+
+\subsubsection{Insurance take-up}
+Although almost 59.5$\%$ of homeowners within SFHAs hold some flood insurance, only 48.4$\%$ of expected flood damages are insured as not all homeowners purchase full insurance (see \cite{amornsiripanitch2025measuring}; statistics as of 2023). In our model with a binary insurance decision, the aggregate insurance rate equals the percentage of expected damages covered. We therefore set $I=0.484$, including both voluntary and mandated insurance demand. 
+
+Regarding the fraction $\phi$, \cite{mulder2024mismeasuring} finds in his survey of homeowners in high-risk areas that 39$\%$ are subject to a mandatory insurance requirement. He uses that number to convert an estimate for the price elasticity of insurance demand to an estimate for \textit{voluntary} insurance demand. For our purposes, an important adjustment comes from the fact that the purchase requirement is partial.\footnote{It is capped at the minimum of the value of the mortgage, the NFIP coverage limit of $\$250,000$, and the replacement value of the property} Unfortunately, there is no data to compare the intensive margin of the insurance decision between homeowners with and without a mortgage.\footnote{Researchers have been unable to match individual-level mortgage data with publicly available NFIP policies and claims data because the latter are anonymised; \cite{mulder2024mismeasuring}'s survey avoids this problem.} We therefore assume their policies on average cover the same fraction of expected damages and set $\phi=0.39\cdot\frac{0.484}{0.595}=0.32$. It follows that the \textit{voluntary} insurance take-up rate inside SFHAs is approximately 24.5$\%$, which is significantly higher than the rate of 16.3$\%$ outside SFHAs.\footnote{See \cite{amornsiripanitch2025measuring}, p. 969: in flood-prone areas outside SFHAs, 22$\%$ of households hold a policy and 16.3$\%$ of expected damages are covered.}    
+
+Several estimates exist in the literature for the price elasticity of flood insurance demand. \cite{mulder2024mismeasuring} exploits NFIP map adjustments transferring homeowners into high-risk SFHAs, which are accompanied by price increases at different calendar dates. He arrives at a price elasticity of insurance demand of $-0.177$ (and $-0.37$ for voluntary demand). \cite{wagner2022adaptation}, using price variation from the Biggert-Waters and HFIAA reforms of the NFIP, obtains a price elasticity of $-0.25$ in SFHAs. Finally, \cite{gruber2026optimal} calculate a semi-elasticity of $-0.32$ from the renewal of policies subject to price rises after the RR2.0 reform. For a baseline results, we will assume a price elasticity of $-0.21$, in the middle of the first two estimates which exploit recent and exogenous price variation within SFHAs.         
+
+[Explain mapping to derivatives.]
+
+
 \section{Results}
 \label{sec:results}
+
+\section{Robustness}
+\label{sec:robustness}
+
+Income point (writing only).
 
 \section{Conclusion}
 \label{sec:conclusion}
