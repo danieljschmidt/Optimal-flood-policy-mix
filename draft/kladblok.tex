@@ -80,7 +80,7 @@ This paper proceeds in five parts. Section~\ref{sec:institutional} briefly descr
 \section{Institutional setting}
 \label{sec:institutional}
 
-\subsection{Insurance}
+\subsection{Insurance}\label{subsec:insurance}
 % DANIEL: "The NFIP programme ran a deficit almost immediately upon its establishment in 1968" - Are we sure about that? Michel-Kerjan says excluding 2005, premiums exceeded claims by ~$11bn over 1969-2008
 The NFIP programme ran a deficit almost immediately upon its establishment in 1968 as on average premiums were less than expected flood damages plus administrative costs. The impact of Hurricane Katrina in 2005 effectively rendered the programme insolvent \citep{michel2010catastrophe}. The programme has also been marked by cross-subsidies from low-risk properties to high-risk properties, as premiums were set on the basis of coarse flood risk maps that did not reflect flood risk at the property level \citep{kousky2018financing}. Two recent reforms, the Biggert-Waters Act of 2012 and the Risk Rating 2.0 (RR2.0) reform of 2021-2022, have sought to eliminate insurance premium subsidies. Especially the RR2.0 reform has resulted in steeply rising premiums in parts of the United States, with rate rises spread out over several years because the maximum annual increase is capped at 18$\%$. While around 34$\%$ of policies were at the actuarially fair premium when RR2.0 was introduced, around 30$\%$ were set on a path towards the doubling of premiums or more \citep[p.~25]{gao2023flood}.  
 
@@ -254,9 +254,17 @@ To do's
 \item For flood arrival rate -- given the distribution of damages, make consistent with AAL reported in \cite{amornsiripanitch2025measuring}?
 \end{itemize}
 
+\subsubsection{Utility}
 
 \subsubsection{Current policy $(s,a)$}
 
+In our model, $s$ is the wedge between the flood insurance premium paid by the household and its expected insurance pay-out. It is not (minus) the balance of the NFIP programme divided by its revenues, which includes administrative costs that do not affect the household. Administrative costs are an important consideration in practice, and we discuss them in section \ref{subsec:admincosts}.
+
+As mentioned in section \ref{subsec:insurance}, current policy is not stable, because the RR2.0 reform has set insurance premiums on a gradual path towards actuarially fair rates. Based on the availability of high-quality empirical studies, we calibrate our `current policy MVPF' formulas from data just \textit{before} the NFIP reform; accordingly, the value of $s$ is positive.
+
+There is a range of estimates reported in the literature for the NFIP subsidy rate, some ex-ante (comparing premiums to estimated flood risk) and some ex-post (comparing premiums to realised flood events). The ex-post estimate of \cite{wagner2022adaptation} is a subsidy of 30 per cent. The ex-ante estimate of \cite{gruber2026optimal}, which comes simply from calculating the average nationwide premium increase under RR2.0, is even larger at 46 per cent. \cite{bakkensen2020sorting} produce a similar ex-ante estimate of about 50 per cent in a sample of Florida properties, reflecting pre-FIRM and CRS discounts built into the system prior to RR2.0. We accordingly set $s=0.46$. 
+
+For the disaster aid fraction $a$, there is a careful estimate from \cite{gruber2026optimal}. They employ an instrumental variables strategy in which exogenous variation in the county-level insurance rate predicts federal spending after a flood event. Their estimate of $a=0.133$ includes spending under the HWBP programme, which goes to local authorities and not to households. Removing this component, we arrive at $a=0.12$.\footnote{\cite{gruber2026optimal} also account for losses on federally backed mortgages following a disaster. It is not obvious how this fits our framework as the foreclosure loss to the lender may not equal the household's financial gain from default. As a component of disaster aid, it is in any event quantitatively unimportant.}  
 
 
 \subsubsection{Insurance take-up}
@@ -266,7 +274,14 @@ Regarding the fraction $\phi$, \cite{mulder2024mismeasuring} finds in his survey
 
 Several estimates exist in the literature for the price elasticity of flood insurance demand. \cite{mulder2024mismeasuring} exploits NFIP map adjustments transferring homeowners into high-risk SFHAs, which are accompanied by price increases at different calendar dates. He arrives at a price elasticity of insurance demand of $-0.177$ (and $-0.37$ for voluntary demand). \cite{wagner2022adaptation}, using price variation from the Biggert-Waters and HFIAA reforms of the NFIP, obtains a price elasticity of $-0.25$ in SFHAs. Finally, \cite{gruber2026optimal} calculate a semi-elasticity of $-0.32$ from the renewal of policies subject to price rises after the RR2.0 reform. For a baseline results, we will assume a price elasticity of $-0.21$, in the middle of the first two estimates which exploit recent and exogenous price variation within SFHAs.         
 
-[Explain mapping to derivatives.]
+We map from these empirical elasticities to the derivatives in \eqref{eq:mvpf_prog} as follows. If we label the effective premium faced by households $\overline{P}$, then $\overline{P}=(1-s)p\overline{d}$ and $\partial \overline{P}/\partial s = -\overline{P}/(1-s)$. Therefore,
+\begin{equation}\label{eq:insurancedemandwrts}
+\frac{\partial I}{\partial s}\bigg|_{(s,a)}=\frac{\partial I}{\partial \overline{P}}\frac{\partial  \overline{P}}{\partial s}\bigg|_{(s,a)}=-\frac{\partial I/I}{\partial\overline{P}/\overline{P}}\frac{I}{1-s},
+\end{equation}
+where the first fraction on the RHS is the elasticity. Filling in our estimates for this elasticity and for $I$ and $s$ leads to $\partial I/\partial s=0.19$. It should be emphasised again that this is a local estimate that holds given current policy $(s,a)$. Meanwhile, from \eqref{eq:partialsinsurance} and \eqref{eq:partialsqstar}, 
+\begin{equation}\label{eq:insurancedemandwrta}
+\frac{\partial I}{\partial a}=-\frac{q^*}{p}\frac{\mathbb{E}[d\,u'(c_{U,F}(d))]}{p\overline{d}}\frac{\partial I}{\partial s}
+\end{equation}
 
 
 \section{Results}
@@ -274,9 +289,22 @@ Several estimates exist in the literature for the price elasticity of flood insu
 
 \section{Robustness}
 \label{sec:robustness}
+\subsection{Redistributive effects}
+Households vary in their wealth and income, which bears on their exposure to flooding and their demand for flood insurance. The insurance premium subsidy and disaster aid thus potentially have redistributive effects.
 
-Income point (writing only).
+\cite{qin2026flood} combine comprehensive census and property tax for the whole of the United States to document a number of facts. First, moving across the income distribution, the fraction of households living in a floodplain is essentially flat, hovering between around 13$\%$ in the left tail to just under 12$\%$ around the 75th percentile, with however a spike in the top income decile reaching around 18$\%$ (ibid p. 31). Second, relative to income, both homeowners' insurance premiums and their expected losses from flooding fall considerably with income, and with a comparable slope (ibid p. 44 and p. 46).
 
+The effect of the premium subsidy and of disaster aid on income inequality is thus ambiguous: both instruments do little for the poorest households which do not own housing but tend to favour less wealthy homeowners, depending on the manner in which they are financed. Given the importance of reducing homeowners' exposure to a major wealth shock from flooding, we do not expect redistributive concerns to change the optimal level of either instrument by much.  
+
+\subsection{Demand for adapted housing}
+
+\subsection{Administrative costs}\label{subsec:admincosts}
+
+Here, enter some available estimates. 
+
+\subsection{Functional form belief distribution}
+
+\subsection{Dispersion in risk aversion}
 \section{Conclusion}
 \label{sec:conclusion}
 
