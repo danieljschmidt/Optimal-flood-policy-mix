@@ -232,7 +232,7 @@ Households' per period-utility $u(c)$ is a function of consumption $c$ (not weal
 
 
 
-In a reduced-form way, we incorporate in our model the limited ability of households to access credit immediately following a flooding disaster. Let $B_{\text{max,U,F}}(w,e)$ be the maximum amount an uninsured household is able to borrow after it suffers a flood; $B_{\text{max,U,I}}(w,e)$ the same if it is insured or it does not suffer a flood. It is also helpful to define the cash-in-hand that results from the insurance decision and the flood realisation:
+In a reduced-form way, we incorporate in our model the limited ability of households to access credit immediately following a flooding disaster. Let $B_{\text{max,U,F}}(w,e)$ be the maximum amount an uninsured household is able to borrow after it suffers a flood; $B_{\text{max,U,N}}(w,e)$ the same if it is insured or it does not suffer a flood. It is also helpful to define the cash-in-hand that results from the insurance decision and the flood realisation:
 
 \begin{equation}
 \begin{aligned}
@@ -276,7 +276,7 @@ and
 
 Let $i$ be the resulting policy function for the insurance decision and $c$ the policy function for consumption conditional on insurance and the realisation of flooding. Now, define 
 \begin{equation}
-\Delta b(d,w,e;q)=1-\frac{c_\text{N}(d,w,e;q)-c_\text{F}(w,e;q)}{(1-a)d}.
+\Delta b(d,w,e;q)=1-\frac{c_\text{U,N}(d,w,e;q)-c_\text{U,F}(w,e;q)}{(1-a)d}.
 \end{equation}
 
 $\Delta b$ is the additional amount the household borrows or withdraws from savings in response to a flood event, as a fraction of the damage it suffers. If the household is already close to its borrowing constraint ($c_\text{U,N}\approx c_\text{max,U,N})$ and the amount of additional credit available to a household after a flood is low ($B_\text{max,U,F}\approx B_\text{max,U,N}$), $\Delta b$ is close to $0$. Current consumption is then reduced by the flood damage $(1-a)d$. Conversely, if the borrowing constraint is not binding, $\Delta b$ is much closer to $1$ and the household does not suffer a consumption trough.      
