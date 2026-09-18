@@ -3,6 +3,7 @@
 % Packages
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}
+\usepackage{bbm}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
@@ -120,7 +121,7 @@ A continuum one of households each own a coastal property and hold wealth $w$. T
 
 Households hold heterogeneous subjective beliefs $q$ about the probability that a flood event occurs, distributed across the population according to the CDF $F(q)$. By contrast, the distribution of damages conditional on flooding $G(d)$ is known and accepted by all households. If a household buys insurance, it pays the insurance premium $(1-s)p\overline{d}$, since the actuarially fair premium is $p\overline{d}$. Flooding is an idiosyncratic risk affecting a continuum one of households, so the actuarially fair premium faced by the household at the start of the period exactly equals realised damages paid out by the insurer at the end of the period.
 
-\subsection{Household insurance decisions}
+\subsection{Household problem}
 
 We assume that household chooses between no insurance and full insurance. An insured household's consumption is therefore unaffected by whether a flood occurs. Its utility is
 \begin{align}
@@ -142,7 +143,7 @@ Furthermore, given the legal requirement that homeowners with a federally backed
 
 Given the CDF for flood risk beliefs $F(q)$, the insurance take-up rate is $I(s,a) = \phi+(1-\phi)(1-F(q^*(s,a)))$. The threshold $q^*(s,a)$ itself is independent of the distribution of beliefs.
 
-\subsection{The social planner's problem}
+\subsection{Social planner problem}
 
 Households make decisions that maximise their subjective expected welfare, and, given those decisions, the social planner evaluates welfare using the true flood probability $p$. Social welfare is the population average of household utility,
 \begin{equation}
@@ -219,6 +220,138 @@ As mentioned, the terms in \eqref{eq:mvpf_deep_prog} can only be quantified give
 
 %Two empirical objects are therefore sufficient to evaluate both MVPFs at the current policy: the insurance take-up rate $I$, and the density $f(q^*)$ of households at the insurance margin. We recover the latter from the empirically estimable elasticity of take-up with respect to the insurance premium, without needing to observe the belief distribution $F$ directly. Evaluating counterfactual policies away from the status quo, however, requires the full distribution $F(q)$; we obtain this by fitting a parametric distribution to match the observed take-up rate and premium elasticity. Section~\ref{sec:calibration} describes this calibration in detail.
 
+\subsection{The dynamic problem}
+
+In the one-period problem developed thus far, damages from flooding are wholly subtracted from current consumption. When there are multiple periods, households are able to maintain their consumption by borrowing or drawing down their assets. In the United States, government policy seeks to assist homeowners in . Homeowners with a GSE-backed mortgage enjoy an automatic forbearance (not forgiveness) of mortgage payments for a period of 6 to 12 months in areas receiving FEMA assistance. This temporarily loosens households' borrowing constraint after a flooding disaster, in order to prevent mortgage defaults and blunt the immediate drop in consumption. Here, we examine how consumption smoothing alters the cost of uninsured flooding disasters and thereby our formulas for optimal policy.   
+
+\subsubsection{Household problem}
+
+There is an infinite number of periods, and the flooding disaster with damage distribution $G(d)$ now strikes each period with constant probability $p$. As before, households are coastal homeowners and their belief about the flood arrival rate $p$ is described by the distribution function $F(q)$.  They now choose anew each period whether to buy flood insurance at cost $\overline{P}=(1-s)p\overline{d}$. If they are hit by a flood while uninsured, they suffer damages $(1-a)d$.
+
+Households' per period-utility $u(c)$ is a function of consumption $c$ (not wealth $w$). They receive stochastic income $e$ each period which follows a Markov chain, have identical discount factor $\beta$, and can borrow and save at interest rate $r$.  
+
+
+
+In a reduced-form way, we incorporate in our model the limited ability of households to access credit immediately following a flooding disaster. Let $B_{\text{max,U,F}}(w,e)$ be the maximum amount an uninsured household is able to borrow after it suffers a flood; $B_{\text{max,U,I}}(w,e)$ the same if it is insured or it does not suffer a flood. It is also helpful to define the cash-in-hand that results from the insurance decision and the flood realisation:
+
+\begin{equation}
+\begin{aligned}
+m_\text{I} &= w + e - \overline{P}, \\
+m_\text{U,F}   &= w + e - (1-a)d, \\
+m_\text{U,N}  &= w + e.
+\end{aligned}
+\end{equation}
+
+Finally, let $c_{\text{max}}$ be the resulting maximum consumption level, e.g., $c_{\text{max,I}}(w,e)=m_\text{I}(w,e)+B_{\text{max,I}}(w,e)$. 
+
+
+The household with subjective belief $q$ regarding the flood arrival rate maximises the subjective expectation of its welfare. The timing of each period is as follows: the household chooses whether to insure, the flooding process is realised, and finally the household chooses consumption. Given its start-of-period wealth $w$, income level $e$, its problem is given by 
+
+\begin{equation}
+\tilde{V}(w,e;q)=\max\left(\tilde{V}_{I}(w,e;q),\,\tilde{V}_{U}(w,e;q)\right),
+\end{equation}
+where
+\begin{equation}
+\tilde{V}_{\text{I}}(w,e;q)=\max_{c\leq c_{\text{max,I}}}\; u(c)+\beta \mathbb{E}_{e'}[\tilde{V}((1+r)(m_\text{I}-c),e';q)]
+\end{equation}
+and
+\begin{align}
+\tilde{V}_{\text{U}}(w,e;q)= q\mathbb{E}_d[\max_{c\leq c_{\text{max,U,F}}}\; u(c)+\beta \mathbb{E}_{e'}[\tilde{V}((1+r)(m_\text{U,F}-c),e';q)]\\
++(1-q)\max_{c\leq c_{\text{max,U,N}}}\; u(c)+\beta \mathbb{E}_{e'}[\tilde{V}((1+r)(m_\text{U,N}-c),e';q)]
+\end{align}
+
+
+%\begin{equation}
+%\tilde{V}(w,e;q)=\max\left(\tilde{V}_{ins}(w,e;q),\,\tilde{V}_{unins}(w,e;q)\right),
+%\end{equation}
+%where
+%\begin{equation}
+%\tilde{V}_{ins}(w,e;q)=\max_{c\leq c_{\text{max,ins}}}\; u(c)+\beta \mathbb{E}_{e'}[V((1+r)(w+e-c-\overline{P}),e';q)]
+%\end{equation}
+%and
+%\begin{align}
+%\tilde{V}_{unins}(w,e;q)= q\mathbb{E}_d[\max_{c\leq c_{\text{max,f}}}\; u(c)+\beta \mathbb{E}_{e'}[V((1+r)(w+e-c-(1-a)d)),e';q)]\\
+%+(1-q)\max_{c\leq c_{\text{max,nf}}}\; u(c)+\beta %\mathbb{E}_{e'}[V((1+r)(w+e-c),e';q)]
+%\end{align}
+
+Let $i$ be the resulting policy function for the insurance decision and $c$ the policy function for consumption conditional on insurance and the realisation of flooding. Now, define 
+\begin{equation}
+\Delta b(d,w,e;q)=1-\frac{c_\text{N}(d,w,e;q)-c_\text{F}(w,e;q)}{(1-a)d}.
+\end{equation}
+
+$\Delta b$ is the additional amount the household borrows or withdraws from savings in response to a flood event, as a fraction of the damage it suffers. If the household is already close to its borrowing constraint ($c_\text{U,N}\approx c_\text{max,U,N})$ and the amount of additional credit available to a household after a flood is low ($B_\text{max,U,F}\approx B_\text{max,U,N}$), $\Delta b$ is close to $0$. Current consumption is then reduced by the flood damage $(1-a)d$. Conversely, if the borrowing constraint is not binding, $\Delta b$ is much closer to $1$ and the household does not suffer a consumption trough.      
+
+The policy functions together with the processes for income and flooding define a stochastic process for consumption $c_t$. The social planner calculates the objective value of the household from this flow: 
+\begin{equation}
+V(w,e;q)=\mathbb{E}\!\left[\textstyle\sum_{t\geq0}\beta^{t}\,u(c_t)\;\middle|\;w_0=w,\,e_0=e\right],
+\label{eq:objective_dyn}
+\end{equation}
+where the expectation is taken over the income process and the true flood arrival rate $p$.
+
+
+
+
+%The objective (true-probability) value of a household, given the decisions generated by its
+%subjective problem, is obtained by evaluating the same policy functions under the true arrival
+%rate $p$:
+%\begin{equation}
+%V(w,e;q)=\mathbb{E}\!\left[\textstyle\sum_{t\geq0}\beta^{t}\,u(c_t)\;\middle|\;w_0=w,\,e_0=e\right],
+%\label{eq:objective_dyn}
+%\end{equation}
+%where the expectation is taken over the true income process and the true flood arrival rate $p$,
+%but consumption $c_t$ and the insurance choice $\mathbbm{1}_{\text{ins}}$ follow the subjective
+%policy functions defined above. The wedge between $V$ and $\tilde{V}$---decisions taken under the
+%belief $q$, welfare scored under $p$---is the source of the behavioural internality, exactly as in
+%the static model of Section~\ref{sec:model}.
+
+\subsubsection{The approximation technique}
+
+In the one-period model, the cost of flooding was given by $\Delta u \equiv u(c_{U,N})-\mathbb{E}_d[u(c_{U,F}(d))]$ with $c_{U,F}(d)=c_{U,N}-(1-a)d$. In the dynamic model, the cost depends on the household's ability to smooth its consumption. The household evaluates the expected cost of a flood as \begin{align}
+\Delta \tilde{V} \equiv u(c_{U,N})-\mathbb{E}[u(c_{\text{U,N}}-(1-\Delta b)(1-a)d)]+ \nonumber \\ \beta\mathbb{E}_{e'}([\tilde{V}((1+r)(m_\text{U,N}-c_\text{U,N})]-\mathbb{E}_{d}[\tilde{V}((1+r)(m_\text{U,N}-c_\text{U,N}-\Delta b(1-a)d)]),
+\end{align}
+where the dependence of objects on the states $(w,e)$ and belief $q$ is suppressed for readability. The social planner uses the same formula to evaluate the cost of flooding to the household, albeit with the objective value $V$ replacing $\tilde{V}$.
+
+We now introduce a simple idea: since flood damages are generally small compared to lifetime earnings (but not one-period consumption), then, provided the household is not at its borrowing constraint next period, next-period value functions $\tilde{V}$ and $V$ are approximately linear over the range given by flood damages $(1-a)d$. In this case, we can write:
+\begin{align}\label{eq:approxformula}
+\Delta \tilde{V} \approx u(c_{U,N})-\mathbb{E}_d[u(c_{U,N}-(1-\Delta b)(1-a)d)]+ \nonumber \\ \beta(1-a)(1+r)\mathbb{E}_d[\Delta b(d)d]\cdot\mathbb{E}_{e'}([\tilde{V}_w((1+r)(m_\text{U,N}-c_\text{U,N})]).
+\end{align}
+
+Now consider the case where the uninsured household is close to its borrowing constraint before the flood. In that case, the value function clearly has curvature when future wealth changes by $\Delta b(1-a)d$, but we expect  $\Delta b$ to be close to $0$. Therefore, equation \eqref{eq:approxformula} continues to hold approximately. 
+
+We can simplify the formulas further by using $u'(c_{U,N})=\beta(1+r)\mathbb{E}_{e'}([\tilde{V}_w((1+r)(m_\text{N}-c_\text{N})$ (again, this works on the second term, which is relevant if the household is not credit-constrained). Then,   
+
+\begin{equation}\label{eq:approxformulasimple}
+\Delta \tilde{V} \approx u(c_{U,N})-\mathbb{E}[u(c_{U,N}-(1-\Delta b)(1-a)d)]+\beta(1-a)\mathbb{E}_d[\Delta b(d)d]\cdot u'(c_{U,N}),
+\end{equation}
+
+and, since the insurance premium is small,
+
+\begin{equation}
+\tilde{V}_{\text{N}}-\tilde{V}_{\text{I}}\approx\overline{P} \cdot u'(c_{U,N}).
+\end{equation}
+
+The indifference condition to buy insurance is now given by
+
+\begin{equation}
+q^*\approx\frac{\overline{P}}{(u(c_{U,N})-\mathbb{E}_d[u(c_{U,N}-(1-\Delta b)(1-a)d)])/u'(c_{U,N})+(1-a)\mathbb{E}_d[\Delta b(d)d]}.
+\end{equation}
+
+To interpret this condition, note that the denominator contains two parts. The first part concerns the hit to current consumption and contains a risk premium, since $u(c_{\text{U,N}})-u(c_{\text{U,F}})>u'(c_{\text{U,N}})(1-\Delta b)(1-a)d$ if the agent is risk-averse. The second part concerns the part of flood damages that the agent is able to spread out over periods. In the extreme case where the agent can smooth consumption perfectly ($\Delta b\approx1$), the agent becomes approximately risk-neutral and $q^*$ equals the insurance premium divided by expected flood damages. This follows from the fact that flood damages are small relative to lifetime earnings. 
+
+\subsubsection{Implications for the MVPF formulas}
+
+The structure of the social planner problem described in \eqref{eq:welfare_prog} and \eqref{eq:budget_prog} is unchanged, except that the social planner eventually has to aggregate over agents by their wealth and income level. Setting this problem aside for now,  
+
+%In a reduced-form way, we incorporate in our model the limited ability of households to access credit immediately following a flooding disaster. Let $\mathbbm{1}_{\{\text{insured}\}}$ and  $\mathbbm{1}_{\{\text{flood}\}}$ be indicators describing whether the household has flood insurance whether a flood has occurred. Then, let $b_{\text{max}}(w,e,\mathbbm{1}_{\{\text{insured}\}},\mathbbm{1}_{\{\text{flood}\}})$ be the maximum amount the household is able to borrow after the realisation of the flood process. $c_\text{max}(w,e,\mathbbm{1}_{\{\text{flood}\}})=w+e+b_{\text{max}}(w,e,\mathbbm{1}_{\{\text{insured}\}},\mathbbm{1}_{\{\text{flood}\}})-(1-a)d$ is the amount the household can consume each period. 
+
+%In a reduced-form way, we incorporate in our model the limited ability of households to access credit immediately following a flooding disaster. Let $d_{\text{net}}$ be the flood damage the household suffers after the realisation of the flood process. It is zero if the household is insured or if it does not suffer a flood; otherwise it is $d_{\text{net}}=(1-a)d$. Then, let $b_{\text{max}}(w,e,d_{\text{net}})$ be the maximum amount the household is able to borrow after the realisation of the flood process and $c_\text{max}(w,e,d_{\text{net}})$ be the maximum amount the household can consume in the period. If an insured household suffers a flood, $c_\text{max}(w,e,d_{\text{net}})=w+e+b_{\text{max}}(w,e,d_{\text{net}})-(1-a)d$.
+
+
+%The simple assumption underpinning our reduced-form approach is that, when hit by a flood, households are not able to divide the loss in wealth over current and future periods in an unconstrained fashion. Instead, in a period in which a household suffers a flood, a maximum fraction of flood damages $1-b(d)$ may be borrowed. The remainder $b(d)$ must be drawn from savings or is subtracted from current consumption. The reduced-form object $b(\cdot)$ represents the sum of unmodelled forces affecting households' ability to smooth their consumption: on the one hand, loan-to-value and payment-to-income constraints as well as delays in obtaining credit in disaster-stricken areas, and on the other hand government policy expanding the availability of credit.      
+
+
+
+
 \subsection{How to identify belief density $f(q^*)$}
 
 From Gruber and Solomon, we know the response of insurance uptake to a percentage increase in the premium: 
@@ -290,11 +423,11 @@ where the first fraction on the RHS is the elasticity. Filling in our estimates 
 \section{Robustness}
 \label{sec:robustness}
 \subsection{Redistributive effects}
-Households vary in their wealth and income, which bears on their exposure to flooding and their demand for flood insurance. The insurance premium subsidy and disaster aid thus potentially have redistributive effects.
+Households vary in their wealth and income, which bears on their exposure to flooding and their demand for flood insurance. Thus, the insurance premium subsidy and disaster aid may  have redistributive effects.
 
-\cite{qin2026flood} combine comprehensive census and property tax for the whole of the United States to document a number of facts. First, moving across the income distribution, the fraction of households living in a floodplain is essentially flat, hovering between around 13$\%$ in the left tail to just under 12$\%$ around the 75th percentile, with however a spike in the top income decile reaching around 18$\%$ (ibid p. 31). Second, relative to income, both homeowners' insurance premiums and their expected losses from flooding fall considerably with income, and with a comparable slope (ibid p. 44 and p. 46).
+\cite{qin2026flood} combine comprehensive census and property tax for the whole of the United States to document a number of facts. First, moving across the income distribution, the fraction of households living in a floodplain is essentially flat, hovering between around 13$\%$ in the left tail to just under 12$\%$ around the 75th percentile, with however a spike in the top income decile reaching around 18$\%$ (ibid p. 31). Second, relative to income, both homeowners' insurance premiums and their expected losses from flooding fall considerably with income, and with a comparable slope (ibid p. 44 and p. 46). Third, the insurance rate rises with income -- moving from the 25th to the 75th income percentile, the fraction of uninsured households in floodplains falls by about half (ibid p. 45).\footnote{Compared to the administrative NFIP data of \cite{amornsiripanitch2025measuring}, the survey data of \cite{qin2026flood} indicate a higher insurance rate overall.} 
 
-The effect of the premium subsidy and of disaster aid on income inequality is thus ambiguous: both instruments do little for the poorest households which do not own housing but tend to favour less wealthy homeowners, depending on the manner in which they are financed. Given the importance of reducing homeowners' exposure to a major wealth shock from flooding, we do not expect redistributive concerns to change the optimal level of either instrument by much.  
+The effects of the premium subsidy and of disaster aid on income inequality seem minor: both instruments do little for the poorest households which do not own housing but tend to favour less wealthy homeowners, depending on the manner in which they are financed. If raw exposure to flooding does not change very much with income, the fact that the flood insurance rate rises with income would make the insurance subsidy less progressive than disaster aid. To the extent that redistributive concerns affect the marginal value of either instrument, we therefore expect our baseline result (given current policy, $\text{MVPF}_a>\text{MVPF}_s)$ to be strengthened.
 
 \subsection{Demand for adapted housing}
 
