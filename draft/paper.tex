@@ -15,6 +15,8 @@
 \usepackage{apacite}
 \usepackage{natbib}
 
+\newtheorem{proposition}{Proposition}
+
 % Paragraph spacing: blank line between paragraphs, no first-line indent
 \setlength{\parskip}{0.8em plus 0.2em minus 0.2em}
 \setlength{\parindent}{0pt}
@@ -351,6 +353,90 @@ The structure of the social planner problem described in \eqref{eq:welfare_prog}
 
 
 
+
+\subsection{Consumption smoothing and the utility base}
+\label{sec:smoothing}
+% TODO: wording is not mine, but from Claude, and references need to be double-checked
+
+In the one-period model, flood damages are subtracted from current consumption in full. Over multiple periods, households can instead borrow or draw down assets, spreading a one-time loss over many periods and reducing its welfare cost. We show that the static model remains valid without modification provided its utility base is chosen correctly: the base consistent with dynamic consumption smoothing is consumption divided by the marginal propensity to consume out of a one-time shock. This pins down the otherwise arbitrary denominator of relative damages and reduces the treatment of consumption smoothing to one calibrated parameter.
+
+\subsubsection{Household problem}
+
+Time is discrete, the horizon infinite. A household has period utility $u$ with CRRA coefficient $\gamma$, discount factor $\beta$, and borrows and saves at rate $r$ subject to a borrowing limit. Income $e$ follows a Markov chain. Cash-on-hand $x$ (assets plus current income) summarises the household's position, and the consumption-savings problem defines
+
+\begin{equation}
+V(x) \;=\; \max_{c \le c_{\max}(x)} \; u(c) + \beta\, \mathbb{E}_{e'}\!\left[ V\big((1+r)(x-c) + e'\big) \right],
+\label{eq:S1}
+\end{equation}
+
+with policy function $c(x)$ and marginal propensity to consume $\mu(x) \equiv c'(x) \in (0,1]$. Under standard conditions $V$ is concave, and by Carroll and Kimball (1996) the consumption function is concave, so $\mu(x)$ decreases in $x$: households with less liquidity pass more of a shock into current consumption.
+
+The insurance choice is as in Section~3.2. Premium $P = (1-s)pd$ and uninsured loss $(1-a)d$ are one-time reductions of cash-on-hand, so a household with belief $q$ insures whenever
+
+\begin{equation}
+V(x - P) \;\ge\; (1-q)\,V(x) + q\,\mathbb{E}_d\!\left[ V\big(x - (1-a)d\big) \right].
+\label{eq:S2}
+\end{equation}
+
+\subsubsection{The equivalent static model}
+
+The envelope theorem gives $V'(x) = u'(c(x))$, hence $V''(x) = u''(c(x))\,\mu(x)$ and
+
+\begin{equation}
+A_V(x) \;\equiv\; -\frac{V''(x)}{V'(x)}
+\;=\; \left[-\frac{u''(c)}{u'(c)}\right]\mu(x)
+\;=\; \frac{\gamma\,\mu(x)}{c(x)}.
+\label{eq:S3}
+\end{equation}
+
+Of each dollar lost, only the fraction $\mu$ is absorbed by current consumption; the remainder is spread over future periods. Smoothing thus dilutes exposure to one-time risk at exactly the rate $\mu$. Equation~\eqref{eq:S3} is the discrete-time envelope version of the result that the risk tolerance of wealth aggregates future consumption risk tolerances (Gollier, 2001).
+
+To see that $A_V$ is the only preference object relevant for the insurance decision at moderate stakes, expand each term of \eqref{eq:S2} to second order around $x$, writing $V(x-z) = V(x) - z V'(x) + \tfrac12 z^2 V''(x) + O(z^3)$, and divide by $V'(x) > 0$:
+
+\begin{equation}
+-P - \tfrac12 P^2 A_V
+\;\ge\;
+-\,q\,\mathbb{E}[(1-a)d] \;-\; \tfrac12\, q\,\mathbb{E}\!\left[(1-a)^2 d^2\right] A_V
+\;+\; O(\text{stakes}^3).
+\label{eq:S4}
+\end{equation}
+
+The static household of Section~3.2 with base $w$ satisfies the same inequality with $A_V$ replaced by $\gamma/w$. The two decision rules therefore coincide at this order precisely when the curvatures match:
+
+\begin{proposition}[Equivalent base]
+\label{prop:base}
+The static model of Section~3.2 reproduces the dynamic household's insurance decision, up to third-order terms in the stakes, if and only if
+\begin{equation}
+w \;=\; \frac{c}{\mu}.
+\label{eq:S5}
+\end{equation}
+\end{proposition}
+
+Two limits delimit the economics. A hand-to-mouth household ($\mu = 1$) has base $w = c$: damages hit consumption one-for-one, as in the literal static model. A frictionless permanent-income household has $\mu \approx r$, so $w \approx c/r$, the present value of consumption including human wealth; relative damages $d/w$ become negligible, the risk-premium terms in \eqref{eq:S4} vanish, and the threshold belief collapses to the actuarial ratio,
+
+\begin{equation}
+q^\ast \;\longrightarrow\; \frac{P}{\mathbb{E}[(1-a)d]}.
+\label{eq:S6}
+\end{equation}
+
+Empirical MPCs out of one-time shocks lie between these poles, around $0.3$--$0.5$ within a year (Fagereng, Holm and Natvik, 2021), and larger for losses than for gains (Bunn et al., 2018), consistent with evidence of binding credit constraints among flood-affected households (Gallagher and Hartley, 2017).
+
+Because \eqref{eq:S5} rescales the base while leaving all monetary stakes unscaled, premium and damage are treated symmetrically and the actuarial comparison is preserved. Setting $s = a = 0$ and $q = p$ in \eqref{eq:S2}, the insured household's certain consumption $w - pd$ equals the mean of the uninsured lottery, so a risk-averse household weakly prefers to insure for any $\mu > 0$. Smoothing weakens the insurance motive without reversing it: by \eqref{eq:S4} the utility gain from fair insurance is $\tfrac12 A_V \operatorname{Var}(\text{loss}) = \tfrac{\gamma \mu}{2c}\, p\,\mathbb{E}[d^2] - \tfrac{\gamma\mu}{2c}\,p^2 d^{\,2} > 0$, of second order in the stakes and proportional to $\mu$.
+
+\subsubsection{Large damages and the truncation of $G$}
+
+Proposition~\ref{prop:base} is local: it evaluates $\mu$ at the household's current position. For losses large relative to liquid resources the exact cost is
+
+\begin{equation}
+V(x) - V\big(x - (1-a)d\big) \;=\; \int_{x-(1-a)d}^{x} u'\big(c(t)\big)\,dt,
+\label{eq:S7}
+\end{equation}
+
+an average of marginal utilities over the traversed interval; concavity of the consumption function implies the effective pass-through rises with the size of the loss. Exposure is bounded from the other side, however: damage beyond home equity plus moving costs is borne by lenders through default, and by the means-tested safety net, rather than by the household's consumption. This is the behaviour observed after Hurricane Katrina, where the most severely flooded homeowners used insurance payouts to retire mortgages and moved rather than absorbing losses in consumption (Gallagher and Hartley, 2017). We impose the bound in the calibration rather than the formulas: $G$ is truncated at $d_{\max}$, set to the home-equity share of property value, with robustness checks across the equity distribution. Truncation also keeps consumption strictly positive in every state, so the planner's problem is well defined over the entire policy space.
+
+\subsubsection{Implications for the MVPF formulas and identification}
+
+All formulas of Sections~3.2--3.4 apply unchanged; only the interpretation of $w$ changes, via \eqref{eq:S5}. With $\mu \approx 1/3$ and a structure-value-to-income ratio near~$3$, the base $c/\mu$ approximately equals the structure value of the home, so damages expressed as a share of structure value---the object measured in the claims data---are already in the model's units. The identification of the belief density in Section~3.6 is likewise unchanged, with one operational caveat: $\Delta u$, and through it the recovered $f(q^\ast)$ and the fitted distribution $F$, depend on $\mu$, so beliefs are re-estimated at every value of $\mu$ considered. The calibration gains two parameters---$\mu$ (baseline $1/3$, swept over $[0.25, 1]$) and $d_{\max}$ (baseline mean equity share, swept across equity quartiles)---each with a row in the sensitivity analysis of Section~6. The transfer terms of both instruments, and in particular the tail-driven component of $\mathrm{MVPF}_a$, are the objects most affected by this grid.
 
 \subsection{How to identify belief density $f(q^*)$}
 
