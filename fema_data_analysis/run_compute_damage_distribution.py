@@ -25,7 +25,11 @@ from discretize_damage import discretize_conditional_means, gauss_three_point
 
 # %% Configuration
 
-DATA_DIR = Path(r"C:\Users\TPRINS\OneDrive - UvA\Documenten\Python files insurance-aid\Code August 2026\fema_data_analysis\data")
+DATA_DIRS = [
+    Path(r"C:\Users\TPRINS\OneDrive - UvA\Documenten\Python files insurance-aid\Code August 2026\fema_data_analysis\data"),
+    Path(r"C:\Users\dschm\Documents\Data\FEMA"),
+]
+DATA_DIR = next(d for d in DATA_DIRS if d.exists())
 DB_PATH = DATA_DIR / "fema.db"
 LAND_PATH = DATA_DIR / "land-prices_2024_20_june.xlsx"   # FHFA WP 19-01 land prices, v4.0
 
