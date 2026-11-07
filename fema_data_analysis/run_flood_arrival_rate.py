@@ -8,8 +8,12 @@ Created on Thu Sep 24 16:27:30 2026
 import sqlite3
 import pandas as pd
 from pathlib import Path
- 
-DATA_DIR = Path(r"C:\Users\TPRINS\OneDrive - UvA\Documenten\Python files insurance-aid\Code August 2026\fema_data_analysis\data")
+
+DATA_DIRS = [
+    Path(r"C:\Users\TPRINS\OneDrive - UvA\Documenten\Python files insurance-aid\Code August 2026\fema_data_analysis\data"),
+    Path(r"C:\Users\dschm\Documents\Data\FEMA"),
+]
+DATA_DIR = next(d for d in DATA_DIRS if d.exists())
 conn = sqlite3.connect(DATA_DIR / "fema.db")
 START, END = 2000, 2025
  
