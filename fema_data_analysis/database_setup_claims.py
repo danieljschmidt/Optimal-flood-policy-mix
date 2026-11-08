@@ -27,7 +27,7 @@ claims_dtype_dict = {
     # Integer fields - use appropriate nullable integer types
     "basementEnclosureCrawlspaceType": "Int16",
     "policyCount": "Int16",
-    "crsClassificationCode": "Int16",
+    "crsClassCode": "Int16",              # v3 rename: was crsClassificationCode
     "elevationDifference": "Int32",
     "locationOfContents": "Int16", 
     "numberOfFloorsInTheInsuredBuilding": "Int16",
@@ -45,7 +45,7 @@ claims_dtype_dict = {
     "floodCharacteristicsIndicator": "Int16",
     "floodWaterDuration": "Int16",
     "iccCoverage": "Int32",
-    "numberOfUnits": "Int16",
+    "numberOfUnits": "Int32",             # v3 goes up to 99999 (Int16 caps at 32767)
     "contentsReplacementCost": "Int32",
     "waterDepth": "Int16",
     "buildingDescriptionCode": "Int16",
@@ -74,9 +74,24 @@ claims_dtype_dict = {
     "reportedCity": "string", 
     "reportedZipCode": "string",
     "countyCode": "string",
-    "censusTract": "string",
-    "censusBlockGroupFips": "string",
-    "id": "string"
+    "censusGeoid": "string",              # v3 rename: replaces censusTract + censusBlockGroupFips
+    "id": "string",
+
+    # --- Fields new in v3 -------------------------------------------------
+    "foundationType": "category",
+    "preFirmIndicator": "boolean",
+
+    # v3 splits the old single waterDepth into exterior/interior.
+    # If the cast ever complains, these hold decimals -> switch to "float64".
+    "exteriorWaterDepth": "Int16",
+    "interiorWaterDepth": "Int16",
+
+    # Recovery / subrogation amounts (dollars, as with the amountPaidOn* fields)
+    "totalSalvageRecovery": "float64",
+    "totalBldgClaimPmtRecovery": "float64",
+    "totalContentsClaimPmtRecovery": "float64",
+    "totalIccClaimPmtRecovery": "float64",
+    "totalSubrogationRecovery": "float64"
 }
 
 # Date/datetime columns to parse separately
@@ -84,5 +99,10 @@ claims_date_cols = [
     "asOfDate",
     "dateOfLoss",
     "originalConstructionDate",
-    "originalNBDate"
+    "originalNBDate",
+
+    # New in v3
+    "openDate",
+    "mostRecentPaymentDate",
+    "mostRecentRecoveryDate"
 ]

@@ -23,7 +23,7 @@ policies_dtype_dict = {
     "basicBuildingRate": "float64",
     "additionalBuildingRate": "float64",
     "basicContentsRate": "float64",
-    "AdditionalContentsRate": "float64",  # Note: Capital A as in your schema
+    "additionalContentsRate": "float64",  # v3 fixed the capital A that v2 had
     "latitude": "float64",
     "longitude": "float64",
     
@@ -78,14 +78,26 @@ policies_dtype_dict = {
     "propertyState": "category",
     "reportedCity": "string",
     "reportedZipCode": "string",
-    "countyCode": "string",
-    "censusTract": "string", 
-    "censusBlockGroupFips": "string",
-    "id": "string"
+    # countyCode is gone in v3 policies -- derive it from censusGeoid[:5] if needed
+    "censusGeoid": "string",              # v3 rename: replaces censusTract + censusBlockGroupFips
+    "id": "string",
+
+    # --- Fields new in v3 -------------------------------------------------
+    "fullRiskPremium": "float64",
+    "preFIRMConstructionIndicator": "boolean",
+
+    # Codes whose exact form I could not verify -- category is safe for any of
+    # them. Switch to "boolean" if you confirm one is a simple true/false flag.
+    "buildingOnFederalLand": "category",
+    "buildingPurpose": "category",
+    "buildingOverWaterType": "category",
+    "seasonallyOccupied": "category",
+    "foundationType": "category"
 }
 
 # Date columns to parse separately
 policies_date_cols = [
+    "asOfDate",                           # new in v3
     "cancellationDateOfFloodPolicy",
     "originalConstructionDate", 
     "originalNBDate",
