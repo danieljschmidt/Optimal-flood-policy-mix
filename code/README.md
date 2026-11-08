@@ -40,12 +40,23 @@ import params, belief_identification as B
 import mvpf_discrete as D, mvpf_continuous as C
 import mvpf_optimal_mix as A
 
-B.mvpf_local(D, D.S0, D.A0, params.I_OBS, params.EPS)   # -> (MVPF_s, MVPF_a) = (1.072, 1.334)
-B.mvpf_local(C, C.S0, C.A0, params.I_OBS, params.EPS)   # -> (2.212, 31.445)  [FEMA main]
-al, be = B.fit_beta(D, D.S0, D.A0, params.I_OBS, params.EPS)   # -> Beta(0.143, 5.691)
+B.mvpf_local(D, D.S0, D.A0, params.I_OBS, params.EPS)   # -> (MVPF_s, MVPF_a) = (1.038, 1.238)
+B.mvpf_local(C, C.S0, C.A0, params.I_OBS, params.EPS)   # -> (1.537, 20.12)  [FEMA main; see note]
+al, be = B.fit_beta(D, D.S0, D.A0, params.I_OBS, params.EPS)   # -> Beta(0.313, 26.1)
 B.validation(D, al, be)                                  # survey checks
-A.optimal_mix(D, al/(al+be), al+be, lam=1.2)             # -> (s*, a*) = (0.00, 0.34)
+A.optimal_mix(D, al/(al+be), al+be, lam=1.2)             # -> (s*, a*) = (0.00, 0.14)
 ```
+
+Values above are for the calibration of 2026-11-07: `GAMMA = 1.5`, `S0 = 0.22` (subsidy relative
+to expected claims), `I_OBS = 0.484`, `PHI = 0.32`, `A0 = 0.052`, `EPS = -0.25`. `P = 0.02` is not
+yet updated. `GAMMA = 1` (log utility) is supported. `optimal_mix` still solves the fixed-lambda
+problem; the fixed-budget solver is still a to-do. The mandated share
+`PHI` enters take-up, $I = \phi + (1-\phi)(1-F(q^*))$, the Beta fit and the optimal mix; it
+cancels out of the local MVPFs. **Note on the continuous MVPF_a:** its denominator (net fiscal
+cost of aid) is small, because extra aid crowds out insurance and saves subsidy spending. At
+`GAMMA = 1.5` and 2 it stays positive (MVPF_a = 20 and 104). At `GAMMA = 3` it turns negative: the subsidy
+saved then exceeds the aid paid, while the numerator is positive. By the usual MVPF convention
+that value is infinite, not negative.
 
 Or run `python code/mvpf_reproduce.py` for all tables and the figures in
 `../notes/figures{,_continuous,_continuous_excl_katrina}/` (runtime dominated by the phase
@@ -54,7 +65,7 @@ diagrams, ~10–20 min).
 ## Documentation
 
 Formulas, worked example, and results: `../notes/mvpf_computations.md`. Parameter values and
-provenance: `../notes/model_parameters.md`. MVPF formulas match `../draft/draft.tex` (verified
+provenance: `../notes/model_parameters.md`. MVPF formulas match `../draft/paper.tex` (verified
 numerically).
 Secondary complements-vs-substitutes diagnostics: `mvpf_complementarity.py` on the
 `mvpf-complementarity` branch (not yet pushed).

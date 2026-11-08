@@ -11,12 +11,13 @@ import numpy as np
 from params import LAM                  # MCPF benchmark (see params.py)
 
 # ---- welfare / cost (needed by the optimum) ----
+# I = mod.take_up includes the mandated share PHI (paper eqs. welfare_prog / budget_prog).
 def welfare(mod, s, a, m, nu):
-    st = mod.struct(s, a); I = 1 - mod.f_cdf(st['qst'], m, nu)
+    st = mod.struct(s, a); I = mod.take_up(s, a, m, nu)
     return st['V_I'] * I + st['V_U'] * (1 - I)
 
 def cost(mod, s, a, m, nu):
-    st = mod.struct(s, a); I = 1 - mod.f_cdf(st['qst'], m, nu)
+    I = mod.take_up(s, a, m, nu)
     return mod.P * mod.MEAN_D * (s * I + a * (1 - I))
 
 # ---- optimal policy mix (s*, a*) = argmax_{s,a} [ S - lam*cost ] ----

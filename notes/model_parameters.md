@@ -1,148 +1,112 @@
 # Model Parameters — what we need to calibrate
 
-*The **Value** column is what the **current findings actually use**; **Value (G&S)** is the
-Gruber–Solomon (NBER WP 35408) estimate where one exists; **Source (G&S)** is how G&S identify it;
-**Reasoning** says whether we adopt G&S and, if not, why. Continuous-damage parameters are folded
-into §1b, tagged **[cont]**. §2 lists quantities that are **not model inputs** but are useful
-consistency checks. G&S page refs are printed pages (PDF page = printed + 2). Cross-refs:
-`draft/draft.tex`, `code/params.py` (single source of truth), `code/belief_identification.py`,
-`lit/gruber_solomon.md`.
+*The **Value** column is what the **current code and paper use** (calibration of 2026-11-07); **Value
+(G&S)** is the Gruber–Solomon (NBER WP 35408) estimate where one exists; **Source (G&S)** is how G&S
+identify it; **Reasoning** says whether we adopt G&S and, if not, why. Continuous-damage parameters
+are folded into §1b, tagged **[cont]**. §2 lists quantities that are **not model inputs** but are
+useful consistency checks. G&S page refs are printed pages (PDF page = printed + 2). Cross-refs:
+`draft/paper.tex` (§4 and Table 1), `code/params.py` (single source of truth),
+`code/belief_identification.py`, `lit/gruber_solomon.md`. Open issues, to-dos and current results
+are tracked in `notes/calibration_overview.md`; this note documents the parameters and their G&S
+counterparts.*
 
 ---
 
 ## 1a. Structural / preference parameters
 | Symbol | Meaning | Value | Source | Value (G&S) | Source (G&S) | Reasoning |
 |---|---|---|---|---|---|---|
-| $\gamma$ | CRRA risk aversion | 2 | Chetty (2006) | CARA $5\times10^{-4}$ | deductible-choice lit (Cohen–Einav, Sydnor), calibrated | **Not using G&S** — different functional form (CARA vs CRRA); implies implausibly high RRA at annual scale (flagged fragile in project notes). |
-| $w$ | household wealth | 1 (normalized) | SCF/AHS | — | not estimated | **No G&S value.** Normalization; dollar scale cross-checked by G&S $\bar P,\,L_f$ ($w\approx\$195$k at $\bar d/w=0.15$). |
+| $\gamma$ | CRRA risk aversion | **1.5** (robustness 1 / 3; was 2) | Decision 2026-11-07, paper §4: between Chetty (2006, mean ≈ 1) and Szpiro (1986, 1.2–1.8 for the US). Not from insurance choices, which imply triple-digit values (Sydnor 2010; Collier et al. 2017; Barseghyan et al. 2013) | CARA $5\times10^{-4}$ | deductible-choice lit (Cohen–Einav, Sydnor), calibrated | **Not using G&S** — different functional form (CARA vs CRRA); implies implausibly high RRA at annual scale. |
+| $w$ | household resources (utility base) | 1 (normalised) = **home value incl. land** | Decision 2026-11-07, paper §4 | — | not estimated | **No G&S value.** Damages are measured relative to home value; equivalent to an income base with pass-through MPC ≈ income/home value ≈ 0.25 (Kaplan et al. 2020 ratio ≈ 4). Code still uses building value until the `_home` files exist (§1b). |
 
 ## 1b. Flood-risk / loss primitives  (discrete baseline + [cont] additions)
 | Symbol | Meaning | Value | Source | Value (G&S) | Source (G&S) | Reasoning |
 |---|---|---|---|---|---|---|
-| $p$ | true annual flood probability | 0.02 | modelling choice (see below) | ≈ 0.055 | $p_f=\sigma_{PDD}\bar P/L_f$, §9.1 p. 31, App. B.22 p. 105 | **Not using G&S (yet)** — their implied value (≫ SFHA nominal 1%) reflects the higher-risk NFIP-insured sample. Kept 0.02; flagged for reconciliation (discussion point below). |
-| $\bar d=\mathbb{E}[D]$ | (mean) flood damage, share of wealth | 0.15 (discrete); **0.3044 (cont., FEMA main; 0.2517 excl. Katrina)** | discrete: G&S $L_f$ anchor; continuous: FEMA claims (2026-08-18) | \$29,267 ($L_f$) | NFIP loss data (loss given flood) | **Discrete keeps the G&S-consistent 0.15.** The continuous model now uses the raw FEMA claim-ratio mean (damage / *depreciated building value* — overstates the share of wealth; see caveats below). The two damage models are therefore **no longer mean-matched** — a live discussion item. |
-| CV **[cont]** | coeff. of variation of $D$ ($=\sigma_D/\bar d$) | **0.99 (main); 1.02 (excl. Katrina)** | **FEMA claims** (was: placeholder 0.86/1.3) | — | not estimated | **Estimated, no longer a placeholder.** Empirical CV ≈ 1.0 in every sample variant — between the two old placeholder values. |
-| $D_{\max}$ **[cont]** | maximum damage (share of base) | 0.993 (top-bin mean; no cap imposed) | FEMA claims | — | not estimated | **No cap (decision 2026-08-18)** — bin values used as-is; consumption stays positive everywhere on the policy grids. The total-loss atom drives relief's tail-insurance value; excl_katrina is the tail-robustness check. |
+| $p$ | true annual flood probability | paper **0.019**; code **0.02** | paper: NFIP claims ÷ policies in force in floodplains (`run_flood_arrival_rate.py`); code: round value | ≈ 0.055 | $p_f=\sigma_{PDD}\bar P/L_f$, §9.1 p. 31, App. B.22 p. 105 | **Not using G&S** — their value is implied by the premium–damage identity for the NFIP-insured sample (a different object). **Pending:** recompute as claims per policy-year for A/V zones with the same filters and years as $G$ (`calibration_overview.md` 3.1). |
+| $\bar d=\mathbb{E}[D]$ | (mean) flood damage, share of resources | 0.15 (discrete); **0.3044 (cont., FEMA main; 0.2517 excl. Katrina)** | discrete: G&S $L_f$ anchor; continuous: FEMA claims, damage/building value | \$29,267 ($L_f$) | NFIP loss data (loss given flood) | The two damage models are **not mean-matched**. **Pending:** both switch to damage relative to home value incl. land once the `_home` variants are computed (`calibration_overview.md` 3.2). |
+| CV **[cont]** | coeff. of variation of $D$ ($=\sigma_D/\bar d$) | **0.99 (main); 1.02 (excl. Katrina)** | FEMA claims | — | not estimated | **Estimated.** Empirical CV ≈ 1.0 in every sample variant. |
+| $D_{\max}$ **[cont]** | maximum damage (share of base) | 0.993 (top-bin mean; no cap imposed) | FEMA claims | — | not estimated | **No cap so far.** The near-total-loss atom drives the continuous model's aid MVPF (20 at baseline); a loss cap at home equity is the recommended fix, decision **open** (`calibration_overview.md` 3.3). Excl. Katrina is the tail robustness check (paper §4). |
 | family **[cont]** | functional form of $G$ | **empirical 20-bin histogram** (FEMA claims) | `fema_data_analysis/output/` | — | only scalar $L_f$ | **Estimated** — $D=$ buildingDamageAmount/buildingPropertyValue, single-family SFHA claims since 2000 ($n=813$k main / 712k excl. Katrina), 20 bins of width 0.05 at their conditional means. Loaded via `configure_damage(empirical=…)`; the Beta mode remains available for comparisons. |
 
 ![Flood-damage distribution — FEMA claims, discretized, by sample variant](figures/damage_distribution.png)
 
-**Reading the y-axis (bin weights).** Unlike the old density plot, each point is a bin
-*probability* (weights sum to 1 across the 20 bins of width 0.05). The distribution is strongly
-right-skewed with a spike at total loss: the top bin ($D\ge0.95$, mean 0.993) carries **6.0%** of
-the mass in the main sample (**1.9%** excl. Katrina) — under CRRA this atom is where relief's
-tail-insurance value lives.
+**Reading the y-axis (bin weights).** Each point is a bin *probability* (weights sum to 1 across the
+20 bins of width 0.05). The distribution is strongly right-skewed with a spike at total loss: the
+top bin ($D\ge0.95$, mean 0.993) carries **6.0%** of the mass in the main sample (**1.9%** excl.
+Katrina) — under CRRA this atom is where aid's tail-insurance value lives.
 
-**The empirical distribution (delivered 2026-08-18, wired in via `configure_damage(empirical=…)`).**
-$G$ is the 20-bin discretization of $D=$ buildingDamageAmount$/$buildingPropertyValue over
-single-family SFHA claims since 2000 (`fema_data_analysis/output/damage_distribution_main.csv`;
-`…_excl_katrina.csv` as tail robustness). Expectations in the model are exact weighted sums over
-the bin conditional means; the discretization reproduces the raw mean exactly and the raw CV to
-within 0.002. Key caveats (full discussion: `fema_data_analysis/notes/notes.md`): **(i)** the
-denominator is *depreciated building value* (ACV), not wealth, so the ratio overstates damage as a
-share of wealth; **(ii)** the distribution is conditional on a *claim*, not a flood — small events
-are missing, and pairing it with the hydrological $p=0.02$ is not fully coherent (claim frequency
-per policy-year is the consistent $p$; open item); **(iii)** Katrina alone carries about two thirds
-of the near-total losses (hence the excl. Katrina variant); **(iv)** the sample pools elevated and
-non-elevated homes.
+**The empirical distribution (wired in via `configure_damage(empirical=…)`).** $G$ is the 20-bin
+discretization of $D=$ buildingDamageAmount$/$buildingPropertyValue over single-family SFHA claims
+since 2000 (`fema_data_analysis/output/damage_distribution_main.csv`; `…_excl_katrina.csv` as tail
+robustness). Expectations in the model are exact weighted sums over the bin conditional means; the
+discretization reproduces the raw mean exactly and the raw CV to within 0.002. Key caveats (full
+discussion: `fema_data_analysis/notes/notes.md`): **(i)** the denominator is *depreciated building
+value* (ACV), not home value, so the ratio overstates damage relative to the utility base (fixed by
+the land-share adjustment below); **(ii)** the distribution is conditional on a *claim*, not a flood,
+so $p$ must be the claim frequency per policy-year in the same sample (`calibration_overview.md`
+3.1); **(iii)** Katrina alone carries about 70% of the near-total losses (hence the excl. Katrina
+variant); **(iv)** the sample pools elevated and non-elevated homes.
 
-**Utility base and the `scale` hook (decision 2026-08-18).** The ratios are used **as-is**
-(scale = 1), i.e. the utility base is the *house value* ($w=1=$ building value) — the mean
-$\bar d$ becomes the empirical 0.3044/0.2517 rather than the G&S-anchored 0.15. Per the MPC
-mapping (`fema_data_analysis/notes/calibration_decisions.md`, App. A), the identical numbers can
-be read as **MPC × damage/annual income** with MPC $=y/h$; the `scale` parameter of
-`configure_damage` implements other (MPC, base) choices — the $\phi$-sweep with belief re-fitting
-is the planned next step of that decision note.
+**Utility base = home value including land (decision 2026-11-07).**
+- **Measure:** damage relative to home value is damage/structure value × (1 − FHFA land share), from Davis et al. (2019), FHFA WP 19-01, matched by tract, ZIP, county or state. This uses the `_home` variants of `run_compute_damage_distribution.py` (Taco's branch, merged locally in `69a1669`).
+- **Interpretation:** an income base with pass-through MPC ≈ income/home value ≈ 0.25. The `scale` argument of `configure_damage` implements other (MPC, base) choices (`fema_data_analysis/notes/calibration_decisions.md`, App. A).
+- **Paper:** described in §4.
+- **Pending:** the code keeps the building-value base until the `_home` files are computed (paths `params.FEMA_DIST_*_HOME`; `calibration_overview.md` 3.2).
 
-**⚠ DISCUSSION POINT — how $p$ is calibrated, and the target population.** Currently $p = 0.02$ is
-a **round modelling choice**, set above the 1% SFHA floor (the SFHA is the ≥1%-annual floodplain) to
-represent a somewhat-higher-risk insured population — it is *not* yet rigorously estimated. Cleaner
-options, in increasing order of rigour: (a) NFIP **claim frequency** (paid claims per policy-year)
-in the target zone; (b) **First Street / FEMA flood-hazard-layer** return periods; (c) adopt G&S's
-directly reported $p_f = \sigma_{PDD}\bar P/L_f \approx 0.055$ for the NFIP-insured population. All
-three point *above* 0.02, so $p$ is a live reconciliation item (and it rescales everything
-downstream: premiums, the belief fit, $q^*/p$). Options on the table: switch to the SFHA population
-($p \approx 0.055$, higher take-up, mandate modelled — "P1") or a two-zone model ("P3"); both are
-optional TODOs, to be decided **before** the next calibration pass.
+**Population and $p$.** The population is SFHA homeowners (decision 2026-11-07). The paper's $p=0.019$
+comes from all NFIP claims per policy in force in floodplains and is not yet matched to the damage
+sample; the code uses 0.02. G&S's premium and loss levels imply a higher rate ($p\approx0.04$ net of
+the expense allowance, 0.055 in their own calculation); see §2 and `calibration_overview.md` 3.1.
 
 ## 1c. Policy parameters (status-quo evaluation point)
 | Symbol | Meaning | Value | Source | Value (G&S) | Source (G&S) | Reasoning |
 |---|---|---|---|---|---|---|
-| $s$ | insurance subsidy rate | 0.47 | GAO (2023)/RR2.0 | ≈ 0.47 current ($s^*=52\%$) | NFIP premium data / sufficient-stat optimization | **Consistent with G&S** — current level matches ($1-944/1739 \approx 0.46$); used 0.47. |
-| $a$ | disaster-relief fraction | **0.10** | interim decision 2026-08-12 | 0.133 ($f$) | App. B.22 p. 105: $f=|\beta_{cond}|/(\sigma_{PDD}\bar P)$; IV spillover $-\$216$/house/1pp | **Interim value** — see below; final choice TODO. |
-
-**Why not G&S's $a=0.133$ (yet) — interim 0.10.** Two problems with plugging 0.133 straight in:
-**(i) it bundles four programs** — IHP (FEMA Individuals & Households grants; IA is its
-Individual-Assistance part), SBA disaster **loans**, HMGP (Hazard Mitigation Grant Program), and GSE
-(Fannie/Freddie forbearance) — whereas the IA-only count is 0.055. **(ii) It mixes benefit- vs
-cost-rate:** an SBA *loan* costs the government ~13¢ per dollar (subsidy cost) but delivers far less
-than face value to the household (they repay it), so the *fiscal cost rate* and the *household
-benefit rate* diverge. Our model's single $a$ is **both at once** (household benefit = fiscal cost),
-so 0.133 — a fiscal-cost number — cannot serve as the household-benefit rate. Hence "**reconciled,
-not averaged**": model each channel's benefit and cost rate separately rather than splitting the
-difference (the $a_{benefit} \ne a_{cost}$ wedge — an open TODO). Two further candidates sharpen the
-range: **≈0.09** (spillover-implied: $\beta_{cond}$ ÷ application rate ÷ $L_f$) and **≈0.14**
-(damage-weighted IHP-only: G&S fn. 4, p. 7 — \$20k average IHP payout against \$144k damage, well
-above the unweighted IA figure). **Decision 2026-08-12: work with $a = 0.10$** (inside the candidate
-range) and postpone the final choice.
+| $s$ | insurance subsidy rate (vs expected claims) | **0.22** (robustness 0 / 0.46; was 0.47) | decision 2026-11-07: $1-944/(0.7\cdot1739)$, i.e. G&S premiums with the ≈30% WYO expense allowance in the full-risk premium netted out (GAO-23-105977) | 0.46 ($1-944/1739$) | pre-RR2.0 vs RR2.0 full-risk premiums | **Not using G&S's 0.46 directly** — it is measured against the loaded full-risk premium (expense allowance, loss adjustment, reinsurance, risk load), not expected claims. 0.22 is an upper bound; counting fees gives about 0. To validate with FEMA data (`calibration_overview.md` 3.1). |
+| $a$ | disaster-aid fraction | **0.052** (range 0.010–0.095; 0.12 upper bound) | decision 2026-11-07: bottom-up IHP grants + SBA home loans at subsidy value (`calibration_a_two_methods.md`; paper §4) | 0.133 ($f$) | App. B.22 p. 105: $f=|\beta_{cond}|/(\sigma_{PDD}\bar P)$; IV spillover $-\$216$/house/1pp | **Not using G&S's 0.133** — it measures how total federal outlays respond to coverage (incl. HMGP, GSE and NFIP interactions), not the transfer per dollar of damage; their own per-house aid amounts imply 0.031–0.036. Their IHP + SBA estimate (0.12) is the upper-bound robustness value. National rate applied to the SFHA population. |
 
 ## 1d. Behavioural / belief inputs
 
 | Symbol | Meaning | Value | Source | Value (G&S) | Source (G&S) | Reasoning |
 |---|---|---|---|---|---|---|
-| $I$ | insurance take-up rate | 0.30 | FEMA / Dixon (high-risk) | 0.18 (risk-wtd); 0.05 (nat'l) | NFIP coverage counts | **⚠ Discussion point** — 0.30 has a real but dated source (Dixon, high-risk penetration); alternatives: 0.18 risk-weighted (G&S), 0.50–0.60 SFHA (Amornsiripanitch et al. 2025, cited in our draft). Depends on the modeled population (§1b). Voluntary-segment correction (mandate share ≈54%, Mulder App. F): TODO. |
-| $\varepsilon$ | premium elasticity of take-up | −0.32 | **G&S $\eta_q$**, Reading A | −0.32 (−0.25 SFHA) | FOIA policy-level panel; within-policy variation from 18%/yr cap, contract FE (§5 p. 19, Table 3) | **Using G&S** under the *relative-elasticity* reading ("Reading A"): their renewal semi-elasticity equals $\varepsilon$ through the threshold model. The alternative level reading ("Reading B", how G&S apply it in their own §9 fiscal arithmetic) would be a different object. Dual-report with Mulder (−0.177; voluntary −0.37): TODO. |
-| $F(q)$ | belief distribution | Beta **fitted to $(I,\varepsilon)$** | draft.tex two-moment strategy | — | no belief distribution (uniform wedge only) | **Decision 2026-08-12** — the two Beta parameters are exactly identified by (take-up level, density at margin). Surveys are *validation targets, not calibration inputs*. |
+| $I$ | insurance take-up rate | **0.484** | Amornsiripanitch et al. (2025), SFHA, share of expected damages insured (2023) | 0.18 (risk-wtd); 0.05 (nat'l) | NFIP coverage counts | **Population = SFHA homeowners (decision 2026-11-07).** Includes mandated and voluntary demand (was 0.30). G&S's national 0.18 remains only in the $a$ calculation, whose denominator is national. |
+| $\phi$ | mandated share | **0.32** | 0.39 (Mulder 2024 survey) × 0.484/0.595 | — | — | **Implemented 2026-11-07:** $I=\phi+(1-\phi)(1-F(q^*))$. Voluntary take-up 0.24. Cancels out of the local MVPFs. **Verified** in Mulder (2024) App. F, p. 74: 39% of floodplain homeowners report being subject to the mandate; the "≈54%" cited earlier is 39/72 with Mulder's own 72% take-up. |
+| $\varepsilon$ | premium elasticity of total take-up (relative) | **−0.25** (bounds −0.177 / −0.32) | **decision 2026-11-07**: G&S SFHA subsample and Wagner (2022), both −0.25 | −0.32 (−0.25 SFHA) | FOIA policy-level panel; within-policy variation from 18%/yr cap, contract FE (§5 p. 19, Table 3) | **SFHA value, relative reading ("Reading A")**: G&S's renewal coefficient equals $\varepsilon$ through the threshold model. Implied voluntary elasticity −0.74 at $\phi=0.32$. Mulder's −0.37 uses his 72% take-up; on our base his −0.177 gives −0.52, so $\phi$ and $\varepsilon$ are consistent. Wagner's −0.25 verified in his online appendix (E, p. 17; A/V zones). |
+| $F(q)$ | belief distribution (voluntary segment) | Beta **fitted to $(I,\varepsilon)$** | paper §3.6 two-moment strategy | — | no belief distribution (uniform wedge only) | The two Beta parameters are exactly identified by (voluntary take-up, density at the margin). Surveys are *validation benchmarks, not calibration inputs*. Used only for the optimal mix. |
 
-**The fitted belief distribution (decision 2026-08-12).** The density at the take-up margin is
-recovered as $\hat f = -\varepsilon\,(I/\pi)\,(\Delta u/u'(c_I))$ with $\pi=(1-s)p\bar d$, and the
-Beta is fitted to the two moments $F(q^*) = 1-I$ and $f(q^*) = \hat f$
+**The fitted belief distribution.** The density at the take-up margin is recovered as
+$\hat f = -\varepsilon\,(I/\pi)\,(\Delta u/u'(c_I))/(1-\phi)$ with $\pi=(1-s)p\bar d$, and the Beta
+is fitted to voluntary take-up, $F(q^*) = 1-\frac{I-\phi}{1-\phi}$, and $f(q^*) = \hat f$
 (`code/belief_identification.py`). Because $q^*$ and $\Delta u$ differ across damage models, the
-fit is per-module. At the status quo $(s,a)=(0.47,0.10)$:
+fit is per-module. At the status quo $(s,a)=(0.22,0.052)$, $\gamma=1.5$:
 
-| damage model | $\hat f$ | fitted Beta$(\alpha,\beta)$ | mean $m$ ($\times p$) | $\nu=\alpha+\beta$ | $\sigma_q$ |
-|---|---|---|---|---|---|
-| discrete | 9.39 | (0.143, 5.69) | 0.0245 (1.22$p$) | 5.83 | 0.059 |
-| continuous FEMA (main) | 30.12 | (0.143, 17.52) | 0.0081 (0.41$p$) | 17.66 | 0.021 |
-| continuous FEMA (excl. Katrina) | 21.48 | (0.143, 12.59) | 0.0112 (0.56$p$) | 12.74 | 0.028 |
+| damage model | $q^*/p$ | $\hat f$ | fitted Beta$(\alpha,\beta)$ | mean $m$ ($\times p$) | $\nu=\alpha+\beta$ | $\sigma_q$ |
+|---|---|---|---|---|---|---|
+| discrete | 0.74 | 12.1 | (0.313, 26.1) | 0.0118 (0.59$p$) | 26.4 | 0.021 |
+| continuous FEMA (main) | 0.29 | 30.5 | (0.314, 66.3) | 0.0047 (0.24$p$) | 66.6 | 0.008 |
+| continuous FEMA (excl. Katrina) | 0.39 | 22.9 | (0.314, 49.6) | 0.0063 (0.31$p$) | 49.9 | 0.011 |
 
-**Survey validation (checks, not inputs) — current results, reported honestly.** Bakkensen–Barrage
-(2022; RI door-to-door elicitation, $N=187$; 10-year horizon; *the paper itself is not in `lit/`
-— verify the table refs before external use*) provides two checks:
-
-- **Mean check ($k_R$):** B–B's mean under-perception ratio is $k_R = 0.57$ (adopted by G&S).
-  Under the FEMA damage distribution the fitted means are **0.41$p$ (main) and 0.56$p$ (excl.
-  Katrina)** — the continuous mean check now **roughly passes** (excl. Katrina almost exactly on
-  $k_R$); only the discrete fit (1.22$p$) still overshoots, dragged up by its thin upper tail.
-  (Under the old Beta placeholders the check failed at 0.81$p$–1.22$p$.)
-- **Quantile check:** B–B report 35% of respondents perceive a 10-year flood probability ≤ 5%. The
-  fitted distributions put **64% (discrete), 75% (FEMA main), 71% (excl. Katrina)** below that
-  threshold — *more* low-belief mass than the elicitation, and the FEMA fits are more concentrated
-  near zero than the old placeholders (mass below $p$: 0.88/0.85; median 0.015$p$–0.020$p$). The
-  revealed-preference fit still implies more extreme under-perception than the survey; whether
-  that reflects non-belief frictions in $(I,\varepsilon)$ (liquidity, distrust, salience) or
-  survey noise is exactly the identification discussion (Mulder over-identification test,
-  contamination share — open TODOs).
+**Survey validation (checks, not inputs).**
+- **Bakkensen–Barrage** (2022; RI door-to-door elicitation, $N=187$, all homeowners; 10-year horizon; *the paper itself is not in `lit/` — verify the table refs before external use*):
+    - **Mean check ($k_R=0.57$, adopted by G&S):** the discrete fit matches (0.59$p$); the continuous fits are far too low (0.24$p$ main, 0.31$p$ excl. Katrina).
+    - **Quantile check:** 35% perceive a 10-year flood probability ≤ 5%. The fits put **58% (discrete), 74% (main), 68% (excl. Katrina)** below that threshold, i.e. too much mass near zero (fitted $\alpha\approx0.31<1$; mass below $p$ 0.81 / 0.94 / 0.91).
+- **Mulder (2024, Table A1):** SFHA respondents report a mean 10-year risk of 27.75%, ≈ 1.6$p$ per year at $p=0.02$, so the two surveys differ by a factor of about 3.
+- **Status:** options and recommendation (Beta baseline, mixture robustness, decision-weight interpretation) in `calibration_overview.md` 3.4. The continuous fits should be judged only after the tail decision (3.3).
 
 *(Local MVPFs need only $(I,\varepsilon)$ — no distribution at all; the fitted Beta is used only by
-the global optimal-mix exercise. The former presentation — imposing $m=0.57p$ and sweeping the
-concentration $\nu$ — is retired; the old sweep figures/tables are superseded.)*
+the global optimal-mix exercise.)*
 
 ## 1e. Government / welfare
 | Symbol | Meaning | Value | Source | Value (G&S) | Source (G&S) | Reasoning |
 |---|---|---|---|---|---|---|
-| $\lambda$ | marginal cost of public funds | 1.1–1.2 | **G&S** robustness (Hendren–Sprung-Keyser) | 1.2 | robustness check (their baseline is lump-sum, MVPF = 1) | **Using G&S's robustness value**, reported as a small sensitivity axis. |
+| $B$ | flood-policy budget | **fixed at today's spending** $B_0=p\bar d[s_0I+a_0(1-I)]$ | paper §3.3 (eq. 6); decision 2026-11-07 | — | — | **Main framing:** the planner reallocates $B_0$ between subsidy and aid; $\lambda$ is the multiplier on that budget, an outcome. **Code pending:** `optimal_mix` still solves the fixed-$\lambda$ problem. |
+| $\lambda$ | marginal cost of public funds | 1.1–1.2 (secondary exercise) | **G&S** robustness (Hendren–Sprung-Keyser) | 1.2 | robustness check (their baseline is lump-sum, MVPF = 1) | **Secondary exercise** on whether total spending should change; `params.LAM = 1.2`. |
 
-**On $\lambda$.** The MCPF is the welfare cost of raising \$1 of public revenue (the deadweight loss
-of taxation); standard values run ~1.0–1.5. We adopt **G&S's 1.2**, reported alongside 1.1 as a
-small sensitivity axis. Note $\lambda$ enters **only** the optimal-mix / phase-diagram exercises;
-the **MVPF status-quo results are $\lambda$-independent**. A higher $\lambda$ shifts optimal
-spending toward the higher-MVPF instrument (relief): at the fitted beliefs the optimum is
-relief-heavy — under the FEMA damage distribution it funds **both** instruments (the total-loss
-atom makes full-coverage insurance valuable too), with the subsidy share shrinking as $\lambda$
-rises (see `mvpf_computations.md` §8). $\lambda = 1.0$ is degenerate
-in our setting (both instruments' MVPFs exceed 1 at the status quo, so the optimum runs to the grid
-corner) and is noted only as a footnote.
+**On $\lambda$.** The MCPF is the welfare cost of raising \$1 of public revenue; standard values run
+~1.0–1.5. It enters **only** the fixed-$\lambda$ optimal-mix exercise; the status-quo MVPFs and the
+fixed-budget optimum are $\lambda$-independent. Current results (discrete model, $\gamma=1.5$):
+$s^*=0$ throughout; $a^*=0.14$ at $\lambda=1.2$ and 0.50 at $\lambda=1.1$. Optimal aid rises with
+$\gamma$ and is zero at $\gamma=1$, $\lambda=1.2$ (`calibration_overview.md`, section 4).
+$\lambda = 1.0$ is degenerate (both MVPFs exceed 1 at the status quo, so the optimum runs to the grid
+corner).
 
 ---
 
@@ -153,18 +117,13 @@ $(p,\bar d,s,a,I,\ldots)$ imply realistic magnitudes.
 
 | Symbol | Meaning | Value (G&S) | Model analog | Model value | Verdict |
 |---|---|---|---|---|---|
-| $\bar P$ | average annual premium | \$1,739 | $p\,\bar d$ | **\$585** ($=0.02\times\$29{,}267$) | **~3× low** — matches G&S only at $p\approx0.06$; this *is* the $p$ discussion point (§1b). |
-| $\beta$ | FEMA ex-post \$ saved / house / 1pp coverage (cond. flood) | −\$216 (IV); −\$1,192/unit uncond. | $0.01\,L_f\,a$ (cond.) | **\$29** ($a{=}0.10$) / **\$39** ($a{=}0.133$) | **5–7× low** — flat-fraction relief misses channels G&S capture (NFIP-payout offsets, GSE, correlated triggers), or units differ (per-house vs per-switcher). If the gap survives, the model **understates** relief's fiscal savings ⇒ *strengthens* the case for relief. |
+| $p\,L_f$ | expected claims per policy-year | ≈ \$1,217 (full-risk premium \$1,739 net of the ≈30% expense allowance) | $p\,\bar d$ | **\$556** ($=0.019\times\$29{,}267$) | **≈ 2.2× low** (3.1× before the $s$ change) — closes only at $p\approx0.04$. Suggests the claims-based $p$, $\bar d$ and G&S's dollar levels don't describe the same households; to be recomputed from our own FEMA data (`calibration_overview.md` 3.1). |
+| $\beta$ | FEMA ex-post \$ saved / house / 1pp coverage (cond. flood) | −\$216 (IV); −\$1,192/unit uncond. | $0.01\,L_f\,a$ (cond.) | **\$15** ($a{=}0.052$) / **\$39** ($a{=}0.133$) | **5–14× low** — the flat-fraction aid misses channels G&S capture (NFIP-payout offsets, GSE, HMGP, correlated triggers), or units differ (per-house vs per-switcher). Consistent with our reading that G&S's 0.133 measures total federal outlays, not the transfer per dollar of damage. |
 
-Both checks come out **low**, and in instructive ways: the $\bar P$ gap is exactly the
-$p=0.02$-vs-G&S tension (it closes at $p\approx0.06$), and the $\beta$ gap says our simple
-"relief = fraction $a$ of own damage" understates the true federal spillover. *(The table's model
-values use the discrete $\bar d=0.15$; under the continuous FEMA mean $\bar d=0.3044$ the model
-premium doubles to $\approx\$1{,}190$ at a \$195k building value — closing much of the $\bar P$
-gap, but by raising $\bar d$ rather than $p$, which is one more reason the $(p,G)$ pairing needs
-the claim-frequency reconciliation.)* Neither is a model
-input — $\beta$ in particular is the *source* G&S use to back out $f\approx0.133$, so feeding both
-it and $a$ would double-count.
+Neither is a model input — $\beta$ in particular is the *source* G&S use to back out $f\approx0.133$,
+so feeding both it and $a$ would double-count. *(Under the continuous FEMA mean $\bar d=0.3044$ the
+model premium roughly doubles — closing much of the $p\,L_f$ gap, but by raising $\bar d$ rather
+than $p$, which is one more reason the $(p,G)$ pairing needs the claim-frequency reconciliation.)*
 
 ---
 
@@ -175,7 +134,7 @@ it and $a$ would double-count.
 |---|---|---|---|---|
 | $\eta_m$ | mitigation/adaptation elasticity | 0.30–0.38 (FL); ≈0.075 reweighted | Florida Elevation Certificates, DiD | adaptation instrument $b$ (new-build margin) |
 | $\eta_x$ | location/migration elasticity | −0.0077 | USPS tract-address panel, event study | sorting bound (defers two-region model) |
-| admin loads | NFIP vs FEMA overhead | 30% of premiums vs 13% of assistance | NFIP / FEMA program accounts | benefit/cost wedge; tilts MVPF toward relief |
-| $k_F$ | aid over-perception | 1.5 | Bakkensen–Barrage elicitation | perceived-vs-actual relief wedge $a_{\text{perc}}\ne a$ |
+| admin loads | NFIP vs FEMA overhead | 30% of premiums vs 13% of assistance | NFIP / FEMA program accounts | benefit/cost wedge; tilts MVPF toward aid |
+| $k_F$ | aid over-perception | 1.5 | Bakkensen–Barrage elicitation | perceived-vs-actual aid wedge $a_{\text{perc}}\ne a$ |
 | intensive margin | coverage-amount elasticity | ≈ 0 (~1%) | FOIA policy-level panel | justifies binary insurance choice |
 | reclassification risk | premium-risk SD (2070) | \$1,842; 50%-subsidy value \$207 | NFIP universe × 40 climate scenarios | a channel we deliberately do **not** model |
