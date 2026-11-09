@@ -1,0 +1,177 @@
+\documentclass[12pt]{article}
+
+% Packages (same set as draft/paper.tex, minus apacite: the single citation is inlined below)
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{natbib}
+
+% Paragraph spacing: blank line between paragraphs, no first-line indent
+\setlength{\parskip}{0.8em plus 0.2em minus 0.2em}
+\setlength{\parindent}{0pt}
+
+\title{Dynamic model: consumption smoothing after a flood\\[0.5em]\large Archived extension to \emph{Optimal Flood Policy}}
+\author{Taco Prins, Lennard Schlattmann, and Daniel Jonas Schmidt}
+\date{Archived 9 November 2026}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Provenance.} This note contains the multi-period extension of the one-period model in \texttt{draft/paper.tex}. It was Section~3.4 (`The dynamic problem') of that file until 9 November 2026 (last version in commit \texttt{72ed32f} on branch \texttt{calibration-update-2026-11}; the text is identical in commit \texttt{0bbc5ec} on \texttt{main}) and was moved here so that the paper's baseline is the static model with a fixed budget. Section~\ref{sec:static} restates only those parts of the static model that the extension refers to, with the same equation labels as the paper. Section~\ref{sec:dynamic} is the extension as it stood when archived, with cosmetic changes only (section levels, one \verb|\ref| changed to \verb|\eqref|, one subscript typo). Section~\ref{sec:open} lists open issues noted at the time of archiving.
+
+\section{Static benchmark (from the paper)}
+\label{sec:static}
+
+A unit continuum of households each own a flood-prone property and hold wealth $w$. A flood occurs with true, common probability $p$; conditional on a flood, damage as a proportion of wealth is drawn from a known distribution with CDF $G(d)$ and mean $\overline{d}$. Households hold heterogeneous subjective beliefs $q$ about the flood probability, distributed according to the CDF $F(q)$. The planner allocates a fixed budget $B$ between an insurance subsidy $s$ (a fraction of the actuarially fair premium $p\overline{d}$) and disaster aid $a$ (a fraction of uninsured damages).
+
+An insured household consumes $c_I = w-(1-s)p\overline{d}$ with certainty and obtains $V_I(s)=u(c_I)$. An uninsured household consumes $c_{U,N}=w$ without a flood and $c_{U,F}(d)=w-(1-a)d$ with one, so that, evaluated at the true probability,
+\begin{equation}
+    V_U(a) = u(c_{U,N}) - p\cdot\Delta u, \qquad \Delta u \equiv u(c_{U,N})-\mathbb{E}[u(c_{U,F}(d))]>0,
+\end{equation}
+while the household with belief $q$ perceives $\tilde{V}_U(q,a) = u(c_{U,N}) - q\cdot\Delta u$. It buys insurance whenever its belief exceeds the threshold $q^*(s,a)$ defined by
+\begin{equation}
+    q^*\cdot\Delta u = u(c_{U,N}) - u(c_I). \label{eq:qstar_prog}
+\end{equation}
+With probability $\phi$ a household is subject to the mandatory purchase requirement, so take-up is $I(s,a) = \phi+(1-\phi)\bigl(1-F(q^*(s,a))\bigr)$. Social welfare and the budget constraint are
+\begin{align}
+    S(s,a) &= V_I(s)\cdot I(s,a) + V_U(a)\cdot\bigl(1-I(s,a)\bigr), \label{eq:welfare_prog}\\
+    B &= p\overline{d}\bigl[s\,I(s,a) + a\,\bigl(1-I(s,a)\bigr)\bigr]. \label{eq:budget_prog}
+\end{align}
+Attaching the multiplier $\lambda$ to \eqref{eq:budget_prog} and rearranging the first-order conditions gives the marginal value of public funds of each instrument,
+\begin{equation}
+    \text{MVPF}_s = \frac{
+        \dfrac{\partial V_I}{\partial s}\cdot I
+         +  (V_I-V_U)\,\dfrac{\partial I}{\partial s}
+    }{
+        p\overline{d}\!\left[I + (s-a)\,\dfrac{\partial I}{\partial s}\right]
+    }, \qquad
+    \text{MVPF}_a = \frac{
+        \dfrac{\partial V_U}{\partial a}\cdot(1-I)
+         + (V_I-V_U)\,\dfrac{\partial I}{\partial a}
+    }{
+        p\overline{d}\!\left[(1-I) + (s-a)\,\dfrac{\partial I}{\partial a}\right]
+    }, \label{eq:mvpf_prog}
+\end{equation}
+where $V_I - V_U = (p-q^*)\,\Delta u$ is the behavioural internality of the marginal household, $\partial V_I/\partial s = p\overline{d}\,u'(c_I)$ and $\partial V_U/\partial a = p\,\mathbb{E}[d\,u'(c_{U,F}(d))]$. Writing the take-up responses as $\partial I/\partial s = -(1-\phi)f(q^*)\,\partial q^*/\partial s$ and $\partial I/\partial a = -(1-\phi)f(q^*)\,\partial q^*/\partial a$ with
+\begin{equation}
+    \frac{\partial q^*}{\partial s} = -\frac{p\overline{d}\,u'(c_I)}{\Delta u}, \qquad
+    \frac{\partial q^*}{\partial a} = \frac{q^*\,\mathbb{E}[d\,u'(c_{U,F}(d))]}{\Delta u}
+\end{equation}
+gives the `optimal policy MVPF' in terms of deep parameters. The dynamic extension below replaces $\Delta u$, $\partial V_U/\partial a$ and the two derivatives of $q^*$ by their consumption-smoothing counterparts and leaves \eqref{eq:welfare_prog}--\eqref{eq:mvpf_prog} unchanged.
+
+\section{The dynamic problem}
+\label{sec:dynamic}
+
+In the one-period problem developed thus far, damages from flooding are wholly subtracted from current consumption. When there are multiple periods, flood-affected households can maintain consumption by borrowing or drawing down their assets, which reduces the risk from flooding to per-period consumption. Households face borrowing constraints, however. In one extreme case, households can borrow as much as their potential flood damages, which must then be scaled by victims' remaining lifetime earnings to find their per-period utility cost. In the other, households cannot increase their borrowing at all, in which case flood damages reduce their immediate consumption one-to-one as in the previous model. 
+
+In the United States, policymakers that come to the aid of flood-affected households do so in part by improving their access to credit. Homeowners with a GSE-backed mortgage that suffer a natural disaster\footnote{Strictly speaking, the homeowner must live in an area receiving FEMA disaster aid.} enjoy an automatic forbearance (not forgiveness) of mortgage payments for a period of 6 to 12 months. This temporarily loosens households' borrowing constraint after a flooding disaster, in order to prevent mortgage defaults and blunt the immediate drop in consumption. Less systematic initiatives in the same direction exist; for example, victims of Hurricane Katrina were able to withdraw money from their retirement account without the accompanying financial penalty (\cite{deryugina2018economic}). 
+
+Here, we examine how real-world consumption smoothing, in between the two extreme cases cited above, alters the cost of flooding disasters and our formulas for optimal policy.   
+
+
+\subsection{Household problem}
+
+There is an infinite number of periods, and the flooding disaster with damage distribution $G(d)$ strikes each period with constant probability $p$. As before, households are coastal homeowners and their belief about the flood arrival rate $p$ is described by the distribution function $F(q)$. Each period, they choose anew whether to buy flood insurance at cost $\overline{P}=(1-s)p\overline{d}$. If they are hit by a flood while uninsured, they suffer damages $(1-a)d$.
+
+Households' per period-utility $u(c)$ is a function of consumption $c$ (not wealth $w$) and they have discount factor $\beta$. Income $e$ follows a Markov chain. Households can borrow and save at interest rate $r$.  
+
+In a flexible and reduced-form way, we incorporate in our model the limited ability of households to access credit immediately following a flooding disaster. The household with subjective belief $q$ regarding the flood arrival rate maximises the subjective expectation of its welfare. The timing of each period is as follows: (i) the household chooses whether to insure or not; (ii) flooding is realised; (iii) the household chooses  how much to consume subject to credit conditions that may depend on the flood realisation.
+
+This model structure is motivated by the empirical reality we report above. On the one hand, government policy makes credit available after a flood that does not exist before, while on the other hand it is costly for households to liquidate assets such as housing and retirement funds in the immediate aftermath of a flood. It thus makes sense to see the consumption-savings decision after a flood as one that occurs under its own conditions, instead of assuming that households' borrowing limit is identical with or without a flood.
+
+Let $m_{\text{U,N}}=w+e$  be the household's cash-on-hand available for consumption if it does not insure and no flood occurs and let $m_{\text{I}}=w+e-\overline{P}$ be the same if it insures. Let $c_{\text{max,U,N}}$ be the maximum consumption the household can choose given cash-in-hand $m_{\text{U,N}}$, so that the difference between the two objects is the maximum amount it can borrow. Finally, let $\mu_\text{max}$ be the maximum amount by which the household can increase consumption after a flood, by increasing borrowing or liquidating assets, as a share of the flood damages $(1-a)d$ it suffers. Clearly, this fraction $\mu$ can depend on the size of damages.      
+
+Then, given its start-of-period wealth $w$, income level $e$, the household's problem is given by 
+
+\begin{equation}
+\tilde{V}(w)=\max\left(\tilde{V}_{I}(w),\,\tilde{V}_{U}(w)\right),
+\end{equation}
+where
+\begin{equation}
+\tilde{V}_{\text{I}}(w)=\max_{c_{\text{I}}\leq c_{\text{max,I}}}\; u(c_{\text{I}})+\beta \mathbb{E}_{e'}[\tilde{V}((1+r)(m_\text{I}-c_{\text{I}}))],
+\end{equation}
+and
+\begin{align}
+\tilde{V}_{\text{U}}(w)=\max_{c_\text{U,N}\leq c_{\text{max,U,N}}}\; (1-q) u(c_\text{U,N})+\beta \mathbb{E}_{e'}[\tilde{V}((1+r)(m_\text{U,N}-c_\text{U,N}))]+ \nonumber \\
+q\mathbb{E}_d[\max_{\mu\leq \mu_{\text{max}}}\; u(c_\text{U,N}-(1-\mu)(1-a)d)+\beta \mathbb{E}_{e'}[\tilde{V}((1+r)(m_\text{U,N}-c_\text{U,N}-\mu(1-a)d))]],
+\end{align}
+
+where we suppress the dependence of the value functions on the state $e$ and belief $q$ for readability.  
+
+\subsection{Approximative reduced-form solution}
+
+To solve for the MVPFs that matter to our problem, we make use of a simple idea: since flood damages are generally small compared to lifetime earnings (but not one-period consumption), then, provided the household is not at its borrowing constraint next period, next-period value functions $\tilde{V}$ and $V$ are approximately linear over the range given by flood damages $(1-a)d$. In this case, we can write the cost of suffering a flood, conditional on no insurance, as:
+\begin{align}\label{eq:approxformula}
+\Delta \tilde{V} \approx u(c_{\text{U,N}})-\mathbb{E}_d[u(c_{\text{U,N}}-(1-\mu(d))(1-a)d)]+ \nonumber \\ \beta(1-a)(1+r)\mathbb{E}_d[\mu(d)d]\cdot\mathbb{E}_{e'}[\tilde{V}_w((1+r)(m_\text{U,N}-c_\text{U,N}))].
+\end{align}
+
+Furthermore, assuming the household is not at its borrowing constraint \textit{without a flood} ($c_{\text{U,N}}<c_{\text{max,U,N}}$), we can use the Euler condition $u'(c_{U,N})=\beta(1+r)\mathbb{E}_{e'}[\tilde{V}_w((1+r)(m_\text{U,N}-c_\text{U,N}))]$ to get 
+
+\begin{equation}\label{eq:approxformulasimple}
+\Delta \tilde{V} \approx u(c_{U,N})-\mathbb{E}[u(c_{\text{U,N}}-(1-\mu(d))(1-a)d)]+(1-a)\mathbb{E}_d[\mu(d)d]\cdot u'(c_{\text{U,N}}).
+\end{equation}
+
+Note that, if the household is in fact at its borrowing constraint even without a flood, then we expect $\mu\approx0$, which limits the inaccuracy in formula \eqref{eq:approxformulasimple}. Now define $\Delta u=u(c_{U,N})-\mathbb{E}[u(c_{\text{U,N}}-(1-\mu(d))(1-a)d)]$. Because of the CRRA property of the utility function, to second order
+
+\begin{equation}\label{eq:simplesecondorderapprox}
+ \Delta u\approx u'(c_{\text{U,N}})\mathbb{E}_d\big[(1-\mu(d))(1-a)d+\frac{\gamma}{2}\frac{(1-\mu(d))^2(1-a)^2d^2}{c_{\text{U,N}}}\big],
+\end{equation}
+
+allowing us to write \eqref{eq:approxformulasimple} as the sum of the money cost of flooding and a risk premium: 
+
+\begin{equation}\label{eq:approxformulafinal}
+\Delta \tilde{V} \approx u'(c_{\text{U,N}})\mathbb{E}_d[(1-a)d(1+\frac{\gamma(1-\mu(d))^2}{2}\frac{(1-a)d}{c_{\text{U,N}}})].
+\end{equation}
+
+Furthermore, since the insurance premium is small,
+
+\begin{equation}
+\tilde{V}_{\text{N}}-\tilde{V}_{\text{I}}\approx\overline{P} \cdot u'(c_{\text{U,N}}),
+\end{equation}
+
+which is the last ingredient necessary to solve the indifference condition \eqref{eq:qstar_prog}: $q^*\cdot\Delta u = u(c_{\text{U,N}}) - u(c_{\text{I}})$. We get
+
+\begin{equation}
+q^*\approx\frac{\overline{P}}{\mathbb{E}_d\!\left[(1-a)\,d\left(1+\dfrac{\gamma\,(1-\mu(d))^2}{2}\dfrac{(1-a)d}{c_{\text{U,N}}}\right)\right]}.
+\end{equation}
+Note that, in the extreme case where the agent can smooth consumption perfectly ($\mu\approx1$), the agent becomes approximately risk-neutral and $q^*$ equals the insurance premium divided by expected flood damages. This follows from the fact that flood damages are small relative to lifetime earnings. 
+
+\subsection{Social planner problem}
+
+The structure of the social planner problem described in \eqref{eq:welfare_prog} and \eqref{eq:budget_prog} is unchanged, and so the formulas for the current policy MVPF given by \eqref{eq:mvpf_prog} remain accurate. The changes when filling in the terms follow straightforwardly from the above. When the household with belief $q^*$ that is indifferent between insuring or not is induced to insure, its welfare increases by $V_\text{I}-V_\text{U}=(p-q^*)\Delta V$. Since $p$ and $q$ are small, we have $\tilde V_w\approx V_w$\footnote{for a household that chooses not to insure given wealth $w$, $V_w=(1-p)u'(c_{\text{U,N}})+p\mathbb{E}_d[u'(c_\text{U,N}-(1-\mu)(1-a)d)]$, while $\tilde{V}_w=(1-q)u'(c_{\text{U,N}})+q\mathbb{E}_d[u'(c_\text{U,N}-(1-\mu)(1-a)d)]$.}, and, with this additional assumption, $\Delta V$ is approximately given by \eqref{eq:approxformulafinal}. We have $\partial V_\text{I}/\partial s=p\overline{d}u'(c_{\text{I}})$ as before while, from \eqref{eq:approxformulafinal}, $\partial V_\text{U}/\partial a\approx p\,u'(c_{\text{U,N}})\mathbb{E}_d[d(1+\gamma(1-\mu(d))^2(1-a)d/c_{\text{U,N}})]$.
+
+For the optimal policy MVPFs, we get 
+
+\begin{equation}
+\frac{\partial q^*}{\partial s}=-\frac{q^*}{1-s} 
+\end{equation}
+
+and
+
+\begin{equation}
+\frac{\partial q^*}{\partial a}=\dfrac{q^*}{(1-a)}\,\frac{\mathbb{E}_d\!\left[d\left(1+\gamma\,(1-\mu(d))^2\,\dfrac{(1-a)d}{c_{\text{U,N}}}\right)\right]}{\mathbb{E}_d\!\left[\,d\left(1+\dfrac{\gamma\,(1-\mu(d))^2}{2}\dfrac{(1-a)d}{c_{\text{U,N}}}\right)\right]}.
+\end{equation}
+
+
+\section{Open issues at the time of archiving}
+\label{sec:open}
+
+\begin{enumerate}
+    \item \textbf{Two different $\Delta u$.} Section~\ref{sec:dynamic} redefines $\Delta u$ as the current-period part $u(c_{U,N})-\mathbb{E}[u(c_{U,N}-(1-\mu(d))(1-a)d)]$ but then solves the indifference condition `$q^*\cdot\Delta u = u(c_{U,N})-u(c_I)$' with the full cost $\Delta\tilde{V}$ of \eqref{eq:approxformulafinal} in the denominator. The threshold formula is right; the notation should use $\Delta\tilde{V}$ throughout.
+    \item \textbf{Undefined $\tilde{V}_{\text{N}}$.} The premium approximation $\tilde{V}_{\text{N}}-\tilde{V}_{\text{I}}\approx\overline{P}\,u'(c_{\text{U,N}})$ compares the no-flood value at cash-on-hand $m_{U,N}$ with the value at $m_I$; the subscript N is not introduced anywhere.
+    \item \textbf{$\mu$ treated as policy-invariant.} $\partial q^*/\partial a$ holds $\mu(d)$ fixed, although the text motivates $\mu$ as depending on the size of the loss $(1-a)d$ and on post-flood credit policy. If $\mu$ is calibrated to the consumption response to income shocks, this is an approximation that should be stated.
+    \item \textbf{Base of the approximation.} The second-order expansion is around $c_{U,N}$, i.e.\ one period of consumption, and the calibration in the paper scales damages to income using a house-value-to-income ratio of about 4. Mean damages then exceed one year of consumption, so the expansion is only accurate when $\mu$ is close to 1 for large losses; the approximation error for the upper damage bins (near-total losses) was never checked numerically.
+    \item \textbf{Borrowing-constraint cases.} The Euler-equation step requires $c_{U,N}<c_{\max,U,N}$; the text argues that constrained households have $\mu\approx0$ so the error is small, but a constrained household with $\mu\approx 0$ also has a much higher marginal utility than the Euler equation implies, which works in the other direction.
+    \item \textbf{Code.} No module in \texttt{code/} implements the smoothing formulas; \texttt{mvpf\_continuous.py} applies the static model with the FEMA damage distribution on a house-value base (\texttt{scale} hook). An earlier, deleted version of this section (commit \texttt{707ae5a}, replaced in \texttt{d07aa9c}) instead derived an equivalent static base $w=c/\mu$; that route is recoverable from the git history.
+\end{enumerate}
+
+\begin{thebibliography}{1}
+\bibitem[Deryugina et al.(2018)]{deryugina2018economic}
+Deryugina, T., Kawano, L., and Levitt, S. (2018). The economic impact of Hurricane Katrina on its victims: Evidence from individual tax returns. \emph{American Economic Journal: Applied Economics}, 10(2):202--233.
+\end{thebibliography}
+
+\end{document}
