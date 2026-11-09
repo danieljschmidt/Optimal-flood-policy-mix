@@ -6,18 +6,19 @@ computes both MVPFs directly from the observed take-up I and premium elasticity
 eps via the recovered density at the margin,
     f_hat = -eps * (I / pi) * (Delta_u / u'(c_I)),        pi = (1-s) p dbar.
 The GLOBAL (secondary) results use `fit_beta`: the two Beta parameters are
-exactly identified by the two moments (CDF at q* = 1-I, pdf at q* = f_hat).
+exactly identified by the two moments (CDF at q* = 1 - voluntary take-up,
+pdf at q* = f_hat). A share PHI of households is mandated to insure
+(`params.PHI`); the Beta describes beliefs of the voluntary segment.
 Surveys are VALIDATION targets, not calibration inputs: `validation` reports the
 fitted mean against Bakkensen-Barrage's k_R = 0.57 and the fitted low-belief
 share against their "35% perceive a 10-year flood probability <= 5%".
 
-Units convention ("Reading A"): G&S's -0.32 is a within-policy renewal
-semi-elasticity d Pr(renew)/d ln P; under the threshold model Pr(renew) =
-I(pi')/I(pi), so the coefficient equals the RELATIVE take-up elasticity eps.
-(The alternative "Reading B" — a level response dI/dlnP = -0.32 — is how G&S
-apply it in their own fiscal calibration.)
-TODO: dual-report with Mulder's information-constant estimate (-0.177; voluntary
--0.37) and run his information effect (+17-30pp) as the over-identification test.
+Units convention ("Reading A", adopted 2026-11-07 in paper and code): eps is the
+RELATIVE elasticity of total take-up, eps = d ln I / d ln pi. A within-policy
+renewal coefficient d Pr(renew)/d ln P (G&S) equals this under the threshold
+model, since Pr(renew) = I(pi')/I(pi). Baseline eps = -0.25 (SFHA: G&S subsample
+and Wagner 2022); robustness bounds -0.177 (Mulder) and -0.32 (G&S, all zones).
+TODO: run Mulder's information effect (+17-30pp) as the over-identification test.
 
 All functions take a core model module (`mvpf_discrete` or `mvpf_continuous`)
 as their first argument, like `mvpf_optimal_mix`.
@@ -34,15 +35,23 @@ def premium(mod, s):
 
 
 def recover_fqstar(mod, s, a, I, eps):
-    """Density of beliefs at the take-up margin implied by (I, eps)."""
+    """Belief density of the VOLUNTARY segment at the take-up margin implied by (I, eps).
+
+    Total take-up I = PHI + (1-PHI)(1-F(q*)), so dI/dq* = -(1-PHI) f(q*); the
+    observed response of total take-up therefore identifies (1-PHI) f(q*), and
+    we divide by (1-PHI) to get f (paper eq. for f(q*) in sec. 3.6).
+    """
     st = mod.struct(s, a)
-    return -eps * (I / premium(mod, s)) * (st['Du'] / st['upI'])
+    return -eps * (I / premium(mod, s)) * (st['Du'] / st['upI']) / (1 - mod.PHI)
 
 
 def mvpf_local(mod, s, a, I, eps):
-    """Sufficient-statistic MVPFs at (s, a): need only (I, eps), no belief Beta."""
+    """Sufficient-statistic MVPFs at (s, a): need only (I, eps), no belief Beta.
+
+    PHI cancels: the (1-PHI) below undoes the division in `recover_fqstar`.
+    """
     st = mod.struct(s, a)
-    f = recover_fqstar(mod, s, a, I, eps)
+    f = (1 - mod.PHI) * recover_fqstar(mod, s, a, I, eps)   # take-up density at the margin
     pd_ = mod.P * mod.MEAN_D
     dI_ds = f * pd_ * st['upI'] / st['Du']
     intern = (mod.P - st['qst']) * st['Du']
@@ -62,17 +71,21 @@ def mvpf_local(mod, s, a, I, eps):
 def fit_beta(mod, s, a, I, eps):
     """Fit Beta(alpha, beta) to the two moments (take-up level, density at margin).
 
-    Solves  F_Beta(q*) = 1 - I  and  f_Beta(q*) = f_hat  (draft eqs. beta_cdf /
-    beta_pdf). Returns (alpha, beta). Raises if the solver does not converge.
+    The Beta is the belief distribution of the voluntary segment (share 1-PHI):
+    solves  F_Beta(q*) = 1 - (I-PHI)/(1-PHI)  and  f_Beta(q*) = f_hat.
+    Returns (alpha, beta). Raises if the solver does not converge or I <= PHI.
     """
     st = mod.struct(s, a)
     qst, fhat = st['qst'], recover_fqstar(mod, s, a, I, eps)
+    if I <= mod.PHI:
+        raise ValueError(f"take-up I={I} must exceed the mandated share PHI={mod.PHI}")
+    I_vol = (I - mod.PHI) / (1 - mod.PHI)               # voluntary take-up
 
     def resid(x):
         al, be = np.exp(x)                              # positivity via log-params
         cdf = betainc(al, be, qst)
         pdf = np.exp((al - 1) * np.log(qst) + (be - 1) * np.log(1 - qst) - betaln(al, be))
-        return [cdf - (1.0 - I), pdf - fhat]
+        return [cdf - (1.0 - I_vol), pdf - fhat]
 
     x, info, ier, msg = fsolve(resid, [np.log(0.2), np.log(8.0)], full_output=True)
     if ier != 1 or max(abs(r) for r in resid(x)) > 1e-8:

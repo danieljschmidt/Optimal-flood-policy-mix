@@ -95,6 +95,14 @@ whether SBA is included.
 
 - **Program size, all-hazard:** IHP ≈\$1.55bn/yr; SBA subsidy-equivalent ≈\$0.18bn/yr (13¢ per
   dollar lent, on ≈\$1.4bn/yr face value) — combined ≈\$1.73bn/yr.
+  - **Update 2026-11-07 (SBA volume now sourced; the paper uses these numbers):**
+    - **Average:** approved SBA *home* disaster loans averaged **\$1.571bn/yr over FY2003–FY2022** (SBA Disaster Loan Data, data.sba.gov, one file per fiscal year; FY2023–24 not published there). Subsidy-equivalent: \$0.204bn/yr, so IHP + SBA ≈ **\$1.754bn/yr**.
+    - **Effect on $a$:** the midpoint is unchanged at **0.052**; the range becomes 0.010–0.095.
+    - **Why home loans only:** business loans and economic-injury loans go to firms, not households. COVID EIDL never appears in the home sheets.
+    - **Year assignment:** the files assign loans to the fiscal year of the disaster declaration (Katrina in FY2005, Harvey/Irma/Maria in FY2017), not the approval date.
+    - **Cross-check:** home + business totals for FY2003–2014 in these files (\$22.5bn) match CRS R41309 Table 2 approvals (\$23.1bn) to within 3%.
+    - **Caveat:** these are *approved* amounts; disbursements are lower (≈60% of approvals in CRS R41309).
+    - **Not yet propagated:** the tables below still use the old \$1.73bn.
 - **All-hazard → flood-only correction:** IHP totals cover every disaster type, not just floods, so
   they're scaled down by flooding's share of all-hazard IHP spending. This is now computed directly
   from FEMA's own data (OpenFEMA `FemaWebDisasterSummaries` × `DisasterDeclarationsSummaries`,

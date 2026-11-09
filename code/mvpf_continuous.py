@@ -26,12 +26,12 @@ from scipy.interpolate import PchipInterpolator
 
 # ---------------- primitives (single source of truth: params.py) ---------------
 import params as _params
-from params import W, GAMMA, P, MEAN_D, S0, A0, FEMA_DIST_MAIN
+from params import W, GAMMA, P, MEAN_D, S0, A0, PHI, FEMA_DIST_MAIN
 DBAR = MEAN_D                 # mean damage (uniform name shared with the discrete module);
                               # configure_damage rebinds DBAR *and* MEAN_D so that
                               # mod.MEAN_D (premium, fiscal cost downstream) == E[D].
 
-def u(c):  return c ** (1 - GAMMA) / (1 - GAMMA)
+def u(c):  return np.log(c) if GAMMA == 1 else c ** (1 - GAMMA) / (1 - GAMMA)   # CRRA; log at gamma = 1
 def up(c): return c ** (-GAMMA)
 
 # ---------------- damage distribution G (configurable) ------------------------
@@ -132,12 +132,15 @@ def struct(s, a):
                 Dubar=float(Dubar(a)),
                 V_I=u(c_I), V_U=(1 - P) * u(W) + P * float(Eu_cUF(a)))
 
-def take_up(s, a, m, nu): return 1 - f_cdf(struct(s, a)['qst'], m, nu)
+# Take-up: a share PHI is mandated to insure; the rest insures iff q > q*.
+# F is the belief distribution of the voluntary segment; (1-PHI) f(q*) is the
+# take-up density at the margin (paper eqs. partialsinsurance / mvpf_deep_prog).
+def take_up(s, a, m, nu): return PHI + (1 - PHI) * (1 - f_cdf(struct(s, a)['qst'], m, nu))
 
 # ---------------- MVPFs (draft eqs. mvpf_s_cont / mvpf_a_cont) -----------------
 def mvpf(s, a, m, nu):
     st = struct(s, a); qst, Du, pdb = st['qst'], st['Du'], P * DBAR
-    I, f = 1 - f_cdf(qst, m, nu), f_pdf(qst, m, nu)
+    I, f = take_up(s, a, m, nu), (1 - PHI) * f_pdf(qst, m, nu)
     dI_ds = f * pdb * st['upI'] / Du
     dI_da = -f * qst * st['Dubar'] / Du                # -f q* overline{Du'}/Du
     intern = (P - qst) * Du

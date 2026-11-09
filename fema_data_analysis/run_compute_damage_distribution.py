@@ -13,7 +13,6 @@
 # not on a flood occurring — are documented in notes/notes.md.
 # The *_home variants rescale each claim by (1 - FHFA land share) to express damage as a
 # share of home value including land (the denominator the macro model uses).
-# Companion to run_compute_damage_grid3.py (3-point grids, depth-damage fit, 2100 projection).
 
 from pathlib import Path
 
@@ -22,11 +21,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import sqlite3
 
-from discretize_damage import discretize_conditional_means
+from discretize_damage import discretize_conditional_means, gauss_three_point
 
 # %% Configuration
 
-DATA_DIR = Path(r"C:\Users\TPRINS\OneDrive - UvA\Documenten\Python files insurance-aid\Code August 2026\fema_data_analysis\data")
+DATA_DIRS = [
+    Path(r"C:\Users\TPRINS\OneDrive - UvA\Documenten\Python files insurance-aid\Code August 2026\fema_data_analysis\data"),
+    Path(r"C:\Users\dschm\Documents\Data\FEMA"),
+]
+DATA_DIR = next(d for d in DATA_DIRS if d.exists())
 DB_PATH = DATA_DIR / "fema.db"
 LAND_PATH = DATA_DIR / "land-prices_2024_20_june.xlsx"   # FHFA WP 19-01 land prices, v4.0
 
@@ -249,6 +252,7 @@ for name, (description, selection, column) in VARIANTS.items():
 
     mean_d = float(np.sum(values * weights))
     sd_d = float(np.sqrt(np.sum(weights * (values - mean_d) ** 2)))
+    nodes, probs = gauss_three_point(x)     # 3-point grid for the model
     summary_rows.append({
         "variant": name,
         "description": description,
@@ -261,6 +265,8 @@ for name, (description, selection, column) in VARIANTS.items():
         "share_above_0.9": (x >= 0.9).mean(),
         "mean_discretized": mean_d,
         "cv_discretized": sd_d / mean_d,
+        "grid3_survival": np.round(1 - nodes, 3).tolist(),
+        "grid3_prob": np.round(probs, 3).tolist(),
     })
 
 df_summary = pd.DataFrame(summary_rows)
@@ -273,7 +279,11 @@ with pd.ExcelWriter(OUT_DIR / "damage_distribution.xlsx") as xl:
         table.to_excel(xl, sheet_name=name, index=False)
 
 print("\nSample variants (mean and CV are the two calibration targets):")
-print(df_summary.drop(columns=["description"]).round(4).to_string(index=False))
+print(df_summary.drop(columns=["description", "grid3_survival", "grid3_prob"]).round(4).to_string(index=False))
+
+print("\n3-point grid (survival fraction, probability), matching mean, variance and skewness:")
+for row in summary_rows:
+    print(f"  {row['variant']:<18} z = {row['grid3_survival']}   p = {row['grid3_prob']}")
 
 print("\nMain distribution:")
 print(distributions["main"].round(4).to_string(index=False))

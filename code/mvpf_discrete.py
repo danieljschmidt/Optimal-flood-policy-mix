@@ -19,10 +19,10 @@ import numpy as np
 from scipy.special import betaln, betainc
 
 # ---------------- primitives (single source of truth: params.py) ---------------
-from params import W, GAMMA, P, MEAN_D, S0, A0
-D = MEAN_D                    # damage (= mean damage; = DBAR in the continuous module)
+from params import W, GAMMA, P, MEAN_D, S0, A0, PHI
+D = MEAN_D                   # damage (= mean damage; = DBAR in the continuous module)
 
-def u(c):  return c ** (1 - GAMMA) / (1 - GAMMA)
+def u(c):  return np.log(c) if GAMMA == 1 else c ** (1 - GAMMA) / (1 - GAMMA)   # CRRA; log at gamma = 1
 def up(c): return c ** (-GAMMA)
 
 # ---------------- belief distribution: Beta by (mean, concentration) ----------
@@ -44,12 +44,15 @@ def struct(s, a):
     return dict(c_I=c_I, c_UF=c_UF, Du=Du, qst=qst, upI=up(c_I), upUF=up(c_UF),
                 V_I=u(c_I), V_U=(1 - P) * u(c_UN) + P * u(c_UF))
 
-def take_up(s, a, m, nu): return 1 - f_cdf(struct(s, a)['qst'], m, nu)
+# Take-up: a share PHI is mandated to insure; the rest insures iff q > q*.
+# F is the belief distribution of the voluntary segment; (1-PHI) f(q*) is the
+# take-up density at the margin (paper eqs. partialsinsurance / mvpf_deep_prog).
+def take_up(s, a, m, nu): return PHI + (1 - PHI) * (1 - f_cdf(struct(s, a)['qst'], m, nu))
 
 # ---------------- MVPFs (draft eqs. mvpf_s_vf / mvpf_a_vf) ---------------------
 def mvpf(s, a, m, nu):
     st = struct(s, a); qst, Du, pd = st['qst'], st['Du'], P * D
-    I, f = 1 - f_cdf(qst, m, nu), f_pdf(qst, m, nu)
+    I, f = take_up(s, a, m, nu), (1 - PHI) * f_pdf(qst, m, nu)
     dI_ds = f * pd * st['upI'] / Du
     dI_da = -f * qst * D * st['upUF'] / Du
     intern = (P - qst) * Du
