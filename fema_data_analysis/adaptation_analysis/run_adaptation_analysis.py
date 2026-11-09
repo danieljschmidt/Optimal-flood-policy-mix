@@ -2,11 +2,14 @@
 
 import pandas as pd
 import sqlite3
+import sys
 from pathlib import Path
 
 # %% Connect to database
 
-db_name = "C:\\Users\\dschm\\Documents\\Data\\FEMA\\fema.db"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))   # for paths.py
+from paths import DATA_DIR   # data folder: see paths.py
+db_name = DATA_DIR / "fema.db"
 
 conn = sqlite3.connect(db_name)
 

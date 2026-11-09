@@ -5,7 +5,8 @@ import sqlite3
 
 # %% Connect to database
 
-db_name = "C:\\Users\TPRINS\OneDrive - UvA\Documenten\Python files insurance-aid\Code August 2026\fema_data_analysis\data\fema.db"
+from paths import DATA_DIR   # data folder: see paths.py
+db_name = DATA_DIR / "fema.db"
 
 conn = sqlite3.connect(db_name)
 cursor = conn.cursor()

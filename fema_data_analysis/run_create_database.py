@@ -7,7 +7,7 @@ from pathlib import Path
 from database_setup_claims import claims_dtype_dict, claims_date_cols
 from database_setup_policies import policies_dtype_dict, policies_date_cols
 
-DATA_DIR = Path(r"C:\Users\TPRINS\OneDrive - UvA\Documenten\Python files insurance-aid\Code August 2026\fema_data_analysis\data")
+from paths import DATA_DIR   # data folder: see paths.py
 parquet_claims = DATA_DIR / "NfipClaimsV3.parquet"        # a file OR a folder of .parquet parts
 parquet_policies = DATA_DIR / "NfipPoliciesV3.parquet"
 db_name = DATA_DIR / "fema.db"
