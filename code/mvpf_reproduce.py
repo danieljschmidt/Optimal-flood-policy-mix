@@ -7,7 +7,8 @@ Structure:
   LOCAL  (headline)  — sufficient-statistic MVPFs from (I_OBS, EPS); no belief
                        distribution, no MCPF.
   GLOBAL (secondary) — belief Beta fitted to the same (I_OBS, EPS); survey
-                       validation checks; optimal mix at lambda in {1.1, 1.2}.
+                       validation checks; optimal mix with a FIXED BUDGET (baseline:
+                       current spending) and, as robustness, fixed lambda in {1.1, 1.2}.
                        Bounds/regions over the calibration set: TODO.
 
 Figures (per damage spec):
@@ -39,7 +40,7 @@ FD    = os.path.join(REPO, "notes", "figures")
 FC    = os.path.join(REPO, "notes", "figures_continuous")
 FCX   = os.path.join(REPO, "notes", "figures_continuous_excl_katrina")
 BLUE, RED = "#2166ac", "#b2182b"
-LAMS = [1.1, 1.2]                       # lambda = 1.0 is degenerate (corner: both -> max)
+LAMS = [1.1, 1.2]                       # fixed-lambda robustness; 1.0 is degenerate (corner)
 
 S0, A0, I_OBS, EPS = params.S0, params.A0, params.I_OBS, params.EPS
 
@@ -79,11 +80,14 @@ def table_global(specs):
         print(f"      fitted mean/p = {cal['mean_over_p']:.2f}   (B-B k_R = 0.57)")
         print(f"      share 10yr-belief<=5% = {cal['share_10yr_below_5pct']:.2f}   (B-B: 0.35)")
         print(f"      mass below p = {cal['mass_below_p']:.2f}   median/p = {cal['median_over_p']:.3f}")
-        for lam in LAMS:
+        o = A.optimal_mix(mod, cal['m'], cal['nu'], ns=99)            # BASELINE: fixed budget B0
+        print(f"    optimal mix, fixed budget (baseline):  s*={o['s_star']:.2f}  a*={o['a_star']:.3f}"
+              f"  [{A.regime(o)}]   I={o['I']:.3f}  q*/p={o['qstar_over_p']:.2f}"
+              f"  aid share={o['relief_share']:.2f}  gain={o['welfare_gain']:.2e}")
+        for lam in LAMS:                                                   # robustness: fixed MCPF
             o = A.optimal_mix(mod, cal['m'], cal['nu'], lam=lam, ns=101, na=101)
-            reg = ("relief-only" if o["s_star"] < 1e-3 else
-                   "subsidy-only" if o["a_star"] < 1e-3 else "both")
-            print(f"    optimal mix (lambda={lam}):  s*={o['s_star']:.2f}  a*={o['a_star']:.2f}  [{reg}]")
+            print(f"    optimal mix, fixed lambda={lam} (robustness):  s*={o['s_star']:.2f}"
+                  f"  a*={o['a_star']:.2f}  [{A.regime(o)}]  q*/p={o['qstar_over_p']:.2f}")
         print()
 
 
@@ -114,7 +118,7 @@ def figD(mod, outdir, tag):
 
 
 def figE(mod, outdir, tag):
-    """Optimal-mix regime map over (mean underperception, sigma_q), at lambda=1.2."""
+    """Optimal-mix regime map over (mean underperception, sigma_q), fixed lambda=1.2 (robustness framing)."""
     os.makedirs(outdir, exist_ok=True)
     cal = calibrate(mod)
     kk = np.linspace(0.2, 1.5, 28); ss = np.linspace(0.002, 0.065, 26)

@@ -85,5 +85,8 @@ EPS = -0.25        # premium elasticity of TOTAL take-up (mandated + voluntary),
                    #   Implied voluntary elasticity: eps * I/(I-PHI) = -0.74.
 
 # ---- welfare -----------------------------------------------------------------
-LAM = 1.2          # MCPF benchmark for the (secondary) optimal-mix exercise;
+LAM = 1.2          # MCPF for the fixed-lambda ROBUSTNESS check only. The baseline
+                   # optimal mix holds the budget fixed at current spending
+                   # (mvpf_optimal_mix.optimal_mix with lam=None), so lambda is the
+                   # shadow value of that budget, not an input.
                    # report lam in {1.1, 1.2}; lam = 1.0 is degenerate (corner).
